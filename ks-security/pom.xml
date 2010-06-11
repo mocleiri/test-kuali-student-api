@@ -12,6 +12,7 @@
   <description>KS Security Parent POM</description>
   <modules>
     <module>ks-standard-sec</module>
+    <module>ks-sts</module>
   </modules>
   <repositories>
     <repository>
