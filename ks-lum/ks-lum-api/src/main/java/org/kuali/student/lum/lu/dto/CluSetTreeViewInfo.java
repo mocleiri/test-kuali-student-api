@@ -38,7 +38,7 @@ import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
  *Detailed information about a single CLU Set.
  */ 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CluSetInfo implements Serializable, Idable, HasAttributes {
+public class CluSetTreeViewInfo implements Serializable, Idable, HasAttributes {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,9 +53,6 @@ public class CluSetInfo implements Serializable, Idable, HasAttributes {
 
     @XmlElement
     private Date expirationDate;
-
-    @XmlElement
-    private MembershipQueryInfo membershipQuery;
     
     @XmlElement
     private String adminOrg;
@@ -67,10 +64,10 @@ public class CluSetInfo implements Serializable, Idable, HasAttributes {
     private Boolean isReferenceable;
     
     @XmlElement
-    private List<String> cluSetIds;
+    private List<CluSetTreeViewInfo> cluSets;
 
     @XmlElement
-    private List<String> cluIds;
+    private List<CluInfo> clus;
 
     @XmlElement
     @XmlJavaTypeAdapter(JaxbAttributeMapListAdapter.class)
@@ -143,33 +140,6 @@ public class CluSetInfo implements Serializable, Idable, HasAttributes {
 //        this.cluCriteria = cluCriteria;
 //    }
 
-    /**
-     * List of identifiers of directly contained CLU Sets. Present for enumerated CLU Sets.
-     */
-    public List<String> getCluSetIds() {
-        if (cluSetIds == null) {
-            cluSetIds = new ArrayList<String>();
-        }
-        return cluSetIds;
-    }
-
-    public void setCluSetIds(List<String> cluSetIds) {
-        this.cluSetIds = cluSetIds;
-    }
-
-    /**
-     * List of identifiers of directly contained CLUs. Present for enumerated CLU Sets.
-     */
-    public List<String> getCluIds() {
-        if (cluIds == null) {
-            cluIds = new ArrayList<String>();
-        }
-        return cluIds;
-    }
-
-    public void setCluIds(List<String> cluIds) {
-        this.cluIds = cluIds;
-    }
 
     /**
      * List of key/value pairs, typically used for dynamic attributes.
@@ -206,14 +176,6 @@ public class CluSetInfo implements Serializable, Idable, HasAttributes {
     public void setId(String id) {
         this.id = id;
     }
-
-	public MembershipQueryInfo getMembershipQuery() {
-		return membershipQuery;
-	}
-
-	public void setMembershipQuery(MembershipQueryInfo membershipQuery) {
-		this.membershipQuery = membershipQuery;
-	}
 
 	/**
 	 * Gets the clu set type. 
@@ -265,5 +227,21 @@ public class CluSetInfo implements Serializable, Idable, HasAttributes {
 
 	public void setIsReferenceable(Boolean isReferenceable) {
 		this.isReferenceable = isReferenceable;
-	}    		
+	}
+
+	public List<CluSetTreeViewInfo> getCluSets() {
+		return cluSets;
+	}
+
+	public void setCluSets(List<CluSetTreeViewInfo> cluSets) {
+		this.cluSets = cluSets;
+	}
+
+	public List<CluInfo> getClus() {
+		return clus;
+	}
+
+	public void setClus(List<CluInfo> clus) {
+		this.clus = clus;
+	}    			
 }

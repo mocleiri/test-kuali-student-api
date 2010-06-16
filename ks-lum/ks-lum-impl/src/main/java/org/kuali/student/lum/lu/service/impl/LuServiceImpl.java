@@ -66,6 +66,7 @@ import org.kuali.student.lum.lu.dto.CluPublicationInfo;
 import org.kuali.student.lum.lu.dto.CluResultInfo;
 import org.kuali.student.lum.lu.dto.CluResultTypeInfo;
 import org.kuali.student.lum.lu.dto.CluSetInfo;
+import org.kuali.student.lum.lu.dto.CluSetTreeViewInfo;
 import org.kuali.student.lum.lu.dto.CluSetTypeInfo;
 import org.kuali.student.lum.lu.dto.DeliveryMethodTypeInfo;
 import org.kuali.student.lum.lu.dto.InstructionalFormatTypeInfo;
@@ -650,6 +651,15 @@ public class LuServiceImpl implements LuService {
 		return cluSetInfo;
 	}
 
+	@Override
+	public CluSetTreeViewInfo getCluSetTreeView(String cluSetId)
+			throws DoesNotExistException, InvalidParameterException,
+			MissingParameterException, OperationFailedException,
+			PermissionDeniedException {
+		// TODO Auto-generated method stub
+		return null;
+	}	
+	
 	@Override
 	public List<CluSetInfo> getCluSetInfoByIdList(List<String> cluSetIdList)
 			throws DoesNotExistException, InvalidParameterException,
