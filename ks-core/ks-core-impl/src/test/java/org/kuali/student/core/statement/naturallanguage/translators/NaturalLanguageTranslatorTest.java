@@ -26,7 +26,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kuali.student.common.messagebuilder.MessageBuilder;
+import org.kuali.student.common.messagebuilder.MessageTreeBuilder;
 import org.kuali.student.common.messagebuilder.impl.BooleanOperators;
+import org.kuali.student.common.messagebuilder.impl.MessageBuilderImpl;
+import org.kuali.student.common.messagebuilder.impl.SuccessFailureMessageBuilder;
 import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
 import org.kuali.student.core.statement.entity.ReqComponent;
 import org.kuali.student.core.statement.entity.ReqComponentField;
@@ -94,20 +98,31 @@ public class NaturalLanguageTranslatorTest {
     }
     
     private static void createMessageBuilder() {
-//    	SimpleExecutorDroolsImpl executor = new SimpleExecutorDroolsImpl();
-//    	final DroolsKnowledgeBase ruleBase = new DroolsKnowledgeBase();
-//		executor.setRuleBaseCache(ruleBase);
-
+    	BooleanOperators deBO = new BooleanOperators("und", "oder");
+    	BooleanOperators enBO = new BooleanOperators("and", "or");
+    	BooleanOperators jpBO = new BooleanOperators("XandX", "XorX");
+    	
 		Map<String, BooleanOperators> booleanLanguageMap = new HashMap<String, BooleanOperators>();
-		booleanLanguageMap.put("dk", new BooleanOperators("og", "eller"));
-		booleanLanguageMap.put("fr", new BooleanOperators("et", "ou"));
-		booleanLanguageMap.put("de", new BooleanOperators("und", "oder"));
-		booleanLanguageMap.put("en", new BooleanOperators("and", "or"));
-		booleanLanguageMap.put("jp", new BooleanOperators("XandX", "XorX"));
+		booleanLanguageMap.put("de", deBO);
+		booleanLanguageMap.put("en", enBO);
+		booleanLanguageMap.put("jp", jpBO);
 
-		englishMessageBuilder = new NaturalLanguageMessageBuilder("en", booleanLanguageMap);
-		germanMessageBuilder = new NaturalLanguageMessageBuilder("de", booleanLanguageMap);
-		japaneseMessageBuilder = new NaturalLanguageMessageBuilder("jp", booleanLanguageMap);
+		MessageTreeBuilder deBuilder = new SuccessFailureMessageBuilder(deBO);
+		MessageTreeBuilder enBuilder = new SuccessFailureMessageBuilder(enBO);
+		MessageTreeBuilder jpBuilder = new SuccessFailureMessageBuilder(jpBO);
+
+		MessageBuilder enMsgBuilder = new MessageBuilderImpl("en", enBuilder);
+		MessageBuilder deMsgBuilder = new MessageBuilderImpl("de", deBuilder);
+		MessageBuilder jpMsgBuilder = new MessageBuilderImpl("jp", jpBuilder);
+
+		Map<String, MessageBuilder> messageBuilderMap = new HashMap<String, MessageBuilder>();
+		messageBuilderMap.put("en", enMsgBuilder);
+		messageBuilderMap.put("de", deMsgBuilder);
+		messageBuilderMap.put("jp", jpMsgBuilder);
+		
+		englishMessageBuilder = new NaturalLanguageMessageBuilder(/*"en",*/ messageBuilderMap);
+		germanMessageBuilder = new NaturalLanguageMessageBuilder(/*"de",*/ messageBuilderMap);
+		japaneseMessageBuilder = new NaturalLanguageMessageBuilder(/*"jp",*/ messageBuilderMap);
     }
     
     private void createTranslator() {

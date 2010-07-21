@@ -18,6 +18,7 @@ package org.kuali.student.common.messagebuilder.impl;
 import java.util.Map;
 
 import org.kuali.student.common.messagebuilder.MessageBuilder;
+import org.kuali.student.common.messagebuilder.MessageTreeBuilder;
 import org.kuali.student.common.messagebuilder.booleanmessage.MessageContainer;
 import org.kuali.student.common.messagebuilder.booleanmessage.ast.BooleanFunctionResult;
 import org.kuali.student.common.messagebuilder.impl.exceptions.MessageBuilderException;
@@ -28,24 +29,14 @@ import org.kuali.student.common.messagebuilder.impl.exceptions.MessageBuilderExc
  * outcome of a boolean expression.
  */
 public class MessageBuilderImpl extends AbstractMessageBuilder implements MessageBuilder {
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param executor A simple rule engine executor
-	 */
-	public MessageBuilderImpl() {
-		super();
-	}
-
 	/**
 	 * Constructor.
 	 * 
      * @param language String Boolean operators' language (English and/or) 
-     * @param booleanOperators Boolean operators (and/or)
+     * @param treeNodeMessageBuilder AST tree node Message builder
 	 */
-	public MessageBuilderImpl(final String language, final BooleanOperators booleanOperators) {
-		super(language, booleanOperators);
+	public MessageBuilderImpl(final String language, final MessageTreeBuilder treeNodeMessageBuilder) {
+		super(language, treeNodeMessageBuilder);
 	}
 	
     /**

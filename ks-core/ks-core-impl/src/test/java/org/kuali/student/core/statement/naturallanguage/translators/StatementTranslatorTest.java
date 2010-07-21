@@ -16,12 +16,18 @@
 package org.kuali.student.core.statement.naturallanguage.translators;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kuali.student.common.messagebuilder.MessageBuilder;
+import org.kuali.student.common.messagebuilder.MessageTreeBuilder;
 import org.kuali.student.common.messagebuilder.impl.BooleanOperators;
+import org.kuali.student.common.messagebuilder.impl.MessageBuilderImpl;
+import org.kuali.student.common.messagebuilder.impl.SuccessFailureMessageBuilder;
 import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
 import org.kuali.student.core.statement.entity.ReqComponent;
 import org.kuali.student.core.statement.entity.ReqComponentField;
@@ -43,11 +49,14 @@ public class StatementTranslatorTest {
     private static void createTranslator() {
     	ContextRegistry<Context<ReqComponent>> reqComponentContextRegistry = NaturalLanguageUtil.getReqComponentContextRegistry();
 
-//    	SimpleExecutorDroolsImpl executor = new SimpleExecutorDroolsImpl();
-//    	final DroolsKnowledgeBase ruleBase = new DroolsKnowledgeBase();
-//		executor.setRuleBaseCache(ruleBase);
+		BooleanOperators bo = new BooleanOperators("and", "or");
+		MessageTreeBuilder tnmBuilder = new SuccessFailureMessageBuilder(bo);
+    	MessageBuilder msgBuilder = new MessageBuilderImpl("en", tnmBuilder);
+		Map<String, MessageBuilder> messageBuilderMap = new HashMap<String, MessageBuilder>();
+		messageBuilderMap.put("en", msgBuilder);
+		messageBuilderMap.put("de", msgBuilder);
 
-		NaturalLanguageMessageBuilder englishMessageBuilder = new NaturalLanguageMessageBuilder("en", new BooleanOperators("and", "or"));
+    	NaturalLanguageMessageBuilder englishMessageBuilder = new NaturalLanguageMessageBuilder(messageBuilderMap);
 
     	ReqComponentTranslator englishReqComponentTranslator = new ReqComponentTranslator();
     	englishReqComponentTranslator.setContextRegistry(reqComponentContextRegistry);
@@ -57,7 +66,7 @@ public class StatementTranslatorTest {
 		englishTranslator.setMessageBuilder(englishMessageBuilder);
 		englishTranslator.setLanguage("en");
 
-		NaturalLanguageMessageBuilder germanMessageBuilder = new NaturalLanguageMessageBuilder("en", new BooleanOperators("and", "or"));
+		NaturalLanguageMessageBuilder germanMessageBuilder = new NaturalLanguageMessageBuilder(messageBuilderMap);
 
     	ReqComponentTranslator germanReqComponentTranslator = new ReqComponentTranslator();
     	germanReqComponentTranslator.setContextRegistry(reqComponentContextRegistry);
