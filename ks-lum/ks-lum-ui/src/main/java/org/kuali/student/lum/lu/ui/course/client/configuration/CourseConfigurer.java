@@ -27,7 +27,7 @@
 	 * or implied. See the License for the specific language governing
 	 * permissions and limitations under the License.
 	 */
-package org.kuali.student.lum.lu.ui.course.client.configuration.course;
+package org.kuali.student.lum.lu.ui.course.client.configuration;
 	
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,8 +83,7 @@ import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCours
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.FeeInfoConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.LearningObjectiveConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.removeinm4.LOBuilderBinding;
-import org.kuali.student.lum.lu.ui.course.client.configuration.CourseRequisitesSectionView;
-import org.kuali.student.lum.lu.ui.course.client.configuration.LUConstants;
+import org.kuali.student.lum.lu.ui.course.client.views.CourseRequisitesSectionView;
 import org.kuali.student.lum.lu.ui.course.client.widgets.CollaboratorTool;
 import org.kuali.student.lum.lu.ui.course.client.widgets.FeeMultiplicity;
 import org.kuali.student.lum.lu.ui.course.client.widgets.LOBuilder;

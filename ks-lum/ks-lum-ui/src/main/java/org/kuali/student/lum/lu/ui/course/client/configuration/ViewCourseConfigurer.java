@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.client.configuration.course;
+package org.kuali.student.lum.lu.ui.course.client.configuration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +61,6 @@ import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.FeeInfoFixe
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.LearningObjectiveConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.SingleUseLoConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.SingleUseRepositoryCategoryConstants;
-import org.kuali.student.lum.lu.ui.course.client.configuration.LUConstants;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
@@ -466,7 +465,7 @@ CreditCourseLearningResultsConstants
         return section;
     }
 
-    protected String getTabKey() {
+    public String getTabKey() {
     	return getLabel(LUConstants.CURRENT_VIEW_LABEL_KEY);
     }
 
