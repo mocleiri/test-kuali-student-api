@@ -27,7 +27,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.kuali.student.lum.lu.ui.course.client.configuration.course;
+package org.kuali.student.lum.lu.ui.course.client.configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +77,7 @@ import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.AffiliatedO
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseActivityConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseJointsConstants;
-import org.kuali.student.lum.lu.ui.course.client.configuration.CourseRequisitesSectionView;
+import org.kuali.student.lum.lu.ui.course.client.views.CourseRequisitesSectionView;
 import org.kuali.student.lum.lu.ui.course.client.configuration.LUConstants;
 import org.kuali.student.lum.lu.ui.course.client.widgets.CollaboratorTool;
 import org.kuali.student.lum.lu.ui.course.client.widgets.FeeMultiplicity;
@@ -273,7 +273,7 @@ public class CourseConfigurer extends AbstractCourseConfigurer {
     }
 
     public SectionView generateCourseInfoSection(){
-    	VerticalSectionView section = initSectionView(CourseSections.COURSE_INFO, LUConstants.INFORMATION_LABEL_KEY);
+        VerticalSectionView section = initSectionView(CourseSections.COURSE_INFO, LUConstants.INFORMATION_LABEL_KEY);
         addField(section, PROPOSAL_TITLE, generateMessageInfo(LUConstants.PROPOSAL_TITLE_LABEL_KEY));
         addField(section, COURSE + "/" + COURSE_TITLE, generateMessageInfo(LUConstants.COURSE_TITLE_LABEL_KEY));
         addField(section, COURSE + "/" + TRANSCRIPT_TITLE, generateMessageInfo(LUConstants.SHORT_TITLE_LABEL_KEY));
@@ -300,35 +300,35 @@ public class CourseConfigurer extends AbstractCourseConfigurer {
 
         return courseNumber;
     }
-    
+
     protected CollapsableSection generateCrossListed_Ver_Joint_Section() {
-    	CollapsableSection result = new CollapsableSection(getLabel(LUConstants.CL_V_J_LABEL_KEY));
-    	
+        CollapsableSection result = new CollapsableSection(getLabel(LUConstants.CL_V_J_LABEL_KEY));
+
 //        addField(result, COURSE + "/" + CROSS_LISTINGS, null, new CrossListedList(COURSE + "/" + CROSS_LISTINGS));
 //        addField(result, COURSE + "/" + JOINTS, null, new OfferedJointlyList(COURSE + "/" + JOINTS));
 //        addField(result, COURSE + "/" + VERSIONS, null, new VersionCodeList(COURSE + "/" + VERSIONS));
-    	addMultiplicityFields(result, COURSE + QueryPath.getPathSeparator() + CROSS_LISTINGS,
-    			LUConstants.ADD_CROSS_LISTED_LABEL_KEY,
-    			LUConstants.CROSS_LISTED_ITEM_LABEL_KEY,
-    			Arrays.asList(
-    					Arrays.asList(SUBJECT_AREA, LUConstants.SUBJECT_CODE_LABEL_KEY),
-    					Arrays.asList(COURSE_NUMBER_SUFFIX, LUConstants.COURSE_NUMBER_LABEL_KEY)));
-    	addMultiplicityFields(result, COURSE + QueryPath.getPathSeparator() + JOINTS,
-    			LUConstants.ADD_EXISTING_LABEL_KEY,
-    			LUConstants.JOINT_OFFER_ITEM_LABEL_KEY,
-    			Arrays.asList(
-    					Arrays.asList(CreditCourseJointsConstants.COURSE_ID, LUConstants.COURSE_NUMBER_OR_TITLE_LABEL_KEY)));
-    	addMultiplicityFields(result, COURSE + QueryPath.getPathSeparator() + VERSIONS,
-    			LUConstants.ADD_VERSION_CODE_LABEL_KEY,
-    			LUConstants.VERSION_CODE_LABEL_KEY,
-    			Arrays.asList(
-    					Arrays.asList("variationCode", LUConstants.VERSION_CODE_LABEL_KEY),
-    					Arrays.asList("variationTitle", LUConstants.TITLE_LABEL_KEY)));
+        addMultiplicityFields(result, COURSE + QueryPath.getPathSeparator() + CROSS_LISTINGS,
+                LUConstants.ADD_CROSS_LISTED_LABEL_KEY,
+                LUConstants.CROSS_LISTED_ITEM_LABEL_KEY,
+                Arrays.asList(
+                        Arrays.asList(SUBJECT_AREA, LUConstants.SUBJECT_CODE_LABEL_KEY),
+                        Arrays.asList(COURSE_NUMBER_SUFFIX, LUConstants.COURSE_NUMBER_LABEL_KEY)));
+        addMultiplicityFields(result, COURSE + QueryPath.getPathSeparator() + JOINTS,
+                LUConstants.ADD_EXISTING_LABEL_KEY,
+                LUConstants.JOINT_OFFER_ITEM_LABEL_KEY,
+                Arrays.asList(
+                        Arrays.asList(CreditCourseJointsConstants.COURSE_ID, LUConstants.COURSE_NUMBER_OR_TITLE_LABEL_KEY)));
+        addMultiplicityFields(result, COURSE + QueryPath.getPathSeparator() + VERSIONS,
+                LUConstants.ADD_VERSION_CODE_LABEL_KEY,
+                LUConstants.VERSION_CODE_LABEL_KEY,
+                Arrays.asList(
+                        Arrays.asList("variationCode", LUConstants.VERSION_CODE_LABEL_KEY),
+                        Arrays.asList("variationTitle", LUConstants.TITLE_LABEL_KEY)));
         return result;
     }
-    
+
     private void addMultiplicityFields(Section section, String path, String addItemlabelMessageKey,
-    		String itemLabelMessageKey, List<List<String>> fieldKeysAndLabels) {
+            String itemLabelMessageKey, List<List<String>> fieldKeysAndLabels) {
         QueryPath parentPath = QueryPath.concat(path);
 
         MultiplicityConfiguration config = new MultiplicityConfiguration(MultiplicityConfiguration.MultiplicityType.GROUP,
@@ -341,39 +341,39 @@ public class CourseConfigurer extends AbstractCourseConfigurer {
         config.setParentFd(parentFd);
 
         if (fieldKeysAndLabels != null) {
-        	for (List<String> fieldKeyAndLabel : fieldKeysAndLabels) {
-        		FieldDescriptor fd = buildMultiplicityFD(fieldKeyAndLabel.get(0), 
-        				fieldKeyAndLabel.get(1), parentPath.toString());
+            for (List<String> fieldKeyAndLabel : fieldKeysAndLabels) {
+                FieldDescriptor fd = buildMultiplicityFD(fieldKeyAndLabel.get(0),
+                        fieldKeyAndLabel.get(1), parentPath.toString());
                 config.addField(fd);
-        	}
+            }
         }
         MultiplicitySection ms = new MultiplicitySection(config);
         section.addSection(ms);
 
     }
-    
+
     private Metadata getMetaData(String fieldKey) {
-    	return modelDefinition.getMetadata(QueryPath.concat(fieldKey));
+        return modelDefinition.getMetadata(QueryPath.concat(fieldKey));
     }
 
     private FieldDescriptor buildMultiplicityFD( String fieldKey, String labelKey, String parentPath) {
 
-    	QueryPath path = QueryPath.concat(parentPath);
-    	int i = path.size();
+        QueryPath path = QueryPath.concat(parentPath);
+        int i = path.size();
 
-    	QueryPath fieldPath = QueryPath.concat(parentPath, QueryPath.getWildCard(), fieldKey);
-    	Metadata meta = modelDefinition.getMetadata(fieldPath);
+        QueryPath fieldPath = QueryPath.concat(parentPath, QueryPath.getWildCard(), fieldKey);
+        Metadata meta = modelDefinition.getMetadata(fieldPath);
 
-    	FieldDescriptor fd = new FieldDescriptor(fieldPath.toString(), generateMessageInfo(labelKey), meta);
+        FieldDescriptor fd = new FieldDescriptor(fieldPath.toString(), generateMessageInfo(labelKey), meta);
 
-    	return fd;
+        return fd;
 
     }
 
     private FieldDescriptor buildFieldDescriptor(String fieldKey, String messageKey,String parentPath) {
-    	return buildFieldDescriptor(fieldKey, messageKey, parentPath, null, null);
+        return buildFieldDescriptor(fieldKey, messageKey, parentPath, null, null);
     }
-    
+
     private FieldDescriptor buildFieldDescriptor(String fieldKey, String messageKey, String parentPath, Widget widget, ModelWidgetBinding<?> binding) {
 
         QueryPath path = QueryPath.concat(parentPath, fieldKey);
@@ -388,7 +388,7 @@ public class CourseConfigurer extends AbstractCourseConfigurer {
         }
         return fd;
     }
-    
+
     protected VerticalSection generateCourseInfoShortTitleSection() {
         VerticalSection shortTitle = initSection(getH3Title(LUConstants.SHORT_TITLE_LABEL_KEY), WITH_DIVIDER);
         addField(shortTitle, COURSE + "/" + TRANSCRIPT_TITLE, null);
@@ -913,94 +913,94 @@ public class CourseConfigurer extends AbstractCourseConfigurer {
 
 
 class KeyListModelWigetBinding extends ModelWidgetBindingSupport<HasDataValue> {
-	private String key;
-	HasDataValueBinding hasDataValueBinding = HasDataValueBinding.INSTANCE;
-	
-	public KeyListModelWigetBinding(String key) {
-		this.key = key;
-	}
-	
-	@Override
-	public void setModelValue(HasDataValue widget, DataModel model, String path) {
-		// convert from the structure path/0/<id> into path/0/<key>/<id>
-		hasDataValueBinding.setModelValue(widget, model, path);
-		
-		QueryPath qPath = QueryPath.parse(path);
+    private String key;
+    HasDataValueBinding hasDataValueBinding = HasDataValueBinding.INSTANCE;
+
+    public KeyListModelWigetBinding(String key) {
+        this.key = key;
+    }
+
+    @Override
+    public void setModelValue(HasDataValue widget, DataModel model, String path) {
+        // convert from the structure path/0/<id> into path/0/<key>/<id>
+        hasDataValueBinding.setModelValue(widget, model, path);
+
+        QueryPath qPath = QueryPath.parse(path);
         Value value = ((KSSelectedList)widget).getValueWithTranslations();
-        
+
         Data idsData = null;
         Data idsDataStruct = null;
-        
+
         if (value != null) {
-        	idsData = value.get();
+            idsData = value.get();
         }
         if (idsData != null) {
-        	for (Data.Property p : idsData) {
-				if(!"_runtimeData".equals(p.getKey())){
-					String id = p.getValue();
-					// old translation path path/_runtimeData/0/id-translation
+            for (Data.Property p : idsData) {
+                if(!"_runtimeData".equals(p.getKey())){
+                    String id = p.getValue();
+                    // old translation path path/_runtimeData/0/id-translation
                     QueryPath translationPath = new QueryPath();
                     translationPath.add(new Data.StringKey(qPath.toString()));
                     translationPath.add(new Data.StringKey("_runtimeData"));
                     translationPath.add(new Data.IntegerKey((Integer)p.getKey()));
                     translationPath.add(new Data.StringKey("id-translation"));
-                    
-					Data idItem = new Data();
+
+                    Data idItem = new Data();
                     String translation = model.get(translationPath.toString());
                     Data idItemRuntime = new Data();
                     Data idItemTranslation = new Data();
-					idsDataStruct = (idsDataStruct == null)? new Data() : idsDataStruct;
-					idItem.set(this.key, id);
+                    idsDataStruct = (idsDataStruct == null)? new Data() : idsDataStruct;
+                    idItem.set(this.key, id);
                     // new translation path/0/_runtimeData/<key>/id-translation
-					idItemTranslation.set("id-translation", translation);
-					idItemRuntime.set(this.key, idItemTranslation);
-					idItem.set("_runtimeData", idItemRuntime);
-					idsDataStruct.add(idItem);
-				}
-        	}
+                    idItemTranslation.set("id-translation", translation);
+                    idItemRuntime.set(this.key, idItemTranslation);
+                    idItem.set("_runtimeData", idItemRuntime);
+                    idsDataStruct.add(idItem);
+                }
+            }
         }
 
         model.set(qPath, idsDataStruct);
-	}
+    }
 
-	@Override
-	public void setWidgetValue(HasDataValue widget, DataModel model, String path) {
-		DataModel middleManModel = new DataModel();
-		if (model != null && model.getRoot() != null) {
-			middleManModel = new DataModel(model.getDefinition(), model.getRoot().copy());
-		}
-		// convert from the structure path/0/<key>/<id> into path/0/<id>
-		QueryPath qPath = QueryPath.parse(path);
-		Object value = null;
-		Data idsData = null;
-		Data newIdsData = null;
-		Data newIdsRuntimeData = null;
-		
-		if(middleManModel!=null){
-        	value = middleManModel.get(qPath);
+    @Override
+    public void setWidgetValue(HasDataValue widget, DataModel model, String path) {
+        DataModel middleManModel = new DataModel();
+        if (model != null && model.getRoot() != null) {
+            middleManModel = new DataModel(model.getDefinition(), model.getRoot().copy());
+        }
+        // convert from the structure path/0/<key>/<id> into path/0/<id>
+        QueryPath qPath = QueryPath.parse(path);
+        Object value = null;
+        Data idsData = null;
+        Data newIdsData = null;
+        Data newIdsRuntimeData = null;
+
+        if(middleManModel!=null){
+            value = middleManModel.get(qPath);
         }
 
-		if (value != null) {
-			idsData = (Data) value;
-			if (idsData != null) {
-	        	for (Data.Property p : idsData) {
-					if(!"_runtimeData".equals(p.getKey())){
-						Data idItem = p.getValue();
-						String id = idItem.get(key);
-						Data runtimeData = idItem.get("_runtimeData");
-						Data translationData = runtimeData.get(key);
-						newIdsData = (newIdsData == null)? new Data() : newIdsData;
-						newIdsData.add(id);
-						newIdsRuntimeData = (newIdsRuntimeData == null)? new Data() : newIdsRuntimeData;
-						newIdsRuntimeData.add(translationData);
-					}
-	        	}
-			}
-		}
-		if (newIdsData != null) {
-			newIdsData.set("_runtimeData", newIdsRuntimeData);
-			middleManModel.set(qPath, newIdsData);
-			hasDataValueBinding.setWidgetValue(widget, middleManModel, path);
-		}
-	}
+        if (value != null) {
+            idsData = (Data) value;
+            if (idsData != null) {
+                for (Data.Property p : idsData) {
+                    if(!"_runtimeData".equals(p.getKey())){
+                        Data idItem = p.getValue();
+                        String id = idItem.get(key);
+                        Data runtimeData = idItem.get("_runtimeData");
+                        Data translationData = runtimeData.get(key);
+                        newIdsData = (newIdsData == null)? new Data() : newIdsData;
+                        newIdsData.add(id);
+                        newIdsRuntimeData = (newIdsRuntimeData == null)? new Data() : newIdsRuntimeData;
+                        newIdsRuntimeData.add(translationData);
+                    }
+                }
+            }
+        }
+        if (newIdsData != null) {
+            newIdsData.set("_runtimeData", newIdsRuntimeData);
+            middleManModel.set(qPath, newIdsData);
+            hasDataValueBinding.setWidgetValue(widget, middleManModel, path);
+        }
+    }
 }

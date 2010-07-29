@@ -13,13 +13,12 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.client.configuration.course;
+package org.kuali.student.lum.lu.ui.course.client.controllers;
 
+import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.application.ViewContext;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.TabbedSectionLayout;
-import org.kuali.student.common.ui.client.event.ChangeViewActionEvent;
 import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.DataModelDefinition;
 import org.kuali.student.common.ui.client.mvc.ModelProvider;
@@ -34,12 +33,13 @@ import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.Metadata;
+import org.kuali.student.core.rice.authorization.PermissionType;
 import org.kuali.student.lum.lu.assembly.data.client.LuData;
-import org.kuali.student.lum.lu.ui.course.client.configuration.course.CourseConfigurer;
+import org.kuali.student.lum.lu.ui.course.client.configuration.CourseConfigurer;
+import org.kuali.student.lum.lu.ui.course.client.configuration.ViewCourseConfigurer;
 import org.kuali.student.lum.lu.ui.course.client.service.CourseRpcService;
 import org.kuali.student.lum.lu.ui.course.client.service.CourseRpcServiceAsync;
 import org.kuali.student.lum.lu.ui.course.client.widgets.ViewCourseActionList;
-import org.kuali.student.lum.lu.ui.main.client.controller.LUMApplicationManager.LUMViews;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -92,6 +92,15 @@ public class ViewCourseController extends TabbedSectionLayout {
         super(ViewCourseController.class.getName(), layoutTitle);
         this.cluType = cluType;        
         initialize();
+    }
+    
+    @Override
+    public void setViewContext(ViewContext viewContext) {
+    	super.setViewContext(viewContext);
+    	if(viewContext.getId() != null && !viewContext.getId().isEmpty()){
+    		viewContext.setPermissionType(PermissionType.OPEN);
+    		this.setCourseId(viewContext.getId());
+    	}
     }
     
     private void initialize() {
@@ -224,6 +233,7 @@ public class ViewCourseController extends TabbedSectionLayout {
             public void onSuccess(Data result) {
                 cluModel.setRoot(result);
                 getContainer().setTitle(getSectionTitle());
+                setName(getSectionTitle());
                 callback.onModelReady(cluModel);
                 workCompleteCallback.exec(true);
                 KSBlockingProgressIndicator.removeTask(loadDataTask);
@@ -273,6 +283,11 @@ public class ViewCourseController extends TabbedSectionLayout {
         });
     }
     
+    @Override
+    public void beforeShow(Callback<Boolean> onReadyCallback) {
+    	showDefaultView(onReadyCallback);
+    }
+    
     private void doShowDefaultView(final Callback<Boolean> onReadyCallback) {
         super.showDefaultView(onReadyCallback);
     }
@@ -280,8 +295,7 @@ public class ViewCourseController extends TabbedSectionLayout {
     private KSButton getQuitButton(){
         return new KSButton("Quit", new ClickHandler(){
                     public void onClick(ClickEvent event) {
-                        Controller parentController = ViewCourseController.this.getParentController(); 
-                        parentController.fireApplicationEvent(new ChangeViewActionEvent<LUMViews>(LUMViews.HOME_MENU));
+                    	Application.navigate("/HOME/CURRICULUM_HOME");
                     }
                 });       
     }
