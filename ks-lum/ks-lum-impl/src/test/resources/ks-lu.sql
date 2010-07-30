@@ -271,7 +271,7 @@ insert into KSLU_CLU_IDENT (ID, CD, DIV, LVL, SUFX_CD, LNG_NAME, SHRT_NAME, ST, 
 insert into KSLU_CLU_IDENT (ID, CD, DIV, LVL, SUFX_CD, LNG_NAME, SHRT_NAME, ST, TYPE, VARTN) values ('9caa02ff-4b4a-4caa-94da-d81113fcbb5f', 'AMST856', 'AMST', '800', '856', 'Museum Research Seminar', 'MUSEUM RSRCH SEMINAR', null, null, null)
 insert into KSLU_CLU_IDENT (ID, CD, DIV, LVL, SUFX_CD, LNG_NAME, SHRT_NAME, ST, TYPE, VARTN) values ('cca4eb70-c4af-4f14-894f-d89b6810605c', 'AMST857', 'AMST', '800', '857', 'Museum Scholarship Practicum', 'MUSEUM SCHLRSHP PRACT', null, null, null)
 insert into KSLU_CLU_IDENT (ID, CD, DIV, LVL, SUFX_CD, LNG_NAME, SHRT_NAME, ST, TYPE, VARTN) values ('4AB05FEB-B550-4DB6-9F65-97A74372A137', '', '', '', '', 'Bachelor of Science', 'B.S.', null, null, null)
-insert into KSLU_CLU_IDENT (ID, CD, DIV, LVL, SUFX_CD, LNG_NAME, SHRT_NAME, ST, TYPE, VARTN) values ('918040DF-964B-46F0-AEF9-F8DB92B07A41', '', '', '', '', 'Anthropology', 'Anthro', null, null, null)
+insert into KSLU_CLU_IDENT (ID, CD, DIV, LVL, SUFX_CD, LNG_NAME, SHRT_NAME, ST, TYPE, VARTN) values ('918040DF-964B-46F0-AEF9-F8DB92B07A41', 'ANTH', '', '', '', 'Anthropology', 'Anthro', null, null, null)
 
 
 // CluCredit

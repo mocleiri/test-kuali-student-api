@@ -27,7 +27,6 @@ import org.kuali.student.core.assembly.data.AssemblyException;
 import org.kuali.student.core.dto.AmountInfo;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
-import org.kuali.student.core.exceptions.DoesNotExistException;
 import org.kuali.student.lum.course.service.assembler.CourseAssembler;
 import org.kuali.student.lum.lo.service.LearningObjectiveService;
 import org.kuali.student.lum.lu.dto.AdminOrgInfo;
@@ -67,7 +66,7 @@ public class MajorDisciplineAssembler implements BOAssembler<MajorDisciplineInfo
         mdInfo.setPublishedInstructors(clu.getInstructors());
         mdInfo.setCredentialProgramId(getCredentialProgramID(clu.getId()));
         mdInfo.setVariations(getVariations(clu.getId(), shallowBuild));
-        mdInfo.setCode(clu.getOfficialIdentifier().getCode());
+        setIds(mdInfo, clu);
         setCodes(mdInfo, clu);
         mdInfo.setResultOptions(getResultOptions(clu));
         mdInfo.setStdDuration(clu.getStdDuration());
@@ -76,8 +75,6 @@ public class MajorDisciplineAssembler implements BOAssembler<MajorDisciplineInfo
         mdInfo.setEndProgramEntryTerm(clu.getLastAdmitAtp());
         mdInfo.setNextReviewPeriod(clu.getNextReviewPeriod());
         mdInfo.setEffectiveDate(clu.getEffectiveDate());
-        mdInfo.setShortTitle(clu.getOfficialIdentifier().getShortName());
-        mdInfo.setLongTitle(clu.getOfficialIdentifier().getLongName());
         setTitles(mdInfo, clu);
         mdInfo.setDescr(clu.getDescr());
         mdInfo.setCatalogDescr(getCatalogDescr(clu.getId()));
@@ -97,6 +94,12 @@ public class MajorDisciplineAssembler implements BOAssembler<MajorDisciplineInfo
         mdInfo.setType(clu.getType());
         mdInfo.setState(clu.getState());
         return mdInfo;
+    }
+
+    private void setIds(MajorDisciplineInfo mdInfo, CluInfo clu) {
+        mdInfo.setCode(clu.getOfficialIdentifier().getCode());
+        mdInfo.setShortTitle(clu.getOfficialIdentifier().getShortName());
+        mdInfo.setLongTitle(clu.getOfficialIdentifier().getLongName());
     }
 
     private List<ProgramVariationInfo> getVariations(String cluId, boolean shallowBuild) throws AssemblyException {
@@ -245,7 +248,7 @@ public class MajorDisciplineAssembler implements BOAssembler<MajorDisciplineInfo
 		clu.setType(major.getType());
 		clu.setState(major.getState());
 
-//        disassembleIdentifiers(clu, major);
+        disassembleIdentifiers(clu, major);
 //
 //		List<BaseDTOAssemblyNode<?, ?>> variationResults;
 //        try {
@@ -313,6 +316,14 @@ public class MajorDisciplineAssembler implements BOAssembler<MajorDisciplineInfo
 
 	    
     	return result;
+    }
+
+    private void disassembleIdentifiers(CluInfo clu, MajorDisciplineInfo major) {
+        CluIdentifierInfo identifier = new CluIdentifierInfo();
+        identifier.setCode(major.getCode());
+        identifier.setLongName(major.getLongTitle());
+        identifier.setShortName(major.getShortTitle());
+        clu.setOfficialIdentifier(identifier);
     }
 
     // Setters for Spring
