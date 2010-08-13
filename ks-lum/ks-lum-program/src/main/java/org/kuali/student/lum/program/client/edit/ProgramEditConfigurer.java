@@ -13,11 +13,11 @@ public class ProgramEditConfigurer extends AbstractProgramConfigurer<ProgramEdit
 
     public ProgramEditConfigurer() {
         programSectionConfigManager = new ConfigurationManager<ProgramEditConfigurer>(this);
-        programSectionConfigManager.registerConfiguration(GWT.<EditableConfiguration<ProgramEditConfigurer>>create(ProgramInformationEditConfiguration.class));
+        programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramEditConfigurer>>create(ProgramInformationEditConfiguration.class));
         //programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramEditConfigurer>>create(SpecializationsConfiguration.class));
         //programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramEditConfigurer>>create(RequirementsConfiguration.class));
-        //programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramEditConfigurer>>create(ManagingBodiesConfiguration.class));
-        programSectionConfigManager.registerConfiguration(GWT.<EditableConfiguration<ProgramEditConfigurer>>create(CatalogInformationEditConfiguration.class));
+        programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramEditConfigurer>>create(ManagingBodiesEditConfiguration.class));
+        programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramEditConfigurer>>create(CatalogInformationEditConfiguration.class));
         //programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramEditConfigurer>>create(LearningObjectivesConfiguration.class));
     }
 }

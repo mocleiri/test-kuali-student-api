@@ -9,7 +9,7 @@ import org.kuali.student.lum.program.client.configuration.base.AbstractConfigura
 import org.kuali.student.lum.program.client.properties.ProgramProperties;
 import org.kuali.student.lum.program.client.view.ProgramViewConfigurer;
 
-public class CatalogInformationEditConfiguration extends AbstractConfiguration<ProgramViewConfigurer> {
+public class CatalogInformationEditConfiguration extends AbstractConfiguration<ProgramEditConfigurer> {
     private VerticalSectionView editView;
 
     public CatalogInformationEditConfiguration() {

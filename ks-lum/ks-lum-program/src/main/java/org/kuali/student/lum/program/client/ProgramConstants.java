@@ -36,8 +36,16 @@ public class ProgramConstants {
     public static final String INSTITUTION = "institution";
 
     //Managing Bodies
+    public static final String CURRICULUM_OVERSIGHT_DIVISION = "divisionsContentOwner";
+    public static final String CURRICULUM_OVERSIGHT_UNIT = "unitsContentOwner";
     public static final String STUDENT_OVERSIGHT_DIVISION = "divisionsStudentOversight";
     public static final String STUDENT_OVERSIGHT_UNIT = "unitsStudentOversight";
+    public static final String DEPLOYMENT_DIVISION = "divisionsDeployment";
+    public static final String DEPLOYMENT_UNIT = "unitsDeployment";
+    public static final String FINANCIAL_RESOURCES_DIVISION = "divisionsFinancialResources";
+    public static final String FINANCIAL_RESOURCES_UNIT = "unitsFinancialResources";
+    public static final String FINANCIAL_CONTROL_DIVISION = "divisionsFinancialControl";
+    public static final String FINANCIAL_CONTROL_UNIT = "unitsFinancialControl";
 
     //Program Description and Catalog Details
     public static final String CATALOG_DESCRIPTION = "catalogDescr";

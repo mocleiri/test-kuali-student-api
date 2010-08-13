@@ -19,7 +19,7 @@ public class ProgramViewConfigurer extends AbstractProgramConfigurer<ProgramView
         programSectionConfigManager.registerConfiguration(GWT.<EditableConfiguration<ProgramViewConfigurer>>create(ProgramInformationViewConfiguration.class));
         programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramViewConfigurer>>create(SpecializationsConfiguration.class));
         programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramViewConfigurer>>create(RequirementsConfiguration.class));
-        programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramViewConfigurer>>create(ManagingBodiesConfiguration.class));
+        programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramViewConfigurer>>create(ManagingBodiesViewConfiguration.class));
         programSectionConfigManager.registerConfiguration(GWT.<EditableConfiguration<ProgramViewConfigurer>>create(CatalogInformationViewConfiguration.class));
         programSectionConfigManager.registerConfiguration(GWT.<Configuration<ProgramViewConfigurer>>create(LearningObjectivesConfiguration.class));
     }
