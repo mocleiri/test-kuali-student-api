@@ -50,7 +50,7 @@ public class CurriculumHomeController extends LayoutController {
     }
 
     @Override
-    protected <V extends Enum<?>> View getView(V viewType) {
+    public <V extends Enum<?>> View getView(V viewType) {
         //this is done so the views can have delayed loading
         switch ((LUMViews) viewType) {
             case DEFAULT:

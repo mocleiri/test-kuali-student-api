@@ -24,20 +24,8 @@ import java.util.Map.Entry;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.ViewLayoutController;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.Section;
 import org.kuali.student.common.ui.client.configurable.mvc.views.SectionView;
-import org.kuali.student.common.ui.client.event.ActionEvent;
-import org.kuali.student.common.ui.client.event.SaveActionEvent;
-import org.kuali.student.common.ui.client.event.SectionUpdateEvent;
-import org.kuali.student.common.ui.client.event.SectionUpdateHandler;
-import org.kuali.student.common.ui.client.event.ValidateRequestEvent;
-import org.kuali.student.common.ui.client.event.ValidateRequestHandler;
-import org.kuali.student.common.ui.client.event.ValidateResultEvent;
-import org.kuali.student.common.ui.client.event.ValidateResultHandler;
-import org.kuali.student.common.ui.client.mvc.ActionCompleteCallback;
-import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.Controller;
-import org.kuali.student.common.ui.client.mvc.DataModel;
-import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
-import org.kuali.student.common.ui.client.mvc.View;
+import org.kuali.student.common.ui.client.event.*;
+import org.kuali.student.common.ui.client.mvc.*;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
@@ -280,7 +268,7 @@ public abstract class LayoutController extends Controller implements ViewLayoutC
 
 
 	@Override
-	protected <V extends Enum<?>> View getView(V viewType) {
+	public <V extends Enum<?>> View getView(V viewType) {
 		return viewMap.get(viewType);
 	}
 

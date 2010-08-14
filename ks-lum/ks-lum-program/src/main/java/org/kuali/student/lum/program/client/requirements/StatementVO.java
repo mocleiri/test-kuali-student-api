@@ -13,21 +13,21 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.ui.requirements.client.model;
+package org.kuali.student.lum.program.client.requirements;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+import org.kuali.student.common.ui.client.widgets.rules.Token;
+import org.kuali.student.common.ui.client.widgets.table.Node;
+import org.kuali.student.core.statement.dto.ReqComponentInfo;
+import org.kuali.student.core.statement.dto.StatementInfo;
+import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
+import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.kuali.student.core.statement.dto.ReqComponentInfo;
-import org.kuali.student.core.statement.dto.StatementInfo;
-import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
-import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
-import org.kuali.student.common.ui.client.widgets.rules.Token;
-import org.kuali.student.common.ui.client.widgets.table.Node;
-
-import com.google.gwt.core.client.GWT;
 
 public class StatementVO extends Token implements Serializable {
 
@@ -36,9 +36,33 @@ public class StatementVO extends Token implements Serializable {
     private List<ReqComponentVO> reqComponentVOs = new ArrayList<ReqComponentVO>();
     private List<StatementVO> statementVOs = new ArrayList<StatementVO>();
 
-    public StatementVO() {
+
+    //TODO remove after refactoring rule table related classes, removing StatementVO
+    public void setStatementTreeViewInfo(StatementTreeViewInfo stmtTreeInfo) {
+        try {
+            composeStatementVO(stmtTreeInfo, this);
+        } catch (Exception e) {
+            Window.alert(e.getMessage());
+            GWT.log("failed", e);
+        }
     }
 
+    public StatementTreeViewInfo getStatementTreeViewInfo() {
+
+        StatementTreeViewInfo stmtTreeInfo = new StatementTreeViewInfo();
+
+        try {
+            composeStatementTreeViewInfo(this, stmtTreeInfo);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return stmtTreeInfo;
+    }
+
+    public StatementVO() {        
+    }
+    
     public StatementVO(StatementInfo statementInfo) {
         setStatementInfo(statementInfo);
     }        
@@ -75,19 +99,14 @@ public class StatementVO extends Token implements Serializable {
     /**
      * Gets the immediate parent statement of reqComponentVO
      * Example: (a and b) or (c and d) or (e)
-     *     Where the statements are enclosed in brackets.  So in this example
-     *     there are 3 statements.  Namely (a and b), (c and d), and (e).  
-     *     There are 5 requirement components a, b, c, d, and e. If
-     *     requirement component b is passed in as a parameter, then (a and b)
-     *     is returned.  If e is passed in, then (e) is returned.  If d is
-     *     is passed in, then (c and d) is returned.
+     *     Where the statements are enclosed in brackets.  So in this example there are 3 statements.  Namely (a and b), (c and d), and (e).
+     *     There are 5 requirement components a, b, c, d, and e. If requirement component b is passed in as a parameter, then (a and b)
+     *     is returned.  If e is passed in, then (e) is returned.  If d is is passed in, then (c and d) is returned.
      * @param reqComponentVO
      * @return
      */
     public StatementVO getEnclosingStatementVO(StatementVO root, ReqComponentVO reqComponentVO) {
-        StatementVO result = null;
-        result = doGetEnclosingStatementVO(root, reqComponentVO);
-        return result;
+        return doGetEnclosingStatementVO(root, reqComponentVO);
     }
     
     private StatementVO doGetEnclosingStatementVO(StatementVO statementVO, ReqComponentVO reqComponentVO) {
@@ -158,6 +177,7 @@ public class StatementVO extends Token implements Serializable {
      * </pre>
      * @return
      */
+    /*
     public int getImmediateChildReqComponentCount() {
         int result = 0;
         if (reqComponentVOs != null && !reqComponentVOs.isEmpty()) {
@@ -173,17 +193,15 @@ public class StatementVO extends Token implements Serializable {
             }
         }
         return result;
-    }
+    } */
     
     private void validate() {
-        if (statementVOs != null && !statementVOs.isEmpty() &&
-                reqComponentVOs != null && !reqComponentVOs.isEmpty()) {
-            throw new java.lang.IllegalStateException(
-                    "Requirement components and statements can not exist together in a statement");
+        if (statementVOs != null && !statementVOs.isEmpty() && reqComponentVOs != null && !reqComponentVOs.isEmpty()) {
+            throw new IllegalStateException("Requirement components and statements can not exist together in a statement");
         }
         checkDuplicateRC(this, new ArrayList<ReqComponentVO>());
     }
-    
+
     private void checkDuplicateRC(StatementVO statementVO, List<ReqComponentVO> seenRCs) {
         if (statementVO.getStatementVOs() != null &&
                 !statementVO.getStatementVOs().isEmpty()) {
@@ -195,7 +213,7 @@ public class StatementVO extends Token implements Serializable {
                     !statementVO.getReqComponentVOs().isEmpty()) {
                 for (ReqComponentVO childReqComponent : statementVO.getReqComponentVOs()) {
                     if (seenRCs.contains(childReqComponent)) {
-                        throw new java.lang.IllegalStateException(
+                        throw new IllegalStateException(
                                 "statement and sub statements cannot have duplicated components");
                     } else {
                         seenRCs.add(childReqComponent);
@@ -215,8 +233,7 @@ public class StatementVO extends Token implements Serializable {
         // move all the existing requirement components into separate wrapping 
         // StatementVOs
         if (reqComponentVOs != null && !reqComponentVOs.isEmpty()) {
-            List<ReqComponentVO> tempReqComponentVOs = 
-                new ArrayList<ReqComponentVO>(reqComponentVOs);
+            List<ReqComponentVO> tempReqComponentVOs = new ArrayList<ReqComponentVO>(reqComponentVOs);
             for (ReqComponentVO currReqComponentVO : tempReqComponentVOs) {
                 StatementVO wrapStatementVO = new StatementVO(statementInfo);
                 wrapStatementVO.addReqComponentVO(currReqComponentVO);
@@ -303,17 +320,14 @@ public class StatementVO extends Token implements Serializable {
         }
     }
     
-    public void shiftReqComponent(String shiftType, 
-            final ReqComponentVO reqComponentVO) {
+    public void shiftReqComponent(String shiftType, final ReqComponentVO reqComponentVO) {
         if (statementVOs != null && !statementVOs.isEmpty()) {
             // the statementVO that wraps the reqComponentVO
             StatementVO reqComponentVOWrap = null;
             for (StatementVO currStatementVO : statementVOs) {
-                List<ReqComponentVO> currReqComponentVOs =
-                    (currStatementVO == null)? null : 
+                List<ReqComponentVO> currReqComponentVOs = (currStatementVO == null)? null :
                         currStatementVO.getReqComponentVOs();
-                if (currReqComponentVOs != null &&
-                        currReqComponentVOs.size() == 1 &&
+                if (currReqComponentVOs != null && currReqComponentVOs.size() == 1 &&
                         currReqComponentVOs.get(0) == reqComponentVO) {
                     reqComponentVOWrap = currStatementVO;
                 }
@@ -329,20 +343,15 @@ public class StatementVO extends Token implements Serializable {
     private <T> void swapElement(List<T> elements, T element, String direction) {
         int elementIndex = 0;
         if (elements != null && elements.size() > 1) {
-            for (T currElement :
-                elements) {
+            for (T currElement : elements) {
                 if (direction != null && direction.equals("RIGHT")) {
-                    if (currElement == element &&
-                            elementIndex + 1 < elements.size()) {
-                        Collections.swap(elements, elementIndex,
-                                elementIndex + 1);
+                    if (currElement == element && elementIndex + 1 < elements.size()) {
+                        Collections.swap(elements, elementIndex, elementIndex + 1);
                         break;
                     }
                 } else if (direction != null && direction.equals("LEFT")) {
-                    if (currElement == element &&
-                            elementIndex > 0) {
-                        Collections.swap(elements, elementIndex,
-                                elementIndex - 1);
+                    if (currElement == element && elementIndex > 0) {
+                        Collections.swap(elements, elementIndex, elementIndex - 1);
                         break;
                     }
                 }
@@ -437,6 +446,7 @@ public class StatementVO extends Token implements Serializable {
             setOperatorNode(node, statementVO);
             for (int i = 0; i < statementVOs.size(); i++) {
                 StatementVO childStatementVO = statementVOs.get(i);
+                childStatementVO.setTokenOperator(true);
                 Node childNode = new Node();
                 node.addNode(childNode);
                 addChildrenNodes(childNode, childStatementVO);
@@ -459,15 +469,11 @@ public class StatementVO extends Token implements Serializable {
     }
     
     private void setOperatorNode(Node node, StatementVO statementVO) {
-        if (statementVO.getStatementInfo() != null &&
-                statementVO.getStatementInfo().getOperator() ==
-                    StatementOperatorTypeKey.AND) {
+        if (statementVO.getStatementInfo() != null && statementVO.getStatementInfo().getOperator() == StatementOperatorTypeKey.AND) {
             statementVO.type = Token.And;
             statementVO.value = "and";
             node.setUserObject(statementVO);
-        } else if (statementVO.getStatementInfo() != null &&
-                statementVO.getStatementInfo().getOperator() ==
-                    StatementOperatorTypeKey.OR) {
+        } else if (statementVO.getStatementInfo() != null && statementVO.getStatementInfo().getOperator() == StatementOperatorTypeKey.OR) {
             statementVO.type = Token.Or;
             statementVO.value = "or";
             node.setUserObject(statementVO);
@@ -822,28 +828,19 @@ public class StatementVO extends Token implements Serializable {
         }
         return simple;
     }
-    
-    private void setFieldsTo(final StatementTreeViewInfo stvInfo) {
-        stvInfo.setAttributes(getStatementInfo().getAttributes());
-        stvInfo.setDesc(getStatementInfo().getDesc());
-        stvInfo.setId(getStatementInfo().getId());
-        stvInfo.setMetaInfo(getStatementInfo().getMetaInfo());
-        stvInfo.setName(getStatementInfo().getName());
-        stvInfo.setOperator(getStatementInfo().getOperator());
-        stvInfo.setState(getStatementInfo().getState());
-        stvInfo.setType(getStatementInfo().getType());
-    }
-    
+
     public String composeStatementTreeViewInfo(StatementVO statementVO, StatementTreeViewInfo statementTreeViewInfo) throws Exception {
+        String rc = "";
         List<StatementVO> statementVOs = statementVO.getStatementVOs();
         List<ReqComponentVO> reqComponentVOs = statementVO.getReqComponentVOs();
-        
-        statementVO.setFieldsTo(statementTreeViewInfo);
+
         if ((statementVOs != null) && (reqComponentVOs != null) && (statementVOs.size() > 0) && (reqComponentVOs.size() > 0))
         {
             return "Internal error: found both Statements and Requirement Components on the same level of boolean expression";
         }
-        
+
+        statementVO.setFieldsTo(statementTreeViewInfo);
+
         if ((statementVOs != null) && (statementVOs.size() > 0)) {
             // retrieve all statements
             List<StatementTreeViewInfo> subStatementTVInfos = new ArrayList<StatementTreeViewInfo>();
@@ -851,7 +848,7 @@ public class StatementVO extends Token implements Serializable {
                 StatementTreeViewInfo subStatementTVInfo = new StatementTreeViewInfo();
                 subStatementTVInfo.setParentId(statementVO.getStatementInfo().getId());
                 statement.setFieldsTo(subStatementTVInfo);
-                composeStatementTreeViewInfo(statement, subStatementTVInfo); // inside set the children of this statementTreeViewInfo
+                rc = composeStatementTreeViewInfo(statement, subStatementTVInfo); // inside set the children of this statementTreeViewInfo
                 subStatementTVInfos.add(subStatementTVInfo);
             }
             statementTreeViewInfo.setStatements(subStatementTVInfos);
@@ -865,6 +862,68 @@ public class StatementVO extends Token implements Serializable {
             statementTreeViewInfo.setReqComponents(reqComponentList);
         }
         
-        return "";
+        return rc;
+    }
+
+    private void setFieldsTo(final StatementTreeViewInfo stvInfo) {
+        stvInfo.setAttributes(getStatementInfo().getAttributes());
+        stvInfo.setDesc(getStatementInfo().getDesc());
+        stvInfo.setId(getStatementInfo().getId());
+        stvInfo.setMetaInfo(getStatementInfo().getMetaInfo());
+        stvInfo.setName(getStatementInfo().getName());
+        stvInfo.setOperator(getStatementInfo().getOperator());
+        stvInfo.setState(getStatementInfo().getState());
+        stvInfo.setType(getStatementInfo().getType());
+    }
+
+    public String composeStatementVO(StatementTreeViewInfo statementTreeViewInfo, StatementVO statementVO) throws Exception {
+        String rc = "";
+        List<StatementTreeViewInfo> statements = statementTreeViewInfo.getStatements();
+        List<ReqComponentInfo> reqComponentInfos = statementTreeViewInfo.getReqComponents();
+
+        if ((statements != null) && (reqComponentInfos != null) && (statements.size() > 0) && (reqComponentInfos.size() > 0))
+        {
+            return "Internal error: found both Statements and Requirement Components on the same level of boolean expression";
+        }
+
+        statementVO.setFields(statementTreeViewInfo);
+        statementVO.setTokenOperator(true);
+
+        if ((statements != null) && (statements.size() > 0)) {
+            // retrieve all statements
+            List<StatementVO> newStatementList = new ArrayList<StatementVO>();
+            for (StatementTreeViewInfo statement : statements) {
+                StatementVO newStatementVO = new StatementVO();
+                newStatementVO.setFields(statement);
+                newStatementVO.getStatementInfo().setId("123"); //TODO testing, put back: statementTreeViewInfo.getParentId());
+                rc = composeStatementVO(statement, newStatementVO); // inside set the children of this statementTreeViewInfo
+                newStatementList.add(newStatementVO);
+            }
+            statementVO.statementVOs = newStatementList;
+        } else {
+            // retrieve all req. component LEAFS
+            List<ReqComponentVO> reqComponentList = new ArrayList<ReqComponentVO>();
+            for (ReqComponentInfo reqComponent : reqComponentInfos) {
+                ReqComponentVO newReqComp = new ReqComponentVO();
+                newReqComp.setReqComponentInfo(ObjectClonerUtil.clone(reqComponent));
+                reqComponentList.add(newReqComp);
+            }
+            statementVO.reqComponentVOs = reqComponentList;
+        }
+
+        return rc;
+    }
+
+    private void setFields(final StatementTreeViewInfo statementTreeViewInfo) {
+//TODO uncomment after testing
+        statementInfo = new StatementInfo();
+//        getStatementInfo().setAttributes(statementTreeViewInfo.getAttributes());
+//        getStatementInfo().setDesc(statementTreeViewInfo.getDesc());
+//        getStatementInfo().setId(statementTreeViewInfo.getId());
+//        getStatementInfo().setMetaInfo(statementTreeViewInfo.getMetaInfo());
+//        getStatementInfo().setName(statementTreeViewInfo.getName());
+        getStatementInfo().setOperator(statementTreeViewInfo.getOperator());
+//        getStatementInfo().setState(statementTreeViewInfo.getState());
+        getStatementInfo().setType(statementTreeViewInfo.getType());
     }
 }

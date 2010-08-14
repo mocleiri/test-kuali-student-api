@@ -13,14 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.ui.requirements.client.model;
-
-import java.io.Serializable;
+package org.kuali.student.lum.program.client.requirements;
 
 import org.kuali.student.common.ui.client.widgets.rules.Token;
 import org.kuali.student.core.dto.Idable;
 import org.kuali.student.core.statement.dto.ReqCompFieldInfo;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
+
+import java.io.Serializable;
 
 public class ReqComponentVO extends Token implements Serializable, Idable {
 
@@ -90,7 +90,7 @@ public class ReqComponentVO extends Token implements Serializable, Idable {
             reqCompDescription = reqCompDescription.replaceAll("<" + fieldInfo.getId() + ">", fieldInfo.getValue());
         }        
 
-        return reqCompDescription;
+        return (reqCompDescription == null ? "" : reqCompDescription);
     }
 
     @Override

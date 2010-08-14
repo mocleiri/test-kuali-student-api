@@ -13,44 +13,50 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.ui.requirements.server.gwt;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.kuali.student.lum.program.server;
 
 import org.apache.log4j.Logger;
+import org.kuali.student.common.ui.server.gwt.BaseRpcGwtServletAbstract;
+import org.kuali.student.core.exceptions.*;
+import org.kuali.student.core.search.dto.SearchParam;
+import org.kuali.student.core.search.dto.SearchRequest;
+import org.kuali.student.core.search.dto.SearchResult;
+import org.kuali.student.core.search.dto.SearchResultCell;
 import org.kuali.student.core.statement.dto.ReqCompFieldInfo;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.core.statement.dto.ReqComponentTypeInfo;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.core.statement.service.StatementService;
-import org.kuali.student.common.ui.server.gwt.BaseRpcGwtServletAbstract;
-import org.kuali.student.core.exceptions.DoesNotExistException;
-import org.kuali.student.core.exceptions.InvalidParameterException;
-import org.kuali.student.core.exceptions.MissingParameterException;
-import org.kuali.student.core.exceptions.OperationFailedException;
-import org.kuali.student.core.exceptions.PermissionDeniedException;
-import org.kuali.student.core.search.dto.SearchParam;
-import org.kuali.student.core.search.dto.SearchRequest;
-import org.kuali.student.core.search.dto.SearchResult;
-import org.kuali.student.core.search.dto.SearchResultCell;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.service.LuService;
+import org.kuali.student.lum.program.client.requirements.StatementVO;
+import org.kuali.student.lum.program.client.rpc.StatementRpcService;
 import org.kuali.student.lum.statement.typekey.ReqComponentFieldTypeKeys;
-import org.kuali.student.lum.ui.requirements.client.model.StatementVO;
-import org.kuali.student.lum.ui.requirements.client.service.RequirementsRpcService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Zdenek Zraly
  */
-public class RequirementsRpcGwtServlet extends BaseRpcGwtServletAbstract<LuService> implements RequirementsRpcService {
+public class StatementRpcServlet extends BaseRpcGwtServletAbstract<LuService> implements StatementRpcService {
 
-    final static Logger LOG = Logger.getLogger(RequirementsRpcGwtServlet.class);
+    final static Logger LOG = Logger.getLogger(StatementRpcServlet.class);
     
     private StatementService statementService;
     
     private static final long serialVersionUID = 822326113643828855L;
-    
+
+    @Override
+    public String translateStatementTreeViewToNL(StatementTreeViewInfo statementTreeViewInfo, String nlUsageTypeKey, String language) throws Exception {
+        return statementService.translateStatementTreeViewToNL(statementTreeViewInfo, nlUsageTypeKey, language);
+    }    
+
+    @Override
+    public String translateReqComponentToNL(ReqComponentInfo reqComponentInfo, String nlUsageTypeKey, String language) throws Exception {
+        return statementService.translateReqComponentToNL(reqComponentInfo, nlUsageTypeKey, language);
+    }
+
     public String getNaturalLanguageForReqComponentInfo(ReqComponentInfo compInfo, String nlUsageTypeKey, String language) throws Exception {
         
         String naturalLanguage = "";   
@@ -99,7 +105,7 @@ public class RequirementsRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServi
     }
     
     /**
-     * @throws Exception
+     * @throws Exception 
      */
     public List<ReqCompFieldInfo> verifyFieldsAndSetIds(List<ReqCompFieldInfo> editedFields) throws Exception {
 
