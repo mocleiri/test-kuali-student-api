@@ -529,6 +529,42 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String programInformation_titleTranscript();
 
   /**
+   * Translated "No <*> currently exist for this program".
+   *
+   * @return translated "No <*> currently exist for this program"
+   */
+  @DefaultMessage("No <*> currently exist for this program")
+  @Key("programRequirements.summaryViewPageNoRule")
+  String programRequirements_summaryViewPageNoRule();
+
+  /**
+   * Translated "Delete Rule".
+   *
+   * @return translated "Delete Rule"
+   */
+  @DefaultMessage("Delete Rule")
+  @Key("programRequirements.summaryViewPageDeleteRuleDialogTitle")
+  String programRequirements_summaryViewPageDeleteRuleDialogTitle();
+
+  /**
+   * Translated "Are you sure you want to delete this rule?".
+   *
+   * @return translated "Are you sure you want to delete this rule?"
+   */
+  @DefaultMessage("Are you sure you want to delete this rule?")
+  @Key("programRequirements.summaryViewPageDeleteRuleDialogMsg")
+  String programRequirements_summaryViewPageDeleteRuleDialogMsg();
+
+  /**
+   * Translated "Add a <*>".
+   *
+   * @return translated "Add a <*>"
+   */
+  @DefaultMessage("Add a <*>")
+  @Key("programRequirements.summaryViewPageAddRule")
+  String programRequirements_summaryViewPageAddRule();
+
+  /**
    * Translated "Add a <*> Rule".
    *
    * @return translated "Add a <*> Rule"
@@ -556,9 +592,9 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String programRequirements_manageViewPageStep2Title();
 
   /**
-   * Translated "Add a <*> Rule".
+   * Translated "Program Requirements".
    *
-   * @return translated "Add a <*> Rule"
+   * @return translated "Program Requirements"
    */
   @DefaultMessage("Program Requirements")
   @Key("programRequirements.summaryViewPageTitle")

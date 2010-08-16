@@ -237,7 +237,6 @@ public class CourseConfigurer extends AbstractCourseConfigurer {
     /**
      * Adds a section for adding or modifying rules associated with a given course (program).
      *
-     * @param layout - a content pane to which this section is added to
      * @return
      */
     protected SectionView generateCourseRequisitesSection() {

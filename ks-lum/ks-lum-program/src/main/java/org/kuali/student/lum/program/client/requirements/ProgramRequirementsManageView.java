@@ -15,13 +15,17 @@
 
 package org.kuali.student.lum.program.client.requirements;
 
+import java.util.List;
+
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSProgressIndicator;
-import org.kuali.student.common.ui.client.widgets.rules.RuleTable;
+import org.kuali.student.common.ui.client.widgets.rules.ReqCompEditWidget;
+import org.kuali.student.common.ui.client.widgets.rules.RuleManagementWidget;
+import org.kuali.student.core.statement.dto.ReqComponentTypeInfo;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.lum.program.client.properties.ProgramProperties;
 import org.kuali.student.lum.program.client.rpc.StatementRpcService;
@@ -30,7 +34,10 @@ import org.kuali.student.lum.program.client.rpc.StatementRpcServiceAsync;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ProgramRequirementsManageView extends VerticalSectionView {
 
@@ -40,7 +47,9 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
 
     //view's widgets
     String pageTitle;
-    private RuleTable ruleTable = new RuleTable();
+    VerticalPanel layout = new VerticalPanel();
+    ReqCompEditWidget editReqCompWidget = new ReqCompEditWidget();
+    RuleManagementWidget ruleManagementWidget = new RuleManagementWidget();
     private SimplePanel twiddlerPanel = new SimplePanel();
     private KSProgressIndicator twiddler = new KSProgressIndicator();
 
@@ -50,13 +59,13 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
     private RuleInfo rule = null;
     private boolean isInitialized = false;
 
-    public ProgramRequirementsManageView(Controller parentController, Enum<?> viewEnum, String name, String modelId,
-                                         StatementTreeViewInfo ruleTree, String ruleName) {
+    public ProgramRequirementsManageView(Controller parentController, Enum<?> viewEnum, String name, String modelId, String ruleName) {
         super(viewEnum, name, modelId);
+
+        this.parentController = parentController;
         pageTitle = ProgramProperties.get().programRequirements_manageViewPageTitle().replace("<*>", ruleName);
 
-        this.parentController = parentController;        
-
+        //TODO remove after testing
         rule = new RuleInfo();
         rule.setCluId("123");
         rule.setId(Integer.toString(123)); //id++));
@@ -64,7 +73,6 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
         rule.setSelectedStatementType(null);
 
         StatementVO statementVO = new StatementVO();
-        statementVO.setStatementTreeViewInfo(ruleTree);
         rule.setStatementVO(statementVO);
     }
     
@@ -72,7 +80,9 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
     public void beforeShow(final Callback<Boolean> onReadyCallback) {
 
         if (isInitialized == false) {
-            setupHandlers();            
+            retrieveReqCompTypes();
+            setupHandlers();
+            isInitialized = true;
         }            
 
         redraw();
@@ -82,6 +92,8 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
 
     private void setupHandlers() {                        
 
+        //TODO setup 'edit' req. component
+        // edit link -> call editReqCompWidget.setupReqComp(existin req. comp.) -> return if req. comp. type list not yet loaded        
 
         btnBackToRulesSummary.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -117,19 +129,55 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
       
     private void redraw() {
 
-        addWidget(SectionTitle.generateH2Title(pageTitle));
+        remove(layout);
+        layout.clear();
 
-        addWidget(SectionTitle.generateH3Title(ProgramProperties.get().programRequirements_manageViewPageStep1Title()));
+        SectionTitle title = SectionTitle.generateH2Title(pageTitle);
+        title.setStyleName("KS-Program-Requirements-Section-header");  //make the header orange
+        layout.add(title);
 
-        addWidget(SectionTitle.generateH3Title(ProgramProperties.get().programRequirements_manageViewPageStep2Title()));        
+        //STEP 1
+        title = SectionTitle.generateH3Title(ProgramProperties.get().programRequirements_manageViewPageStep1Title());
+        title.setStyleName("KS-Program-Requirements-Manage-Step-header1");  //make the header orange
+        layout.add(title);
+
+        layout.add(editReqCompWidget);
+
+        //STEP 2
+        title = SectionTitle.generateH3Title(ProgramProperties.get().programRequirements_manageViewPageStep2Title());
+        title.setStyleName("KS-Program-Requirements-Manage-Step-header2");  //make the header orange
+        layout.add(title);
+
+        layout.add(ruleManagementWidget);
 
         //add progressive indicator when rules are being simplified
         twiddler = new KSProgressIndicator();
         twiddler.setVisible(false);
         twiddlerPanel.setWidget(twiddler);
-        addWidget(twiddlerPanel);
+        layout.add(twiddlerPanel);
         
-        addWidget(btnBackToRulesSummary);
+        layout.add(btnBackToRulesSummary);
+
+        addWidget(layout);
+    }
+
+    private void retrieveReqCompTypes() {
+
+        statementRpcServiceAsync.getReqComponentTypesForStatementType(rule.getStatementTypeKey(), new AsyncCallback<List<ReqComponentTypeInfo>>() {
+            public void onFailure(Throwable cause) {
+            	GWT.log("Failed to get req. component types for statement of type:" + rule.getStatementTypeKey(), cause);
+            	Window.alert("Failed to get req. component types for statement of type:" + rule.getStatementTypeKey());
+            }
+
+            public void onSuccess(final List<ReqComponentTypeInfo> reqComponentTypeInfoList) {
+                if (reqComponentTypeInfoList == null || reqComponentTypeInfoList.size() == 0) {
+                    GWT.log("Missing Requirement Component Types", null);
+                    Window.alert("Missing Requirement Component Types");
+                    return;
+                }
+                editReqCompWidget.setReqCompList(reqComponentTypeInfoList);
+            }
+        });
     }
 
     // called by requirement display widget when user wants to edit a specific piece of rule

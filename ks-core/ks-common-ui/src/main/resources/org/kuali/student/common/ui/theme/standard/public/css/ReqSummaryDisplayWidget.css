@@ -13,33 +13,33 @@
  * permissions and limitations under the License.
  */
 
-/* Program Requirements */
-.KS-Program-Requirements-Section-header{
-    color: #940B07;
+/* subrule is a section of a rule that user can manipulate separately */
+.KS-Program-Rule-Summary-Subrule-Box{
+    background: #f1f1f2;
+    border: 1px solid #a8a6a6;
+    padding-left: 15px;
 }
 
-/* Program Summary View */
-.KS-Program-Requirements-Summary-Rule-Type-First-Header{
-    padding-top: 20px;
+.KS-Program-Requirements-header, ks-form-module h6{
+    font-weight: normal;
+    width: 600px;
+    border-bottom: 1px solid #a8a6a6;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
 }
 
-.KS-Program-Requirements-Summary-Rule-Type-Header{
-    padding-top: 40px;
+.KS-Program-Requirements-header-action{
+    float:right;
 }
 
-.KS-Program-Requirements-Summary-No-Rule-Text{
-    padding-top: 20px;    
+.KS-Program-Requirements-ul{
+    padding-top: 5px;
+    padding-left: 0px;
+    margin-top: 0px;
+   /* font-size: 50%; */
 }
 
-/* Program Manage View */
-.KS-Program-Requirements-Manage-Step-header1{
-    width: 650px;
-    margin-top:20px;
-    border-bottom: 1px solid #d7d7d7;
-}
-
-.KS-Program-Requirements-Manage-Step-header2{
-    width: 650px;
-    margin-top:50px;
-    border-bottom: 1px solid #d7d7d7;
+.KS-Program-Requirements-ORAND{
+    color: #DF7401;
+    font-weight: bold;
 }
