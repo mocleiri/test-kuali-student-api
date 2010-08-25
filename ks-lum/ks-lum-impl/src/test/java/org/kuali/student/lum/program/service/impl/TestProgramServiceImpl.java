@@ -185,9 +185,10 @@ public class TestProgramServiceImpl {
             assertEquals("d02dbbd3-20e2-410d-ab52-1bd6d362748b", major.getCredentialProgramId());
 
             assertNotNull(major.getVariations());
-            assertTrue(major.getVariations().size() == 1);
-            assertEquals("BS", major.getVariations().get(0).getCode());
-
+            assertTrue(major.getVariations().size() == 2);
+            assertEquals("ZOOA", major.getVariations().get(0).getCode());
+            assertEquals("ARCB", major.getVariations().get(1).getCode());
+            
             assertNotNull(major.getCode());
             assertEquals("ANTH", major.getCode());
             assertNotNull(major.getCip2000Code());
@@ -329,11 +330,11 @@ public class TestProgramServiceImpl {
             assertEquals(pvInfos.size(), majorDisciplineInfo.getVariations().size());
             
             ProgramVariationInfo pvInfo = pvInfos.get(0);
-            assertEquals("BS", pvInfo.getCode());
-            assertEquals("Bachelor of Science", pvInfo.getDescr().getPlain());
-            assertEquals("Bachelor of Science", pvInfo.getLongTitle());
-            assertEquals("B.S.", pvInfo.getShortTitle());
-            assertEquals("d02dbbd3-20e2-410d-ab52-1bd6d362748b", pvInfo.getId());
+            assertEquals("ZOOA", pvInfo.getCode());
+            assertEquals("Zooarchaeology", pvInfo.getDescr().getPlain());
+            assertEquals("Zooarchaeology", pvInfo.getLongTitle());
+            assertEquals("ZooArch", pvInfo.getShortTitle());
+            assertEquals("VAR-200", pvInfo.getId());
             assertEquals("active", pvInfo.getState());
 
         } catch (Exception e) {
