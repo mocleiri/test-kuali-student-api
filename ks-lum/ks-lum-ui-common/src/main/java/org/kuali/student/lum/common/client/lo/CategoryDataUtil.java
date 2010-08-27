@@ -1,9 +1,8 @@
-package org.kuali.student.lum.lu.ui.course.client.configuration;
+package org.kuali.student.lum.common.client.lo;
 
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.lum.lo.dto.LoCategoryInfo;
-import org.kuali.student.lum.lu.assembly.data.client.refactorme.base.RichTextInfoHelper;
 
 public class CategoryDataUtil {
     

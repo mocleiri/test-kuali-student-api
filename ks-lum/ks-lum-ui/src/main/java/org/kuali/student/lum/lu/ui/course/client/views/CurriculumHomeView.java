@@ -20,9 +20,9 @@ import org.kuali.student.common.ui.client.widgets.menus.KSListPanel;
 import org.kuali.student.common.ui.client.widgets.search.KSPicker;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.rice.authorization.PermissionType;
+import org.kuali.student.lum.common.client.lo.CategoryManagement;
 import org.kuali.student.lum.lu.ui.course.client.service.CreditCourseProposalRpcService;
 import org.kuali.student.lum.lu.ui.course.client.service.CreditCourseProposalRpcServiceAsync;
-import org.kuali.student.lum.lu.ui.course.client.widgets.CategoryManagement;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

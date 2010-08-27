@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.client.widgets;
+package org.kuali.student.lum.common.client.lo;
 
 import java.util.List;
 

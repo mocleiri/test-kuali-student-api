@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.client.widgets;
+package org.kuali.student.lum.common.client.lo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,6 @@ import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.search.KSPicker;
 import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.lum.lo.dto.LoCategoryInfo;
-import org.kuali.student.lum.lu.ui.course.client.configuration.LUConstants;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -35,7 +33,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -78,6 +75,7 @@ public class LOBuilder extends Composite implements HasValue<List<OutlineNode<LO
         messageGroup = luGroup;
 
         //searchLink = new KSLabel(getLabel(LUConstants.LO_SEARCH_LINK_KEY));  picker needs to handle labels like this
+        if(metadata.getInitialLookup() != null){
         searchWindow = new KSPicker(metadata.getInitialLookup(), metadata.getAdditionalLookups());
         searchWindow.addValuesChangeHandler(new ValueChangeHandler<List<String>>(){
             public void onValueChange(ValueChangeEvent<List<String>> event) {
@@ -85,7 +83,8 @@ public class LOBuilder extends Composite implements HasValue<List<OutlineNode<LO
                 loList.addSelectedLOs(selection);
             }                    
         });
-        searchMainPanel.add(searchWindow);            
+        searchMainPanel.add(searchWindow);
+        }
 
         //adding search icon - should this be part of search link? coordinate with UX
         //searchImage.addClickHandler(searchClickHandler);

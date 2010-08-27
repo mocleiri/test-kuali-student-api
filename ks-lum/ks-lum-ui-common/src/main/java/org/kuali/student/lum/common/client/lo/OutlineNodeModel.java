@@ -13,12 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.client.widgets;
+package org.kuali.student.lum.common.client.lo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.event.dom.client.ChangeHandler;
+import org.kuali.student.lum.common.client.lo.OutlineNode;
 
 public 
 class OutlineNodeModel<T> {

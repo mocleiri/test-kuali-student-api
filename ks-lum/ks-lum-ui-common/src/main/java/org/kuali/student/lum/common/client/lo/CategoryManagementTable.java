@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.client.widgets;
+package org.kuali.student.lum.common.client.lo;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,9 +26,9 @@ import org.kuali.student.common.ui.client.widgets.pagetable.GenericTableModel;
 import org.kuali.student.common.ui.client.widgets.pagetable.PagingScrollTableBuilder;
 import org.kuali.student.common.ui.client.widgets.searchtable.ResultRow;
 import org.kuali.student.common.ui.client.widgets.searchtable.SearchColumnDefinition;
+import org.kuali.student.lum.common.client.lo.rpc.LoRpcService;
 import org.kuali.student.lum.lo.dto.LoCategoryInfo;
-import org.kuali.student.lum.lu.ui.course.client.service.LoRpcService;
-import org.kuali.student.lum.lu.ui.course.client.service.LoRpcServiceAsync;
+import org.kuali.student.lum.common.client.lo.rpc.LoRpcServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.gen2.table.client.AbstractColumnDefinition;
