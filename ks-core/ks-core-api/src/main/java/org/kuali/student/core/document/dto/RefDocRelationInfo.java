@@ -37,30 +37,33 @@ import org.kuali.student.core.dto.RichTextInfo;
 
 
 /**
- * Detailed information about a document.
+ * Information about the object to document relation.
  *
  * @Author KSContractMojo
  * @Author tom
- * @Since Wed Aug 18 12:10:38 EDT 2010
- * @See <a href="https://test.kuali.org/confluence/display/KULSTU/documentInfo+Structure">DocumentInfo</>
+ * @Since Wed Aug 18 12:10:44 EDT 2010
+ * @See <a href="https://test.kuali.org/confluence/display/KULSTU/refDocRelationInfo+Structure">RefDocRelationInfo</>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DocumentInfo implements Serializable, Idable, HasTypeState, HasAttributes {
+public class RefDocRelationInfo implements Serializable, Idable, HasTypeState, HasAttributes {
 
     private static final long serialVersionUID = 1L;
 
     @XmlElement
-    private String name;
+    private String refObjectTypeKey;
 
     @XmlElement
-    private String fileName;
+    private String refObjectId;
+
+    @XmlElement
+    private String documentId;
+
+    @XmlElement
+    private String title;
 
     @XmlElement
     private RichTextInfo desc;
-
-    @XmlElement
-    private DocumentBinaryInfo documentBinaryInfo;
 
     @XmlElement
     private Date effectiveDate;
@@ -85,29 +88,51 @@ public class DocumentInfo implements Serializable, Idable, HasTypeState, HasAttr
     private String id;
 
     /**
-     * Friendly name of the document
+     * Unique identifier for an object type. Used to identify the type of object being referred to, so that the id can be resolved.
      */
-    public String getName() {
-        return name;
+    public String getRefObjectTypeKey() {
+        return refObjectTypeKey;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRefObjectTypeKey(String refObjectTypeKey) {
+        this.refObjectTypeKey = refObjectTypeKey;
     }
 
     /**
-     * Name of the document file
+     * Identifier for an object. This will likely require some additional context in order to be resolved, such as the type of object. An objectId could be a cluId, a luiId, an orgId, a documentId, etc.
      */
-    public String getFileName() {
-        return fileName;
+    public String getRefObjectId() {
+        return refObjectId;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setRefObjectId(String refObjectId) {
+        this.refObjectId = refObjectId;
     }
 
     /**
-     * Narrative description of the document
+     * Unique identifier for a document.
+     */
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
+
+    /**
+     * The title of the document usage in the context of the relation to the object.
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * The description of the document usage in the context of the relation to the object.
      */
     public RichTextInfo getDesc() {
         return desc;
@@ -118,18 +143,7 @@ public class DocumentInfo implements Serializable, Idable, HasTypeState, HasAttr
     }
 
     /**
-     * The encoded document. The expectation is that this could be a base64 encoding.
-     */
-    public DocumentBinaryInfo getDocumentBinaryInfo() {
-        return documentBinaryInfo;
-    }
-
-    public void setDocumentBinaryInfo(DocumentBinaryInfo documentBinaryInfo) {
-        this.documentBinaryInfo = documentBinaryInfo;
-    }
-
-    /**
-     * Date and time that this document became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
+     * Date and time that this Object Doc Relation became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
      */
     public Date getEffectiveDate() {
         return effectiveDate;
@@ -140,7 +154,7 @@ public class DocumentInfo implements Serializable, Idable, HasTypeState, HasAttr
     }
 
     /**
-     * Date and time that this document expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
+     * Date and time that this Object Doc Relation expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
      */
     public Date getExpirationDate() {
         return expirationDate;
@@ -176,7 +190,7 @@ public class DocumentInfo implements Serializable, Idable, HasTypeState, HasAttr
     }
 
     /**
-     * Unique identifier for a document type.
+     * Unique identifier for an object/document relationship type. Describes the type of usage of the document.
      */
     public String getType() {
         return type;
@@ -187,7 +201,7 @@ public class DocumentInfo implements Serializable, Idable, HasTypeState, HasAttr
     }
 
     /**
-     * The current status of the document. The values for this field are constrained to those in the documentState enumeration. A separate setup operation does not exist for retrieval of the meta data around this value.
+     * The current status of the object to document relationship. The values for this field are constrained to those in the refDocRelationState enumeration. A separate setup operation does not exist for retrieval of the meta data around this value.
      */
     public String getState() {
         return state;
@@ -198,7 +212,7 @@ public class DocumentInfo implements Serializable, Idable, HasTypeState, HasAttr
     }
 
     /**
-     * Unique identifier for a document. This is optional, due to the identifier being set at the time of creation. Once the document has been created, this should be seen as required.
+     * Unique identifier for a LU to document relation. This is optional, due to the identifier being set at the time of creation. Once the connection has been created, this should be seen as required.
      */
     public String getId() {
         return id;

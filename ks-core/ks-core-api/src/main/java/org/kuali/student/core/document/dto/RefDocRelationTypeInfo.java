@@ -36,16 +36,16 @@ import org.kuali.student.core.dto.RichTextInfo;
 
 
 /**
- * Detailed information about a document type.
+ * Detailed information about a single object/document relationship type.
  *
  * @Author KSContractMojo
  * @Author tom
- * @Since Wed Aug 18 12:10:26 EDT 2010
- * @See <a href="https://test.kuali.org/confluence/display/KULSTU/documentTypeInfo+Structure">DocumentTypeInfo</>
+ * @Since Wed Aug 18 12:10:36 EDT 2010
+ * @See <a href="https://test.kuali.org/confluence/display/KULSTU/refDocRelationTypeInfo+Structure">RefDocRelationTypeInfo</>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DocumentTypeInfo implements Serializable, Idable, HasAttributes {
+public class RefDocRelationTypeInfo implements Serializable, Idable, HasAttributes {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,7 +53,7 @@ public class DocumentTypeInfo implements Serializable, Idable, HasAttributes {
     private String name;
 
     @XmlElement
-    private RichTextInfo desc;
+    private String desc;
 
     @XmlElement
     private Date effectiveDate;
@@ -69,7 +69,7 @@ public class DocumentTypeInfo implements Serializable, Idable, HasAttributes {
     private String id;
 
     /**
-     * Friendly name of the document type.
+     * Friendly name of the object/document relationship type
      */
     public String getName() {
         return name;
@@ -80,18 +80,18 @@ public class DocumentTypeInfo implements Serializable, Idable, HasAttributes {
     }
 
     /**
-     * Narrative description of the document type.
+     * Narrative description of the object/document relationship type
      */
-    public RichTextInfo getDesc() {
+    public String getDesc() {
         return desc;
     }
 
-    public void setDesc(RichTextInfo desc) {
+    public void setDesc(String desc) {
         this.desc = desc;
     }
 
     /**
-     * Date and time that this document type became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
+     * Date and time that this object/document relationship type became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
      */
     public Date getEffectiveDate() {
         return effectiveDate;
@@ -102,7 +102,7 @@ public class DocumentTypeInfo implements Serializable, Idable, HasAttributes {
     }
 
     /**
-     * Date and time that this document type expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
+     * Date and time that this object/document relationship type expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
      */
     public Date getExpirationDate() {
         return expirationDate;
@@ -127,7 +127,7 @@ public class DocumentTypeInfo implements Serializable, Idable, HasAttributes {
     }
 
     /**
-     * Unique identifier for a document type.
+     * Unique identifier for an object/document relationship type.
      */
     public String getId() {
         return id;
