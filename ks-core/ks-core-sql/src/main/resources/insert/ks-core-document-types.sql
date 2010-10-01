@@ -23,3 +23,16 @@ insert into KSDO_DOCUMENT_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME) val
 insert into KSDO_DOCUMENT_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME) values ('documentType.xls', 'xls Document', {ts '2000-01-01 00:00:00.0'}, {ts '2000-12-31 00:00:00.0'},'xls');
 insert into KSDO_DOCUMENT_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME) values ('documentType.xml', 'xml Document', {ts '2000-01-01 00:00:00.0'}, {ts '2000-12-31 00:00:00.0'},'xml');
 insert into KSDO_DOCUMENT_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME) values ('documentType.zip', 'zip Document', {ts '2000-01-01 00:00:00.0'}, {ts '2000-12-31 00:00:00.0'},'zip');
+
+insert into KSDO_REF_OBJ_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME) values ('kuali.org.RefObjectType.CluInfo', 'Clu Object Type', null, null, 'CluInfo');
+insert into KSDO_REF_OBJ_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME) values ('kuali.org.RefObjectType.ProposalInfo', 'Proposal Object Type', null, null, 'ProposalInfo');
+
+insert into KSDO_REF_OBJ_SUB_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME, REF_OBJ_TYPE_KEY) values ('kuali.org.RefObjectSubType.Program', 'Sub Type for Program', null, null, 'Program', 'kuali.org.RefObjectType.CluInfo');
+insert into KSDO_REF_OBJ_SUB_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME, REF_OBJ_TYPE_KEY) values ('kuali.org.RefObjectSubType.Course', 'Sub Type for Course', null, null, 'Course', 'kuali.org.RefObjectType.CluInfo');
+insert into KSDO_REF_OBJ_SUB_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME, REF_OBJ_TYPE_KEY) values ('kuali.org.RefObjectSubType.Proposal', 'Sub Type for Proposal', null, null, 'Proposal', 'kuali.org.RefObjectType.ProposalInfo');
+
+insert into KSDO_REF_DOC_RELTN_TYPE (TYPE_KEY, TYPE_DESC, EFF_DT, EXPIR_DT, NAME) values ('kuali.org.DocRelation.allObjectTypes', 'Relation for all known sub object types', null, null, 'All Relations');
+
+insert into KSDO_REF_REL_TYP_JN_SUB_TYP (REF_DOC_RELTN_TYPE_KEY, REF_OBJ_SUB_TYPE_KEY) values ('kuali.org.DocRelation.allObjectTypes', 'kuali.org.RefObjectSubType.Program');
+insert into KSDO_REF_REL_TYP_JN_SUB_TYP (REF_DOC_RELTN_TYPE_KEY, REF_OBJ_SUB_TYPE_KEY) values ('kuali.org.DocRelation.allObjectTypes', 'kuali.org.RefObjectSubType.Course');
+insert into KSDO_REF_REL_TYP_JN_SUB_TYP (REF_DOC_RELTN_TYPE_KEY, REF_OBJ_SUB_TYPE_KEY) values ('kuali.org.DocRelation.allObjectTypes', 'kuali.org.RefObjectSubType.Proposal');
