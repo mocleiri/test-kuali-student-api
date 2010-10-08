@@ -61,10 +61,12 @@
                 <ref bean="majorDisciplineInfo.type"/>
                 <ref bean="majorDisciplineInfo.state"/>
                 <ref bean="majorDisciplineInfo.id"/>
+                
                 <!-- Dynamic Attributes -->
                 <ref bean="majorDisciplineInfo.lastReviewDate"/>
                 <ref bean="majorDisciplineInfo.isVariationRequired"/>
                 <ref bean="majorDisciplineInfo.endInstAdmitTerm"/>
+                <ref bean="majorDisciplineInfo.durationOther"/>
             </list>
         </property>
         <property name="hasMetaData" value="true"/>
@@ -385,6 +387,9 @@
                 <ref bean="programVariationInfo.unitsFinancialResources"/>
                 <ref bean="programVariationInfo.unitsStudentOversight"/>
                 <ref bean="programVariationInfo.universityClassification"/>
+
+                <!--Dynamic Attributes-->
+                <ref bean="programVariationInfo.durationOther"/>
             </list>
         </property>
         <property name="hasMetaData" value="true"/>
@@ -616,6 +621,18 @@
         <property name="dynamic" value="true"/>
     </bean>
     <bean id="majorDisciplineInfo.endInstAdmitTerm" parent="majorDisciplineInfo.endInstAdmitTerm-parent"/>
+
+    <bean id="majorDisciplineInfo.durationOther-parent" abstract="true" parent="baseString">
+        <property name="name" value="durationOther"/>
+        <property name="dynamic" value="true"/>
+    </bean>
+    <bean id="majorDisciplineInfo.durationOther" parent="majorDisciplineInfo.durationOther-parent"/>
+
+    <bean id="programVariationInfo.durationOther-parent" abstract="true" parent="baseString">
+        <property name="name" value="durationOther"/>
+        <property name="dynamic" value="true"/>
+    </bean>
+    <bean id="programVariationInfo.durationOther" parent="programVariationInfo.durationOther-parent"/>
 
     <!-- CoreProgramInfo-->
     <bean id="org.kuali.student.lum.program.dto.CoreProgramInfo-parent" abstract="true"
