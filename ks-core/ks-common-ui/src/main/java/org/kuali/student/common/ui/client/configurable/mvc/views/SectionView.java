@@ -32,7 +32,7 @@ public abstract class SectionView extends BaseSection implements View {
     protected DataModel model;
 
     private Enum<?> viewEnum;
-    private String viewName;
+	private String viewName;
 
     private List<View> views = new ArrayList<View>();
 
@@ -50,6 +50,10 @@ public abstract class SectionView extends BaseSection implements View {
     public Enum<?> getViewEnum() {
         return viewEnum;
     }
+    public void setViewEnum(Enum<?> viewEnum) {
+		this.viewEnum = viewEnum;
+	}
+    
 
     /**
      * Called by controller before the view is displayed to allow lazy initialization or any other preparatory work to be
@@ -94,7 +98,15 @@ public abstract class SectionView extends BaseSection implements View {
 
     }
 
-    /**
+    public String getModelId() {
+		return modelId;
+	}
+
+	public void setModelId(String modelId) {
+		this.modelId = modelId;
+	}
+
+	/**
      * Called by the controller before the view is hidden to allow the view to perform cleanup or request confirmation from
      * the user, etc. Can cancel the action by returning false.
      *
@@ -123,6 +135,10 @@ public abstract class SectionView extends BaseSection implements View {
     @Override
     public String getName() {
         return viewName;
+    }
+    
+    public void setName(String name) {
+        this.viewName = name;
     }
 
     public void setController(Controller controller) {

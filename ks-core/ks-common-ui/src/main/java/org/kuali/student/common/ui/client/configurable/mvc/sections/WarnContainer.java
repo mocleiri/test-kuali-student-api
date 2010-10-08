@@ -23,6 +23,16 @@ public class WarnContainer extends Composite{
 		this.initWidget(layout);
 	}
 	
+	public WarnContainer(boolean shown){
+		icon.addStyleName("ks-message-static-image");
+		normalLayout.addStyleName("ks-message-static-margin");
+		layout.add(icon);
+		layout.add(normalLayout);
+		layout.add(warnLayout);
+		this.initWidget(layout);
+		this.showWarningLayout(shown);
+	}
+	
 	public void add(Widget w){
 		normalLayout.add(w);
 	}

@@ -53,7 +53,7 @@
  </bean>
  <bean id="freestanding.search.proposedCourses" parent="freestanding.search.proposedCourses-parent" />
 
- <bean id="freestanding.search.courseVersions-parent" abstract="true" parent="baseKualiId">
+ <bean id="freestanding.search.courseVersions-parent" parent="baseKualiId">
   <property name="name" value="searchCourseVersions" />
  </bean>
  <bean id="freestanding.search.courseVersions" parent="freestanding.search.courseVersions-parent" />

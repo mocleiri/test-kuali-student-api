@@ -1312,6 +1312,27 @@
 			</list>
 		</property>
 		<property name="resultReturnKey" value="lu.resultColumn.cluId" />
+	</bean>
+	
+	<bean id="kuali.common.lookup.basic.courseVersions" parent="commonLookup-parent">
+		<property name="id" value="kuali.common.lookup.advanced.courseVersions" />
+		<property name="searchTypeId" value="lu.search.clu.versions" />		
+		<property name="name" value="Course Versions" />
+		<property name="desc" value="Search for versions of a course" />
+		<property name="params">
+			<list>
+				<bean parent="param" autowire-candidate="default" dependency-check="default" autowire="default" lazy-init="default">
+					<property name="key" value="lu.queryParam.cluVersionIndId" />
+					<property name="name" value="VersionIndId" />
+					<property name="desc" value="VersionIndId" />
+					<property name="dataType" value="STRING" />
+					<property name="writeAccess" value="NEVER" />
+					<property name="caseSensitive" value="true" />
+					<property name="optional" value="false" />
+				</bean>
+			</list>
+		</property>
+		<property name="resultReturnKey" value="lu.resultColumn.cluId" />
 	</bean>	
 	
 	<bean id="kuali.common.lookup.basic.reusableCluSets" parent="commonLookup-parent">

@@ -332,3 +332,7 @@ ul.ks-selected-list {
 
 .ks-selected-list-readOnly .ks-selected-list-value-container{
 }
+
+.standard-content-padding{
+	padding-left: 20px;
+}

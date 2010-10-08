@@ -70,7 +70,9 @@ public class MenuSectionController extends LayoutController implements ContentNa
         rightPanel.add(buttonPanel);
         layout.add(collapsablePanel);
         layout.add(rightPanel);
+        header.setVisible(false);
         this.initWidget(layout);
+        
     }
 
     public void removeMenuNavigation() {
@@ -79,10 +81,12 @@ public class MenuSectionController extends LayoutController implements ContentNa
 
     public void setContentTitle(String title) {
         header.setTitle(title);
+        header.setVisible(true);
     }
 
     public void addContentWidget(Widget w) {
         header.addWidget(w);
+        header.setVisible(true);
     }
 
     public void setSideBarWidget(Widget w) {

@@ -210,11 +210,13 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
 		}else{
 			v = row.getCellData(columnId);			
 		}
-		if(v == null){
-			v = "";
-		}
 		if("RowHeader".equals(columnId) == false){
-			table.setText(r, c, v.toString());
+			if(v != null){
+				table.setText(r, c, v.toString());
+			}
+			else{
+				table.setHTML(r, c, "&nbsp;");
+			}
 			return;
 		}
 		final TableCellWidget widget = new TableCellWidget(v);

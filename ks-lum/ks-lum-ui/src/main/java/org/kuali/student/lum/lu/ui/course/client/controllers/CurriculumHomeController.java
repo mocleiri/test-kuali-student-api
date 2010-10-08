@@ -165,7 +165,7 @@ public class CurriculumHomeController extends LayoutController {
 
     private LayoutController getViewCourseController() {
         if (viewCourseController == null) {
-            viewCourseController = new ViewCourseController();
+            viewCourseController = new ViewCourseParentController();
         }
         return this.viewCourseController;
     }

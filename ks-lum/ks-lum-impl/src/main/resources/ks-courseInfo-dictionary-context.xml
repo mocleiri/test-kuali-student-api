@@ -62,9 +62,10 @@
          their model structure 
     see https://jira.kuali.org/browse/KSLUM-375
     -->
+    <ref bean="courseInfo.searchCourseVersions"/>
+
     <ref bean="freestanding.search.cluset" />
     <ref bean="freestanding.search.findCourse" />
-    <ref bean="freestanding.search.courseVersions"/>
     
    </list>
   </property>
@@ -835,8 +836,13 @@
   <property name="maxLength" value="250" />
   <property name="validChars" ref="multiLineText"/>
  </bean>
+ 
 
-  <!-- courseFeeInfo.feeAmounts.CurrencyAmountInfo-->
+<!-- Searches -->
+
+ <bean id="courseInfo.searchCourseVersions" parent="freestanding.search.courseVersions" />
+ 
+ <!-- courseFeeInfo.feeAmounts.CurrencyAmountInfo-->
  <bean id="courseFeeInfo.feeAmounts.CurrencyAmountInfo-parent"
        abstract="true" parent="objectStructureDefinition">
   <property name="name"

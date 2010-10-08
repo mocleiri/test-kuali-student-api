@@ -75,7 +75,7 @@ public class SearchResultsTable extends Composite{
     
     //FIXME do we really need to recreate the table for every refresh?
     public void initializeTable(List<LookupResultMetadata> listResultMetadata, String resultIdKey){ 
-
+    	table = new Table();
         this.resultIdColumnKey = resultIdKey;
         
         tableModel = new DefaultTableModel();
@@ -118,16 +118,25 @@ public class SearchResultsTable extends Composite{
         
         redraw();
         layout.add(table);
-  }    
+  }   
     
-    public void performSearch(SearchRequest searchRequest, List<LookupResultMetadata> listResultMetadata, String resultIdKey){
+    public void performSearch(SearchRequest searchRequest, List<LookupResultMetadata> listResultMetadata, String resultIdKey, boolean pagedResults){
         this.searchRequest = searchRequest;
         initializeTable(listResultMetadata, resultIdKey);
         if (this.searchRequest.getSearchKey().toLowerCase().contains("cross")) {
 
             performOnDemandSearch(0, 0);
         }
-        performOnDemandSearch(0, PAGE_SIZE);
+        if(pagedResults){
+        	performOnDemandSearch(0, PAGE_SIZE);
+        }
+        else{
+        	performOnDemandSearch(0, 0);
+        }
+    }    
+    
+    public void performSearch(SearchRequest searchRequest, List<LookupResultMetadata> listResultMetadata, String resultIdKey){
+        this.performSearch(searchRequest, listResultMetadata, resultIdKey, true);
     }    
     
     private void performOnDemandSearch(int startAt, int size) {

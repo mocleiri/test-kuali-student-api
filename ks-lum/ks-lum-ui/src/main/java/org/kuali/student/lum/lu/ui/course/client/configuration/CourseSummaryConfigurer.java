@@ -96,10 +96,11 @@ public class CourseSummaryConfigurer implements
     
     private Controller controller;
     private SummaryTableSection tableSection;
+    private String modelId;
     
     
     
-    public static final String CLU_PROPOSAL_MODEL = "cluProposalModel";
+
     
     private class EditHandler implements ClickHandler{
     	
@@ -117,17 +118,18 @@ public class CourseSummaryConfigurer implements
     }
     
     public CourseSummaryConfigurer(String type, String state,
-            String groupName, DataModelDefinition modelDefinition, Controller controller) {
+            String groupName, DataModelDefinition modelDefinition, Controller controller, String modelId) {
         this.type = type;
         this.state = state;
         this.groupName = groupName;
         this.modelDefinition = modelDefinition;
         this.controller = controller;
+        this.modelId = modelId;
         tableSection = new SummaryTableSection((Controller)controller);
     }
 
     protected VerticalSectionView initSectionView (Enum<?> viewEnum, String labelKey) {
-        VerticalSectionView section = new VerticalSectionView(viewEnum, getLabel(labelKey), CLU_PROPOSAL_MODEL);
+        VerticalSectionView section = new VerticalSectionView(viewEnum, getLabel(labelKey), modelId);
         section.addStyleName(LUConstants.STYLE_SECTION);
         return section;
     }
@@ -202,7 +204,7 @@ public class CourseSummaryConfigurer implements
 				}
 			});
 	        //Override beforeShow for summary section here to allow for custom validation mechanism on the table
-	        VerticalSectionView verticalSection = new VerticalSectionView(CourseSections.SUMMARY, getLabel(LUConstants.SUMMARY_LABEL_KEY), CourseConfigurer.CLU_PROPOSAL_MODEL){
+	        VerticalSectionView verticalSection = new VerticalSectionView(CourseSections.SUMMARY, getLabel(LUConstants.SUMMARY_LABEL_KEY), modelId){
 	        	@Override
 	        	public void beforeShow(final Callback<Boolean> onReadyCallback) {
 	        		
@@ -249,7 +251,7 @@ public class CourseSummaryConfigurer implements
 	        return verticalSection;
         }
         else{
-        	VerticalSectionView verticalSection = new VerticalSectionView(CourseSections.SUMMARY, getLabel(LUConstants.SUMMARY_LABEL_KEY), CourseConfigurer.CLU_PROPOSAL_MODEL);
+        	VerticalSectionView verticalSection = new VerticalSectionView(CourseSections.SUMMARY, getLabel(LUConstants.SUMMARY_LABEL_KEY), modelId);
         	verticalSection.addSection(tableSection);
         	GWT.log("CourseSummaryConfigurer - Summary table needs a workflow controller to provide submit/validation mechanism");
         	return verticalSection;
@@ -322,7 +324,7 @@ public class CourseSummaryConfigurer implements
         tableSection.addSummaryTableFieldBlock(generateActiveDatesSection());
         tableSection.addSummaryTableFieldBlock(generateFeesSection());
         
-        VerticalSectionView verticalSection = new VerticalSectionView(ViewCourseSections.DETAILED, getLabel(LUConstants.SUMMARY_LABEL_KEY), CourseConfigurer.CLU_PROPOSAL_MODEL, false);
+        VerticalSectionView verticalSection = new VerticalSectionView(ViewCourseSections.DETAILED, getLabel(LUConstants.SUMMARY_LABEL_KEY), modelId, false);
         verticalSection.addSection(tableSection);
         
         return verticalSection;        
@@ -731,14 +733,14 @@ public class CourseSummaryConfigurer implements
 		                Arrays.asList("variationCode", LUConstants.VERSION_CODE_LABEL_KEY),
 		                Arrays.asList("variationTitle", LUConstants.TITLE_LABEL_KEY))));*/
 		courseBriefSection.addSummaryTableFieldBlock(block);
-        VerticalSectionView verticalSection = new VerticalSectionView(ViewCourseSections.BRIEF, "At a Glance", CourseConfigurer.CLU_PROPOSAL_MODEL, false);
+        VerticalSectionView verticalSection = new VerticalSectionView(ViewCourseSections.BRIEF, "At a Glance", modelId, false);
         verticalSection.addSection(courseBriefSection);
         
         return verticalSection;
 	}
 
 	public VerticalSectionView generateCourseCatalogSection() {
-		VerticalSectionView verticalSection = new VerticalSectionView(ViewCourseSections.CATALOG, "Catalog View", CourseConfigurer.CLU_PROPOSAL_MODEL, false);
+		VerticalSectionView verticalSection = new VerticalSectionView(ViewCourseSections.CATALOG, "Catalog View", modelId, false);
 		FieldDescriptorReadOnly catalogField = new FieldDescriptorReadOnly("", null, null, new HTML());
 		catalogField.showLabel(false);
 		catalogField.setWidgetBinding(new ModelWidgetBinding<HTML>(){

@@ -24,6 +24,16 @@
 	padding-right: 10px;
 }
 
+.versionHistoryLink{
+	padding-top: 5px;
+	padding-left: 10px;
+	float: left;
+}
+
+.selectVersions{
+	width: 600px;
+}
+
 /* FIXME: This needs to be removed from here */
 .KS-Add-Collaborator-Box{
 	background-color:#f1f1f2;

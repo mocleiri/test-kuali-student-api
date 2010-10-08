@@ -36,6 +36,7 @@ import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.StylishDropDown;
+import org.kuali.student.common.ui.client.widgets.KSButtonAbstract.ButtonStyle;
 import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
@@ -83,10 +84,12 @@ public class ViewCourseController extends TabMenuController implements DocumentL
 	private BlockingTask initTask = new BlockingTask("Initializing....");
 	private KSLabel statusLabel = new KSLabel("");
             
-    public ViewCourseController(){
+    public ViewCourseController(Enum<?> viewType){
     	super(CourseProposalController.class.getName());
         initialize();
         addStyleName("courseView");
+        this.tabPanel.addStyleName("standard-content-padding");
+        this.setViewEnum(viewType);
     }
     
     @Override
@@ -272,6 +275,10 @@ public class ViewCourseController extends TabMenuController implements DocumentL
     public String getCourseId() {
         return courseId;
     }
+    
+    public String getVersionIndId() {
+        return (String)cluModel.get("versionInfo/versionIndId");
+    }
 
     public void setCourseId(String courseId) {
         this.courseId = courseId;
@@ -352,20 +359,33 @@ public class ViewCourseController extends TabMenuController implements DocumentL
 		return statusLabel;
 	}
 	
+	public Widget getVersionHistoryWidget(){
+		KSButton button = new KSButton("Version History", ButtonStyle.DEFAULT_ANCHOR, new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				parentController.showView(ViewCourseParentController.Views.VERSIONS);
+			}
+		});
+		button.addStyleName("versionHistoryLink");
+		return button;
+		
+	}
+	
 	@Override
 	public void onHistoryEvent(String historyStack) {
 		super.onHistoryEvent(historyStack);
-		if (cluModel.get("transcriptTitle") != null){
+		if (cluModel.get("courseTitle") != null){
 			RecentlyViewedHelper.addCurrentDocument(getCourseTitle());
 		}
 	}
 	
-	private String getCourseTitle(){
-		StringBuffer sb = new StringBuffer();
-		sb.append(cluModel.get("code"));
-		sb.append(" - ");
-		sb.append(cluModel.get("transcriptTitle"));
-		return sb.toString();
+	public String getCourseTitle(){
+		return cluModel.get("courseTitle");
+	}
+
+	public String getCurrentId() {
+		return cluModel.get("id");
 	}
 
 }
