@@ -16,12 +16,13 @@ import org.kuali.student.common.ui.client.widgets.dialog.ButtonMessageDialog;
 import org.kuali.student.common.ui.client.widgets.field.layout.button.ConfirmCancelGroup;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotification;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
+import org.kuali.student.common.ui.shared.IdAttributes;
+import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
+import org.kuali.student.lum.program.client.ProgramConstants;
 import org.kuali.student.lum.program.client.ProgramSections;
-import org.kuali.student.lum.program.client.events.MetadataLoadedEvent;
-import org.kuali.student.lum.program.client.events.ModelLoadedEvent;
-import org.kuali.student.lum.program.client.events.UpdateEvent;
-import org.kuali.student.lum.program.client.events.UpdateEventHandler;
+import org.kuali.student.lum.program.client.VariationRegistry;
+import org.kuali.student.lum.program.client.events.*;
 import org.kuali.student.lum.program.client.major.MajorController;
 import org.kuali.student.lum.program.client.properties.ProgramProperties;
 import org.kuali.student.lum.program.client.rpc.AbstractCallback;
@@ -100,6 +101,24 @@ public class ProgramEditController extends MajorController {
             @Override
             public void onEvent(UpdateEvent event) {
                 doSave();
+            }
+        });
+
+        eventBus.addHandler(SpecializationCreatedEvent.TYPE, new SpecializationCreatedEventHandler() {
+            @Override
+            public void onEvent(SpecializationCreatedEvent event) {
+                ((Data) programModel.get(ProgramConstants.VARIATIONS)).add(event.getData());
+                doSave();
+            }
+        });
+        eventBus.addHandler(AddSpecializationEvent.TYPE, new AddSpecializationEventHandler() {
+            @Override
+            public void onEvent(AddSpecializationEvent event) {
+                String id = (String) programModel.get("id");
+                ViewContext viewContext = new ViewContext();
+                viewContext.setId(id);
+                viewContext.setIdType(IdAttributes.IdType.OBJECT_ID);
+                HistoryManager.navigate(ProgramConstants.VARIATION_EDIT_URL, viewContext);
             }
         });
     }
