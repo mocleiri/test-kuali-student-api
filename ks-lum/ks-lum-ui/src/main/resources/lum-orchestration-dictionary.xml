@@ -5820,8 +5820,10 @@
 		<property name="constraints">
 			<list>
 				<ref bean="constraint.single" />
+<!-- 				
 				<ref bean="constraint.required" />
 				<ref bean="constraint.related.orgId" />
+ -->
 			</list>
 		</property>
 		<property name="initialLookup">

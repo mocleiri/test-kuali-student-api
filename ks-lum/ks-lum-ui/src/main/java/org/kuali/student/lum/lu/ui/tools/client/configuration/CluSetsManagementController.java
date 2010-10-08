@@ -153,12 +153,6 @@ public class CluSetsManagementController extends BasicLayout {
                 }
             }
         });
-        
-//        FlowPanel buttonPanel = new FlowPanel();
-//        KSButton saveButton = getSaveButton();
-//        KSButton cancelButton = getCancelButton();
-//        buttonPanel.add(saveButton);
-//        buttonPanel.add(cancelButton);
         return actionCancel;
     }
 
