@@ -1,9 +1,6 @@
 package org.kuali.student.common.ui.client.widgets.rules;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptor;
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
@@ -54,6 +51,7 @@ public class ReqCompEditWidget extends FlowPanel {
     private boolean addingNewReqComp;                           //adding (true) or editing (false) req. component
     private DataModel ruleFieldsData;
     private BasicLayout reqCompController;
+    private Map<String, Widget> customWidgets = new HashMap<String, Widget>();
 
     //other
     private Callback reqCompConfirmCallback;
@@ -99,58 +97,16 @@ public class ReqCompEditWidget extends FlowPanel {
                     
                     if (result == ButtonEnumerations.AddCancelEnum.ADD) {
 
-                        //if req. comp. has no data then do not retrieve field values
-                        if (ruleFieldsData.getRoot().size() == 0) {
-                            //handle cluset widget here
-                            if (selectedReqCompType.getReqCompFieldTypeInfos().size() > 0) {
-                                //TODO get value from the widget and update the editedReqComp (see below)
-                                List<ReqCompFieldInfo> editedFields = new ArrayList<ReqCompFieldInfo>();
-                                ReqCompFieldInfo fieldInfo = new ReqCompFieldInfo();
-                                fieldInfo.setId(null);
-                                fieldInfo.setType(selectedReqCompType.getReqCompFieldTypeInfos().get(0).getId());
-                                fieldInfo.setValue("CLUSET-1"); //TODO get value from the cluset widget
-                                editedFields.add(fieldInfo);
-                                editedReqComp.setReqCompFields(editedFields);
-                            }
+                        //true if we have no fields for this req. component type
+                        if ((ruleFieldsData.getRoot().size() == 0) && (customWidgets.size() == 0)) {
                             finalizeRuleUpdate();
                             return;
-                        }                       
+                        }
 
-                        //1. check that all fields have values
-                        ruleFieldsData.validate(new Callback<List<ValidationResultInfo>>() {
-                            @Override
-                            public void exec(List<ValidationResultInfo> validationResults) {
-
-                                //do not proceed if the user input is not valid
-                                if (!reqCompController.isValid(validationResults, true, true)) {
-                                    setEnableAddRuleButtons(true);                                   
-                                    return;
-                                }
-
-                                //2. retrieve entered values and set the rule info
-                                List<ReqCompFieldInfo> editedFields = new ArrayList<ReqCompFieldInfo>();
-                                for (ReqCompFieldTypeInfo fieldTypeInfo : selectedReqCompType.getReqCompFieldTypeInfos()) {
-                                    ReqCompFieldInfo fieldInfo = new ReqCompFieldInfo();
-                                    fieldInfo.setId(null);
-                                    fieldInfo.setType(fieldTypeInfo.getId());
-
-                                    //handle clusets differently
-                                    String fieldValue;
-                                    if (RulesUtil.isCluSetWidget(fieldTypeInfo.getId())) {
-                                        fieldValue = "CLUSET-1"; //TODO get value from the cluset widget                                        
-                                    } else {
-                                        fieldValue = ruleFieldsData.getRoot().get(fieldTypeInfo.getId()).toString();
-                                    }
-                                    fieldInfo.setValue((fieldValue == null ? "" : fieldValue.toString()));
-                                    editedFields.add(fieldInfo);
-                                }
-
-                                //3. update req. component being edited
-                                editedReqComp.setReqCompFields(editedFields);
-                                finalizeRuleUpdate();
-                            }
-                        });
-                    } else {
+                        //validate and retrieve fields
+                        validateAndRetrieveFields();
+                        
+                    } else { //user canceled add/edit rule action
                         setupNewReqComp();
                         reqCompConfirmCallback.exec(null);                        
                     }
@@ -182,6 +138,79 @@ public class ReqCompEditWidget extends FlowPanel {
                  displayFieldsSection();
          }});
 
+    }
+
+    private void validateAndRetrieveFields() {
+        
+        final List<ReqCompFieldInfo> editedFields = new ArrayList<ReqCompFieldInfo>();
+
+        //1. validate and retrieve non-custom fields
+        if (ruleFieldsData.getRoot().size() > 0) {
+            ruleFieldsData.validate(new Callback<List<ValidationResultInfo>>() {
+                @Override
+                public void exec(List<ValidationResultInfo> validationResults) {
+
+                    //do not proceed if the user input is not valid
+                    if (!reqCompController.isValid(validationResults, true, true)) {
+                        setEnableAddRuleButtons(true);
+                        return;
+                    }
+
+                    //2. retrieve entered values and set the rule info
+                    for (ReqCompFieldTypeInfo fieldTypeInfo : selectedReqCompType.getReqCompFieldTypeInfos()) {
+
+                        //we handle custom widgets elsewhere in order to deal with callbacks
+                        if (customWidgets.containsKey(fieldTypeInfo.getId())) {
+                            continue;
+                        }
+
+                        ReqCompFieldInfo fieldInfo = new ReqCompFieldInfo();
+                        fieldInfo.setId(null);
+                        fieldInfo.setType(fieldTypeInfo.getId());
+                        String fieldValue = ruleFieldsData.getRoot().get(fieldTypeInfo.getId()).toString();
+                        fieldInfo.setValue((fieldValue == null ? "" : fieldValue.toString()));
+                        editedFields.add(fieldInfo);
+                    }
+
+
+                    //2. retrieve non-custom fields 
+                    retrieveValuesFromCustomWidgets(editedFields);
+                }
+            });
+        } else {
+            //2. retrieve non-custom fields
+            retrieveValuesFromCustomWidgets(editedFields);    
+        }
+    }
+
+    private void retrieveValuesFromCustomWidgets(final List<ReqCompFieldInfo> editedFields) {
+
+        final Iterator iter = customWidgets.entrySet().iterator();
+        while (iter.hasNext()) {
+            final String fieldType = (String)((Map.Entry)iter.next()).getKey();
+            ((AccessWidgetValue)customWidgets.get(fieldType)).getValue(new Callback<String>() {
+                @Override
+                public void exec(String widgetValue) {
+                    //clu set validation failed...
+                    if (widgetValue == null) {
+                        return;
+                    }
+                    ReqCompFieldInfo fieldInfo = new ReqCompFieldInfo();
+                    fieldInfo.setId(null);
+                    fieldInfo.setType(fieldType);
+                    fieldInfo.setValue(widgetValue);
+                    editedFields.add(fieldInfo);
+
+                    //TODO not sure if this will work all the time due to parallel nature of this code but running out of time                    
+                    iter.remove();
+                    if (customWidgets.size() == 0) {
+                        //3. update req. component being edited
+                        editedReqComp.setReqCompFields(editedFields);
+                        finalizeRuleUpdate();
+                    }
+                }
+            });
+        }
     }
 
     private void finalizeRuleUpdate() {
@@ -295,6 +324,7 @@ public class ReqCompEditWidget extends FlowPanel {
 
     public void displayFieldsEnd(List<Metadata> fieldsMetadataList) {
 
+        customWidgets = new HashMap<String, Widget>();
         List<ReqCompFieldInfo> reqCompFields = (editedReqComp == null ? null : editedReqComp.getReqCompFields());
         reqCompFieldsPanel = new VerticalSectionView(ReqCompEditView.VIEW, "", REQ_COMP_MODEL_ID, false);
         reqCompFieldsPanel.addStyleName("KS-Rule-FieldsList");
@@ -310,7 +340,7 @@ public class ReqCompEditWidget extends FlowPanel {
 
             //add clusets separately
             if (RulesUtil.isCluSetWidget(fieldType)) {
-                displayCustomWidgetCallback.exec(getFieldValue(reqCompFields, fieldType));
+                displayCustomWidgetCallback.exec(fieldType);
                 continue;
             }
 
@@ -347,7 +377,7 @@ public class ReqCompEditWidget extends FlowPanel {
                 String fieldValue = getFieldValue(reqCompFields, fieldType);
                 if (fieldValue != null) {
                     if (RulesUtil.isCluSetWidget(fieldType)) {
-                        continue; //TODO set clu set widget
+                        ((AccessWidgetValue)customWidgets.get(fieldType)).setValue(fieldValue);    
                     } else {
                         ruleFieldsData.set(QueryPath.parse(fieldType), fieldValue);
                     }
@@ -373,7 +403,8 @@ public class ReqCompEditWidget extends FlowPanel {
         //TODO save history        
     }
 
-    public void displayCustomWidget(Widget customWidget) {
+    public void displayCustomWidget(String widgetId, Widget customWidget) {
+        customWidgets.put(widgetId, customWidget);
         holdFieldsPanel.add(customWidget);
     }    
 

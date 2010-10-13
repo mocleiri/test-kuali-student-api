@@ -181,7 +181,7 @@ public class SubrulePreviewWidget extends FlowPanel {
         html.append(requirement);
 
         //we need to display clu set show/hide list widget if this req. component has a cluset
-        if ((clusetWidgets != null) && (reqComp != null) && RulesUtil.isCluSetWidget(reqComp.getType())) {
+        if ((clusetWidgets != null) && (reqComp != null)) {
             List<ReqCompFieldInfo> fieldInfos = reqComp.getReqCompFields();
             for (ReqCompFieldInfo fieldInfo : fieldInfos) {
                 if (RulesUtil.isCluSetWidget(fieldInfo.getType())) {

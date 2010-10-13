@@ -27,6 +27,7 @@ import org.kuali.student.common.ui.client.mvc.View;
 import org.kuali.student.common.ui.client.service.DataSaveResult;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
+import org.kuali.student.common.ui.client.widgets.rules.AccessWidgetValue;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
@@ -36,7 +37,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-public class BuildCourseSetWidget extends FlowPanel {
+public class BuildCourseSetWidget extends FlowPanel implements AccessWidgetValue {
 
     private CluSetRetriever cluSetRetriever;
     private CluSetEditorWidget cluSetEditorWidgetView;
@@ -84,15 +85,12 @@ public class BuildCourseSetWidget extends FlowPanel {
             }
         });
 
-        //show fields
-        // TODO testing remove when done testing
-        showCourseSet("CLUSET-NL-3");
-        //
         reqCompController.showView(BuildCourseView.VIEW);
         add(reqCompController);
     }
-    
-    public void showCourseSet(final String cluSetId) {
+
+    @Override
+    public void setValue(final String cluSetId) {
         if (cluSetId != null) {
             KSBlockingProgressIndicator.addTask(retrievingTask);
             cluSetRetriever.getData(cluSetId,  new Callback<Data>() {
@@ -110,7 +108,8 @@ public class BuildCourseSetWidget extends FlowPanel {
         }
     }
 
-    public void createCourseSetFromUserInput(final Callback<String> doneSaveCallback) {
+    @Override
+    public void getValue(final Callback<String> doneSaveCallback) {
         GWT.log("CluSetManagementController received save action request.", null);
         reqCompController.getCurrentView().updateModel();
         if(ruleFieldsData!=null){
@@ -146,7 +145,7 @@ public class BuildCourseSetWidget extends FlowPanel {
                         endCal.set(Calendar.HOUR_OF_DAY, 1);
                         endCal.set(Calendar.MINUTE, 0);
                         endCal.set(Calendar.SECOND, 0);
-                        CluSetHelper cluSetHelper = CluSetHelper.wrap((Data)ruleFieldsData.getRoot().get("cluset"));
+                        CluSetHelper cluSetHelper = CluSetHelper.wrap(ruleFieldsData.getRoot());
                         cluSetHelper.setType(cluSetType);
                         cluSetHelper.setName("AdHock");
                         cluSetHelper.setReusable(new Boolean(false));
@@ -158,14 +157,12 @@ public class BuildCourseSetWidget extends FlowPanel {
                             public void exec(DataSaveResult result) {
                                 // FIXME needs to check validation results and display messages if validation failed
                                 ruleFieldsData.setRoot(result.getValue());
-                                String cluSetId = 
-                                        CluSetHelper.wrap((Data)ruleFieldsData.getRoot().get("cluset")).getId();
-                                Window.alert("New Cluset Id is " + cluSetId);
+                                String cluSetId = CluSetHelper.wrap((Data)ruleFieldsData.getRoot()).getId();
                                 doneSaveCallback.exec(cluSetId);
                             }
                         });
                     }
-                    else{
+                    else {
                         Window.alert("Save failed.  Please check fields for errors.");
                     }
 

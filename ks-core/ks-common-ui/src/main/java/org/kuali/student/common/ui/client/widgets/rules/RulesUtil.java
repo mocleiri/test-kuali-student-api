@@ -212,9 +212,8 @@ public class RulesUtil {
         return clonedStatementTreeViewInfoInfo;
     }
     
-    public static boolean isCluSetWidget(String reqCompType) {
-        return ((reqCompType.toLowerCase().indexOf("cluset") > 0) ||
-                (reqCompType.toLowerCase().indexOf("courseset") > 0) ||
-                (reqCompType.toLowerCase().indexOf("programset") > 0));
+    public static boolean isCluSetWidget(String fieldType) {
+        return ((fieldType.toLowerCase().indexOf("course.cluSet".toLowerCase()) > 0) ||
+                (fieldType.toLowerCase().indexOf("program.cluSet".toLowerCase()) > 0));
     }
 }

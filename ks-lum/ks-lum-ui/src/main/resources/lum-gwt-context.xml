@@ -225,6 +225,7 @@
     <bean id="CourseRpcGwtServlet" class="org.kuali.student.lum.lu.ui.course.server.gwt.CourseRpcGwtServlet">
         <property name="courseService" ref="courseClient"/>
         <property name="dataService" ref="CourseDataService"/>
+        <property name="statementService" ref="statementServiceClient"/>          
     </bean>
 
     <bean id="CourseProposalRpcGwtServlet"

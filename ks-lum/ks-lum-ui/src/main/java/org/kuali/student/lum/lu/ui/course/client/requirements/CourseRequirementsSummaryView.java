@@ -1,20 +1,11 @@
 package org.kuali.student.lum.lu.ui.course.client.requirements;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.configurable.mvc.views.SectionView;
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
-import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.DataModel;
-import org.kuali.student.common.ui.client.mvc.Model;
-import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
-import org.kuali.student.common.ui.client.mvc.View;
+import org.kuali.student.common.ui.client.mvc.*;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSButtonAbstract;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
@@ -47,6 +38,7 @@ public class CourseRequirementsSummaryView extends VerticalSectionView {
     //view's widgets
     private FlowPanel layout = new FlowPanel();
     private ActionCancelGroup actionCancelButtons = new ActionCancelGroup(ButtonEnumerations.SaveCancelEnum.SAVE, ButtonEnumerations.SaveCancelEnum.CANCEL);
+    private Map<String, Widget> addButtonsList = new HashMap<String, Widget>();
 
     //view's data
     private CourseRequirementsViewController parentController;
@@ -145,6 +137,9 @@ public class CourseRequirementsSummaryView extends VerticalSectionView {
             StatementTypeInfo affectedStatementTypeInfo = rules.getStmtTypeInfo(rule.getType());
             SpanPanel reqPanel = perCourseRequisiteTypePanel.get(affectedStatementTypeInfo.getId());
 
+            //don't show 'add rule' button if we have one rule already
+            addButtonsList.get(rule.getType()).setVisible(false);
+
             //if this is a new rule then add it to the panel
             if (reqPanel.getWidgetCount() == 0) {
                 SubrulePreviewWidget newRulePreviewWidget = addCourseRequisite(reqPanel, rule);
@@ -219,14 +214,15 @@ public class CourseRequirementsSummaryView extends VerticalSectionView {
         ruleTypeDesc.addStyleName("KS-Course-Requisites-Preview-Rule-Type-Desc");
         layout.add(ruleTypeDesc);
 
-        //display "Add Rule" button if user is in 'edit' mode
-        if (!isReadOnly) {
+        //display "Add Rule" button if user is in 'edit' mode OR a rule is already defined
+        final String stmtId = stmtTypeInfo.getId();
+        if (!isReadOnly && rules.getCourseReqInfo(stmtId).isEmpty()) {
             KSButton addCourseReqButton = new KSButton("Add " + stmtTypeInfo.getName(), KSButtonAbstract.ButtonStyle.FORM_SMALL);
              addCourseReqButton.addClickHandler(new ClickHandler(){
                 public void onClick(ClickEvent event) {
                         final StatementTreeViewInfo newRule = new StatementTreeViewInfo();
                         newRule.setId(generateStatementTreeId());
-                        newRule.setType(stmtTypeInfo.getId());
+                        newRule.setType(stmtId);
                         RichTextInfo text = new RichTextInfo();
                         text.setPlain("");
                         newRule.setDesc(text);
@@ -240,6 +236,7 @@ public class CourseRequirementsSummaryView extends VerticalSectionView {
                         });
                     }
                 });
+            addButtonsList.put(stmtId, addCourseReqButton);
             layout.add(addCourseReqButton);
             VerticalPanel spacer = new VerticalPanel();
             spacer.addStyleName("KS-Course-Requisites-Button-Spacer");            
@@ -281,6 +278,7 @@ public class CourseRequirementsSummaryView extends VerticalSectionView {
                 //remove rule from display and storage
                 rules.deleteRule(internalProgReqID);
                 requirementsPanel.remove(subRuleWidget);
+                addButtonsList.get(stmtTypeId).setVisible(true);
             }
         });		   
     }
@@ -332,12 +330,8 @@ public class CourseRequirementsSummaryView extends VerticalSectionView {
             }
         });
     }
+    
     static public String generateStatementTreeId() {
         return (NEW_STMT_TREE_ID + Integer.toString(tempProgReqInfoID++));
-    }
-
-    public void setRules(CourseRequirementsDataModel rules) {
-        this.rules = rules;
-        this.rules.setInitialized(false);
     }
 }

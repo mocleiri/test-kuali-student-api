@@ -28,9 +28,9 @@ import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumeration
 import org.kuali.student.common.ui.client.widgets.field.layout.button.ActionCancelGroup;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
-import org.kuali.student.common.ui.client.widgets.rules.RulesUtil;
 import org.kuali.student.common.ui.client.widgets.rules.ReqCompEditWidget;
 import org.kuali.student.common.ui.client.widgets.rules.RuleManageWidget;
+import org.kuali.student.common.ui.client.widgets.rules.RulesUtil;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.core.statement.dto.ReqComponentTypeInfo;
@@ -344,8 +344,11 @@ public class CourseRequirementsManageView extends VerticalSectionView {
     };
 
     protected Callback<String> retrieveCustomWidgetCallback = new Callback<String>(){
-        public void exec(final String widgetId) {
-            editReqCompWidget.displayCustomWidget(new BuildCourseSetWidget(new CluSetRetrieverImpl(), "kuali.cluSet.type.creditCourse"));
+        public void exec(final String fieldType) {
+
+            if (RulesUtil.isCluSetWidget(fieldType)) {
+                editReqCompWidget.displayCustomWidget(fieldType, new BuildCourseSetWidget(new CluSetRetrieverImpl(), "kuali.cluSet.type.creditCourse"));
+            }
         }
     };
 
