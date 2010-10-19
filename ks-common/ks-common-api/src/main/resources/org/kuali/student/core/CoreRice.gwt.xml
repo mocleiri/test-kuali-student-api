@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><module>
 <!--
 
     Copyright 2010 The Kuali Foundation Licensed under the
@@ -16,13 +15,11 @@
 
 -->
 
-
-  <inherits name="org.kuali.student.common.ui.CommonUI"/>
-  <inherits name='org.kuali.student.core.Core'/>  
-  <inherits name='org.kuali.student.core.search.Search'/>  
-  
-  <inherits name='org.kuali.student.lum.lu.typekey.Typekey'/>
-  <inherits name='org.kuali.student.core.proposal.Proposal'/>
-  <inherits name='org.kuali.student.lum.lo.Lo'/>
-  <inherits name='org.kuali.student.lum.lu.Lu'/>
+<module>
+	<inherits name='com.google.gwt.user.User' />
+	<source path='rice' >
+		<include name="**/*StudentIdentityConstants.java"/>
+		<include name="**/*StudentWorkflowConstants.java"/>
+		<include name="**/*PermissionType.java"/>
+	</source>
 </module>
