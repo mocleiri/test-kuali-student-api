@@ -282,6 +282,21 @@
 		<search:desc>Lu State</search:desc>
 		<search:dataType>string</search:dataType>
 	</search:resultColumn>
+	
+	<search:resultColumn id="lu.resultColumn.luOptionalExpFirstAtp" parent="lu.resultColumn.luOptionalExpFirstAtp-parent"/>
+	<search:resultColumn id="lu.resultColumn.luOptionalExpFirstAtp-parent"  abstract="true">
+		<search:name>Expected First Atp</search:name>
+		<search:desc>Expected First Atp</search:desc>
+		<search:dataType>string</search:dataType>
+	</search:resultColumn>
+
+	<search:resultColumn id="lu.resultColumn.luOptionalLastAdmitAtp" parent="lu.resultColumn.luOptionalLastAdmitAtp-parent"/>
+	<search:resultColumn id="lu.resultColumn.luOptionalLastAdmitAtp-parent"  abstract="true">
+		<search:name>Last Admit Atp</search:name>
+		<search:desc>Last Admit Atp</search:desc>
+		<search:dataType>string</search:dataType>
+	</search:resultColumn>
+
 	<search:resultColumn id="lu.resultColumn.luOptionalType" parent="lu.resultColumn.luOptionalType-parent"/>
 	<search:resultColumn id="lu.resultColumn.luOptionalType-parent"  abstract="true">
 		<search:name>Lu Type</search:name>
@@ -830,6 +845,8 @@
 			<ref bean="lu.resultColumn.luOptionalDescr"/>
 			<ref bean="lu.resultColumn.luOptionalStudySubjectArea"/>
 			<ref bean="lu.resultColumn.luOptionalState"/>
+			<ref bean="lu.resultColumn.luOptionalExpFirstAtp"/>
+			<ref bean="lu.resultColumn.luOptionalLastAdmitAtp"/>
 			<ref bean="lu.resultColumn.luOptionalVersionedFromId"/>
 			<ref bean="lu.resultColumn.luOptionalVersionStartDate"/>
 			<ref bean="lu.resultColumn.luOptionalVersionEndDate"/>
@@ -1184,7 +1201,7 @@
 				<entry key="lu.search.clu.versions">
 					<value>SELECT clu.id, officialIdentifier.shortName, officialIdentifier.longName,
                     officialIdentifier.code, officialIdentifier.level,
-                    cludesc.plain, clu.studySubjectArea, clu.state,
+                    cludesc.plain, clu.studySubjectArea, clu.state, clu.expectedFirstAtp, clu.lastAdmitAtp,
                     clu.version.versionedFromId, clu.version.currentVersionStart, clu.version.currentVersionEnd, clu.version.sequenceNumber
                     FROM Clu clu
                     LEFT JOIN clu.officialIdentifier officialIdentifier

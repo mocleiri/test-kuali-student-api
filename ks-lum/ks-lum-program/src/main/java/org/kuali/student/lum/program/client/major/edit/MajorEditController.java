@@ -15,6 +15,7 @@ import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSButtonAbstract;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
 import org.kuali.student.common.ui.shared.IdAttributes;
+import org.kuali.student.common.ui.shared.IdAttributes.IdType;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.QueryPath;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
@@ -23,7 +24,16 @@ import org.kuali.student.lum.program.client.ProgramConstants;
 import org.kuali.student.lum.program.client.ProgramRegistry;
 import org.kuali.student.lum.program.client.ProgramSections;
 import org.kuali.student.lum.program.client.ProgramUtils;
-import org.kuali.student.lum.program.client.events.*;
+import org.kuali.student.lum.program.client.events.AddSpecializationEvent;
+import org.kuali.student.lum.program.client.events.AfterSaveEvent;
+import org.kuali.student.lum.program.client.events.ChangeViewEvent;
+import org.kuali.student.lum.program.client.events.MetadataLoadedEvent;
+import org.kuali.student.lum.program.client.events.ModelLoadedEvent;
+import org.kuali.student.lum.program.client.events.SpecializationCreatedEvent;
+import org.kuali.student.lum.program.client.events.SpecializationSaveEvent;
+import org.kuali.student.lum.program.client.events.StoreRequirementIDsEvent;
+import org.kuali.student.lum.program.client.events.UpdateEvent;
+import org.kuali.student.lum.program.client.events.ValidationFailedEvent;
 import org.kuali.student.lum.program.client.major.MajorController;
 import org.kuali.student.lum.program.client.properties.ProgramProperties;
 import org.kuali.student.lum.program.client.rpc.AbstractCallback;
@@ -203,7 +213,44 @@ public class MajorEditController extends MajorController {
         }
     }
 
-    private void doSave(final Callback<Boolean> okCallback) {
+    
+    @Override
+	protected void loadModel(ModelRequestCallback<DataModel> callback) {
+    	ViewContext viewContext = getViewContext();
+    	if (viewContext.getIdType() == IdType.COPY_OF_OBJECT_ID){
+    		createNewVersionAndLoadModel(callback, viewContext);
+    	} else {
+    		super.loadModel(callback);
+    	}
+	}
+    
+    protected void createNewVersionAndLoadModel(final ModelRequestCallback<DataModel> callback, final ViewContext viewContext){        
+        Data data = new Data();
+    	Data versionData = new Data();
+        versionData.set(new Data.StringKey("versionIndId"), getViewContext().getId());
+        versionData.set(new Data.StringKey("versionComment"), "Major Disicpline Version");
+        data.set(new Data.StringKey("versionInfo"), versionData);
+    	
+        programRemoteService.saveData(data, new AbstractCallback<DataSaveResult>(ProgramProperties.get().common_retrievingData()) {
+			public void onSuccess(DataSaveResult result) {                
+				super.onSuccess(result);
+				viewContext.setIdType(IdType.OBJECT_ID);
+                programModel.setRoot(result.getValue());
+                setHeaderTitle();
+                setStatus();
+                callback.onModelReady(programModel);
+                    eventBus.fireEvent(new ModelLoadedEvent(programModel));
+			}
+			
+			public void onFailure(Throwable caught) {
+                super.onFailure(caught);
+                callback.onRequestFail(caught);
+			}
+		});
+        
+    }
+
+	private void doSave(final Callback<Boolean> okCallback) {
         requestModel(new ModelRequestCallback<DataModel>() {
             @Override
             public void onModelReady(DataModel model) {

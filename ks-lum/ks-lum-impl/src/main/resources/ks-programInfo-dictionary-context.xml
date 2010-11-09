@@ -56,11 +56,13 @@
     <ref bean="majorDisciplineInfo.unitsStudentOversight"/>
     <ref bean="majorDisciplineInfo.unitsDeployment"/>
     <ref bean="majorDisciplineInfo.unitsFinancialResources"/>
-    <ref bean="majorDisciplineInfo.unitsFinancialControl"/>
+    <ref bean="majorDisciplineInfo.unitsFinancialControl"/>    
 
     <ref bean="majorDisciplineInfo.type"/>
     <ref bean="majorDisciplineInfo.state"/>
     <ref bean="majorDisciplineInfo.id"/>
+    
+    <ref bean="majorDisciplineInfo.versionInfo"/>
 
     <!-- Dynamic Attributes -->
     <ref bean="majorDisciplineInfo.lastReviewDate"/>
@@ -68,6 +70,8 @@
     <ref bean="majorDisciplineInfo.endInstAdmitTerm"/>
     <ref bean="majorDisciplineInfo.durationNotes"/>
     <ref bean="majorDisciplineInfo.coreFaculties"/>
+    
+    <ref bean="majorDisciplineInfo.searchProgramVersions"/>
    </list>
   </property>
   <property name="hasMetaData" value="true"/>
@@ -892,6 +896,12 @@
  </bean>
  <bean id="majorDisciplineInfo.id" parent="majorDisciplineInfo.id-parent"/>
 
+ <bean id="majorDisciplineInfo.versionInfo-parent" abstract="true" parent="baseComplex">
+  <property name="name" value="versionInfo"/>
+  <property name="dataObjectStructure" ref="org.kuali.student.core.versionmanagement.dto.VersionInfo"/>
+ </bean>
+ <bean id="majorDisciplineInfo.versionInfo" parent="majorDisciplineInfo.versionInfo-parent"/>
+
  <!-- begin ProgramVariationInfo-->
     <!-- ProgramVariationInfo-->
  <bean id="org.kuali.student.lum.program.dto.ProgramVariationInfo-parent" abstract="true"
@@ -1216,6 +1226,8 @@
  </bean>
  <bean id="majorDisciplineInfo.coreFaculties" parent="majorDisciplineInfo.coreFaculties-parent"/>
 
+ <bean id="majorDisciplineInfo.searchProgramVersions" parent="freestanding.search.programVersions"/>
+ 
  <bean id="programVariationInfo.coreFaculties-parent" abstract="true" parent="baseStringLong">
   <property name="name" value="coreFaculties"/>
   <property name="dynamic" value="true"/>

@@ -448,13 +448,22 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String program_menu_sections_viewAll();
 
   /**
-   * Translated "Modify".
+   * Translated "Modify (no version)".
    * 
-   * @return translated "Modify"
+   * @return translated "Modify (no version)"
    */
-  @DefaultMessage("Modify")
+  @DefaultMessage("Modify (no version)")
   @Key("programAction.modify")
   String programAction_modify();
+
+  /**
+   * Translated "Modify (with new version)".
+   * 
+   * @return translated "Modify (with new version)"
+   */
+  @DefaultMessage("Modify (with new version)")
+  @Key("programAction.modifyVersion")
+  String programAction_modifyVersion();
 
   /**
    * Translated "Program Actions: Modify, Retire...".
@@ -824,6 +833,15 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("HISTORY")
   @Key("sideBar.history")
   String sideBar_history();
+
+  /**
+   * Translated "View version history".
+   * 
+   * @return translated "View version histroy"
+   */
+  @DefaultMessage("View version history")
+  @Key("sideBar.viewHistory")
+  String sideBar_viewHistory();
 
   /**
    * Translated "Last review date:".

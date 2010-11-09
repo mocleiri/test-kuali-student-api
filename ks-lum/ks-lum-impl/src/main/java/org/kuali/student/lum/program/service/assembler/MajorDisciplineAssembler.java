@@ -72,6 +72,7 @@ public class MajorDisciplineAssembler implements BOAssembler<MajorDisciplineInfo
         mdInfo.setAccreditingAgencies(clu.getAccreditations());
         mdInfo.setEffectiveDate(clu.getEffectiveDate());
         mdInfo.setDescr(clu.getDescr());
+        mdInfo.setVersionInfo(clu.getVersionInfo());
 
         if (!shallowBuild) {
         	programAssemblerUtils.assembleRequirements(clu, mdInfo);

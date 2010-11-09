@@ -44,6 +44,7 @@ public class CurriculumHomeController extends LayoutController {
         PROGRAM_VIEW,
         PROGRAM_EDIT,
         PROGRAM_CREATE,
+        PROGRAM_VERSIONS,
         CLU_SETS,
         VARIATION_VIEW,
         VARIATION_EDIT,
@@ -114,6 +115,14 @@ public class CurriculumHomeController extends LayoutController {
                     @Override
                     public void onSuccess() {
                         callback.exec(majorManager.getProgramEditController());
+                    }
+                });
+                break;
+            case PROGRAM_VERSIONS:
+                GWT.runAsync(new RunAsyncGetView() {
+                    @Override
+                    public void onSuccess() {
+                        callback.exec(majorManager.getProgramVersionsController());
                     }
                 });
                 break;

@@ -8,6 +8,7 @@ import org.kuali.student.lum.program.client.major.edit.MajorEditController;
 import org.kuali.student.lum.program.client.major.view.MajorViewController;
 import org.kuali.student.lum.program.client.variation.edit.VariationEditController;
 import org.kuali.student.lum.program.client.variation.view.VariationViewController;
+import org.kuali.student.lum.program.client.versions.ProgramVersionsController;
 
 import com.google.gwt.event.shared.HandlerManager;
 
@@ -23,6 +24,8 @@ public class MajorManager {
     private VariationViewController variationViewController;
 
     private VariationEditController variationEditController;
+    
+    private ProgramVersionsController programVersionsController;
 
     protected DataModel programModel;
 
@@ -41,7 +44,6 @@ public class MajorManager {
         return majorViewController;
     }
 
-
     public VariationViewController getVariationViewController() {
         DataModel variationModel = new DataModel();
         variationModel.setDefinition(programModel.getDefinition());
@@ -55,7 +57,7 @@ public class MajorManager {
         variationModel.setDefinition(programModel.getDefinition());
         variationModel.setRoot(ProgramRegistry.getData());
         if (variationEditController == null) {
-            variationEditController = new VariationEditController(variationModel, viewContext, eventBus, majorEditController);
+        variationEditController = new VariationEditController(variationModel, viewContext, eventBus, majorEditController);
         }
         return variationEditController;
     }
@@ -64,8 +66,15 @@ public class MajorManager {
         programModel.resetRoot();
         return getMajorEditController();
     }
+    
+    public ProgramVersionsController getProgramVersionsController() {
+    	if (programVersionsController == null){
+    		programVersionsController = new ProgramVersionsController(programModel, viewContext, eventBus);
+    	}
+		return programVersionsController;
+	}
 
-    public static HandlerManager getEventBus() {
+	public static HandlerManager getEventBus() {
         return eventBus;
     }
 
