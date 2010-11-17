@@ -35,9 +35,7 @@ import org.kuali.student.common.ui.client.util.WindowTitleUtils;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
-import org.kuali.student.common.ui.client.widgets.StylishDropDown;
 import org.kuali.student.common.ui.client.widgets.KSButtonAbstract.ButtonStyle;
-import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
 import org.kuali.student.common.ui.shared.IdAttributes.IdType;
@@ -47,12 +45,12 @@ import org.kuali.student.core.assembly.data.QueryPath;
 import org.kuali.student.core.rice.StudentIdentityConstants;
 import org.kuali.student.core.rice.authorization.PermissionType;
 import org.kuali.student.core.statement.dto.StatementTypeInfo;
+import org.kuali.student.lum.common.client.helpers.RecentlyViewedHelper;
 import org.kuali.student.lum.common.client.lu.LUUIConstants;
 import org.kuali.student.lum.lu.assembly.data.client.LuData;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseConstants;
 import org.kuali.student.lum.lu.ui.course.client.configuration.CourseConfigurer;
 import org.kuali.student.lum.lu.ui.course.client.configuration.ViewCourseConfigurer;
-import org.kuali.student.lum.lu.ui.course.client.helpers.RecentlyViewedHelper;
 import org.kuali.student.lum.lu.ui.course.client.requirements.CourseRequirementsDataModel;
 import org.kuali.student.lum.lu.ui.course.client.service.CourseRpcService;
 import org.kuali.student.lum.lu.ui.course.client.service.CourseRpcServiceAsync;
@@ -87,11 +85,11 @@ public class ViewCourseController extends TabMenuController implements DocumentL
     private boolean initialized = false;
     CourseRpcServiceAsync rpcServiceAsync = GWT.create(CourseRpcService.class);
     
-	private BlockingTask loadDataTask = new BlockingTask("Retrieving Data....");
-	private BlockingTask initTask = new BlockingTask("Initializing....");
-	private KSLabel statusLabel = new KSLabel("");
+	private final BlockingTask loadDataTask = new BlockingTask("Retrieving Data....");
+	private final BlockingTask initTask = new BlockingTask("Initializing....");
+	private final KSLabel statusLabel = new KSLabel("");
 	
-	private List<CourseWorkflowActionList> actionDropDownWidgets = new ArrayList<CourseWorkflowActionList>();
+	private final List<CourseWorkflowActionList> actionDropDownWidgets = new ArrayList<CourseWorkflowActionList>();
 	            
     public ViewCourseController(Enum<?> viewType){
     	super(CourseProposalController.class.getName());
@@ -183,7 +181,8 @@ public class ViewCourseController extends TabMenuController implements DocumentL
     		
         	rpcServiceAsync.getMetadata("", null, new KSAsyncCallback<Metadata>(){
 
-	        	public void handleFailure(Throwable caught) {
+	        	@Override
+                public void handleFailure(Throwable caught) {
 	        		initialized = false;
                 	onReadyCallback.exec(false);
                 	KSBlockingProgressIndicator.removeTask(initTask);
