@@ -15,8 +15,6 @@
 
 package org.kuali.student.lum.program.server;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.kuali.student.common.ui.client.widgets.rules.ReqComponentInfoUi;
@@ -25,139 +23,74 @@ import org.kuali.student.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.core.statement.dto.ReqComponentTypeInfo;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.core.statement.dto.StatementTypeInfo;
-import org.kuali.student.core.statement.service.StatementService;
 import org.kuali.student.core.versionmanagement.dto.VersionDisplayInfo;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.service.LuService;
 import org.kuali.student.lum.program.client.rpc.StatementRpcService;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.apache.log4j.Logger;
-
 public class StatementRpcServlet extends BaseRpcGwtServletAbstract<LuService> implements StatementRpcService {
 
-    final static Logger LOG = Logger.getLogger(StatementRpcServlet.class);
-    
-    private StatementService statementService;
-    private LuService luService;
-    
-    private static final long serialVersionUID = 822326113643828855L;
+	private static final long serialVersionUID = 1L;
+	private StatementRpcService statmentDataService;
 
-    public List<StatementTypeInfo> getStatementTypesForStatementTypeForCourse(String statementTypeKey) throws Exception {
+	public void setStatmentDataService(StatementRpcService statmentDataService) {
+		this.statmentDataService = statmentDataService;
+	}
 
+	@Override
+	public List<StatementTypeInfo> getStatementTypesForStatementTypeForCourse(
+			String statementTypeKey) throws Exception {
+		return statmentDataService
+				.getStatementTypesForStatementTypeForCourse(statementTypeKey);
+	}
 
-        String[] desiredSequenceEnrollmentElig = {"kuali.statement.type.course.academicReadiness.studentEligibilityPrereq",
-                                                    "kuali.statement.type.course.academicReadiness.coreq",
-                                                    "kuali.statement.type.course.recommendedPreparation",
-                                                    "kuali.statement.type.course.academicReadiness.antireq"};
+	@Override
+	public List<StatementTypeInfo> getStatementTypesForStatementType(
+			String statementTypeKey) throws Exception {
+		return statmentDataService
+				.getStatementTypesForStatementType(statementTypeKey);
+	}
 
-        String[] desiredSequenceCreditConstraints = {"kuali.statement.type.course.credit.restriction",
-                                                        "kuali.statement.type.course.credit.repeatable"};        
+	@Override
+	public List<ReqComponentTypeInfo> getReqComponentTypesForStatementType(
+			String luStatementTypeKey) throws Exception {
+		return statmentDataService
+				.getReqComponentTypesForStatementType(luStatementTypeKey);
+	}
 
-        List<StatementTypeInfo> statementTypesSorted = new ArrayList<StatementTypeInfo>();
+	@Override
+	public String translateReqComponentToNL(ReqComponentInfo reqComponentInfo,
+			String nlUsageTypeKey, String language) throws Exception {
+		return statmentDataService.translateReqComponentToNL(reqComponentInfo,
+				nlUsageTypeKey, language);
+	}
 
-        List<String> statementTypeNames = statementService.getStatementTypesForStatementType(statementTypeKey);
+	@Override
+	public String translateStatementTreeViewToNL(
+			StatementTreeViewInfo statementTreeViewInfo, String nlUsageTypeKey,
+			String language) throws Exception {
+		return statmentDataService.translateStatementTreeViewToNL(
+				statementTreeViewInfo, nlUsageTypeKey, language);
+	}
 
-        for (String statementTypeName : statementTypeNames) {
-            StatementTypeInfo stmtInfo = statementService.getStatementType(statementTypeName);
+	@Override
+	public List<String> translateReqComponentToNLs(
+			ReqComponentInfoUi reqComponentInfo, String[] nlUsageTypeKeys,
+			String language) throws Exception {
+		return statmentDataService.translateReqComponentToNLs(reqComponentInfo,
+				nlUsageTypeKeys, language);
+	}
 
-            statementTypesSorted.add(statementService.getStatementType(statementTypeName));
+	@Override
+	public CluInfo getClu(String cluId) throws Exception {
+		return statmentDataService.getClu(cluId);
+	}
 
-            //true if we found sub statement type
-            List<String> subStmtInfos = stmtInfo.getAllowedStatementTypes();
-            List<StatementTypeInfo> statementTypesOrig = new ArrayList<StatementTypeInfo>();
-            if ((subStmtInfos != null) && !subStmtInfos.isEmpty()) {
-                List<String> subStatementTypeNames = statementService.getStatementTypesForStatementType(statementTypeName);
-                for (String subStatementTypeName : subStatementTypeNames) {
-                    statementTypesOrig.add(statementService.getStatementType(subStatementTypeName));
-                }
-                if (statementTypeName.contains("kuali.statement.type.course.enrollmentEligibility")) {
-                    for (String stmtType : desiredSequenceEnrollmentElig) {
-                        Iterator<StatementTypeInfo> iter = statementTypesOrig.iterator();
-                        while (iter.hasNext()) {
-                            StatementTypeInfo stmtT = iter.next();
-                            if (stmtT.getId().equals(stmtType)) {
-                                statementTypesSorted.add(stmtT);
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (statementTypeName.contains("kuali.statement.type.course.creditConstraints")) {
-                    for (String stmtType : desiredSequenceCreditConstraints) {
-                        Iterator<StatementTypeInfo> iter = statementTypesOrig.iterator();
-                        while (iter.hasNext()) {
-                            StatementTypeInfo stmtT = iter.next();
-                            if (stmtT.getId().equals(stmtType)) {
-                                statementTypesSorted.add(stmtT);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }            
-        }
-        
-        return statementTypesSorted;
-    }
-    
-    @Override
-    public List<StatementTypeInfo> getStatementTypesForStatementType(String statementTypeKey) throws Exception {
-        List<String> statementTypeNames = statementService.getStatementTypesForStatementType(statementTypeKey);
-        List<StatementTypeInfo> statementTypes = new ArrayList<StatementTypeInfo>();
-        for (String statementTypeName : statementTypeNames) {
-            statementTypes.add(statementService.getStatementType(statementTypeName));
-        }
-        return statementTypes;
-    }
-    
-    public List<ReqComponentTypeInfo> getReqComponentTypesForStatementType(String luStatementTypeKey) throws Exception {
+	@Override
+	public VersionDisplayInfo getCurrentVersion(String refObjectTypeURI,
+			String refObjectId) throws Exception {
+		return statmentDataService.getCurrentVersion(refObjectTypeURI,
+				refObjectId);
+	}
 
-        List<ReqComponentTypeInfo> reqComponentTypeInfoList;
-        try { 
-            reqComponentTypeInfoList = statementService.getReqComponentTypesForStatementType(luStatementTypeKey);
-        } catch (Exception ex) {
-            LOG.error(ex);
-            throw new Exception("Unable to find Requirement Component Types based on LU Statement Type Key:" + luStatementTypeKey, ex);
-        }
-        
-        return reqComponentTypeInfoList;
-    }
-
-    @Override
-    public String translateStatementTreeViewToNL(StatementTreeViewInfo statementTreeViewInfo, String nlUsageTypeKey, String language) throws Exception {
-        return statementService.translateStatementTreeViewToNL(statementTreeViewInfo, nlUsageTypeKey, language);
-    }
-
-    @Override
-    public String translateReqComponentToNL(ReqComponentInfo reqComponentInfo, String nlUsageTypeKey, String language) throws Exception {
-        return statementService.translateReqComponentToNL(reqComponentInfo, nlUsageTypeKey, language);
-    }
-
-    @Override
-    public List<String> translateReqComponentToNLs(ReqComponentInfoUi reqComponentInfo, String[] nlUsageTypeKeys, String language) throws Exception {
-    	List<String> nls = new ArrayList<String>(nlUsageTypeKeys.length);
-    	for (String typeKey : nlUsageTypeKeys) {
-    		nls.add(statementService.translateReqComponentToNL(reqComponentInfo, typeKey, language));
-    	}
-    	return nls;
-    }
-
-    @Override
-    public CluInfo getClu(String cluId) throws Exception {
-        return luService.getClu(cluId);
-    }
-
-    @Override
-    public VersionDisplayInfo getCurrentVersion(String refObjectTypeURI, String refObjectId) throws Exception {
-        return luService.getCurrentVersion(refObjectTypeURI, refObjectId);
-    }
-
-    public void setStatementService(StatementService statementService) {
-        this.statementService = statementService;
-    }
-
-    public void setLuService(LuService luService) {
-        this.luService = luService;
-    }
 }

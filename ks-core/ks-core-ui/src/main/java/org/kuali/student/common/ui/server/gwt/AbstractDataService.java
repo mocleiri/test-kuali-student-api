@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.rice.kim.service.PermissionService;
+import org.kuali.rice.kim.service.IdentityManagementService;
 import org.kuali.student.common.ui.client.service.DataSaveResult;
 import org.kuali.student.common.ui.shared.IdAttributes;
 import org.kuali.student.common.util.security.SecurityUtils;
@@ -16,8 +16,8 @@ import org.kuali.student.core.assembly.transform.AuthorizationFilter;
 import org.kuali.student.core.assembly.transform.MetadataFilter;
 import org.kuali.student.core.assembly.transform.ProposalWorkflowFilter;
 import org.kuali.student.core.assembly.transform.TransformFilter;
-import org.kuali.student.core.assembly.transform.TransformationManager;
 import org.kuali.student.core.assembly.transform.TransformFilter.TransformFilterAction;
+import org.kuali.student.core.assembly.transform.TransformationManager;
 import org.kuali.student.core.dto.DtoConstants;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
 import org.kuali.student.core.exceptions.DoesNotExistException;
@@ -28,7 +28,7 @@ import org.kuali.student.core.rice.StudentIdentityConstants;
 import org.kuali.student.core.rice.authorization.PermissionType;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
+@Transactional(readOnly=true,noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
 public abstract class AbstractDataService implements DataService{
 
 	private static final long serialVersionUID = 1L;
@@ -37,7 +37,7 @@ public abstract class AbstractDataService implements DataService{
 
 	private TransformationManager transformationManager;
 	
-	private PermissionService permissionService;
+	private IdentityManagementService permissionService;
 
     //TODO: why do we have this reference in the base class????
 	private ProposalService proposalService;
@@ -110,6 +110,7 @@ public abstract class AbstractDataService implements DataService{
 	}
 
 	@Override
+	@Transactional(readOnly=false)
 	public DataSaveResult saveData(Data data) throws OperationFailedException, DataValidationErrorException {
 		Map<String, Object> filterProperties = getDefaultFilterProperties();
 		filterProperties.put(TransformFilter.FILTER_ACTION, TransformFilterAction.SAVE);
@@ -214,11 +215,11 @@ public abstract class AbstractDataService implements DataService{
 		this.transformationManager = transformationManager;
 	}
 
-	public PermissionService getPermissionService() {
+	public IdentityManagementService getPermissionService() {
 		return permissionService;
 	}
 
-	public void setPermissionService(PermissionService permissionService) {
+	public void setPermissionService(IdentityManagementService permissionService) {
 		this.permissionService = permissionService;
 	}
 	

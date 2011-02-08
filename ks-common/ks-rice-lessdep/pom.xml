@@ -205,6 +205,16 @@
           <groupId>org.mortbay.jetty</groupId>
           <artifactId>jetty</artifactId>
         </exclusion>
+        
+		<!-- JOTM -->        
+        <exclusion>                                 
+          <groupId>xapool</groupId>                 
+          <artifactId>xapool</artifactId>           
+        </exclusion>                                
+        <exclusion>                                 
+          <groupId>jotm</groupId>                   
+          <artifactId>jotm</artifactId>             
+        </exclusion> 
       </exclusions>
     </dependency>
   </dependencies>
