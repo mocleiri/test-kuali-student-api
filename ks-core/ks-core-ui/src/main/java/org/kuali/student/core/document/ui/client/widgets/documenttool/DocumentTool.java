@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.widgets.documenttool;
+package org.kuali.student.core.document.ui.client.widgets.documenttool;
 
 import java.util.List;
 import java.util.Map;

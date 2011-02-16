@@ -19,8 +19,6 @@ import org.kuali.student.common.ui.client.mvc.*;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSButtonAbstract.ButtonStyle;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
-import org.kuali.student.common.ui.client.widgets.documenttool.DocumentList;
-import org.kuali.student.common.ui.client.widgets.documenttool.DocumentListBinding;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.MessageKeyInfo;
 import org.kuali.student.common.ui.client.widgets.menus.KSListPanel;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
@@ -30,6 +28,8 @@ import org.kuali.student.common.ui.client.widgets.table.summary.ShowRowCondition
 import org.kuali.student.common.ui.client.widgets.table.summary.SummaryTableFieldBlock;
 import org.kuali.student.common.ui.client.widgets.table.summary.SummaryTableFieldRow;
 import org.kuali.student.common.ui.client.widgets.table.summary.SummaryTableSection;
+import org.kuali.student.core.document.ui.client.widgets.documenttool.DocumentList;
+import org.kuali.student.core.document.ui.client.widgets.documenttool.DocumentListBinding;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.core.statement.dto.StatementTypeInfo;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;

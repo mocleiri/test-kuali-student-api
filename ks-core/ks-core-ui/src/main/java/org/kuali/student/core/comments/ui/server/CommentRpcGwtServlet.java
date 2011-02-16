@@ -25,7 +25,7 @@ import org.kuali.student.common.ui.server.gwt.BaseRpcGwtServletAbstract;
 import org.kuali.student.core.comment.dto.CommentInfo;
 import org.kuali.student.core.comment.dto.CommentTypeInfo;
 import org.kuali.student.core.comment.service.CommentService;
-import org.kuali.student.core.document.ui.client.service.CommentRpcService;
+import org.kuali.student.core.comments.ui.client.service.CommentRpcService;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.rice.StudentIdentityConstants;
 import org.kuali.student.core.rice.authorization.PermissionType;

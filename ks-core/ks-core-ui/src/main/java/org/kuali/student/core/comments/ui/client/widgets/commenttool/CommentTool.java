@@ -27,8 +27,8 @@ import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumeration
 import org.kuali.student.common.ui.client.widgets.dialog.ConfirmationDialog;
 import org.kuali.student.common.ui.client.widgets.layout.VerticalFlowPanel;
 import org.kuali.student.core.comment.dto.CommentInfo;
-import org.kuali.student.core.document.ui.client.service.CommentRpcService;
-import org.kuali.student.core.document.ui.client.service.CommentRpcServiceAsync;
+import org.kuali.student.core.comments.ui.client.service.CommentRpcService;
+import org.kuali.student.core.comments.ui.client.service.CommentRpcServiceAsync;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.dto.DtoConstants.DtoState;
