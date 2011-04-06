@@ -8,6 +8,7 @@ import org.kuali.student.common.ui.client.mvc.View;
 import org.kuali.student.common.ui.client.util.WindowTitleUtils;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.SpanPanel;
 import org.kuali.student.lum.common.client.configuration.LUMViews;
+import org.kuali.student.lum.lu.ui.browseprogram.client.controllers.BrowseProgramController;
 import org.kuali.student.lum.lu.ui.course.client.controllers.CourseProposalController;
 import org.kuali.student.lum.lu.ui.course.client.controllers.ViewCourseParentController;
 import org.kuali.student.lum.lu.ui.course.client.views.CategoryManagementView;
@@ -60,6 +61,7 @@ public class CurriculumHomeController extends LayoutController {
     private LayoutController manageCluSetsController;
     private LayoutController browseCatalogController;
     private LayoutController dependencyAnalysisController;
+    private LayoutController browseProgramController;
     private MajorManager majorManager = new MajorManager();
     private CredentialManager credentialManager = new CredentialManager();
     private CoreManager coreManager = new CoreManager();
@@ -266,6 +268,14 @@ public class CurriculumHomeController extends LayoutController {
                     }
                 });
                 break;
+            case BROWSE_PROGRAM:
+                GWT.runAsync(new RunAsyncGetView() {
+                    @Override
+                    public void onSuccess() {
+                        callback.exec(getBrowseProgramController());
+                    }
+                });
+                break;
             default:
                 callback.exec(home);
         }
@@ -302,7 +312,12 @@ public class CurriculumHomeController extends LayoutController {
     	dependencyAnalysisController = new DependencyAnalysisController("DependencyAnalaysis");
         return dependencyAnalysisController;
     }
-
+    
+    private LayoutController getBrowseProgramController() {
+    	browseProgramController = new BrowseProgramController("BrowseProgram");
+        return browseProgramController;
+    }
+    
     @Override
     protected void hideView(View view) {
         ApplicationController.getApplicationViewContainer().clear();

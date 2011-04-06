@@ -124,6 +124,8 @@
 			<ref bean="lu.resultColumn.resultComponentId"/>
 			<ref bean="lu.resultColumn.luOptionalAdminOrg"/>
 			<ref bean="lu.resultColumn.variationId"/>
+			<ref bean="lu.resultColumn.luOptionalCampusLocation"/>
+			<ref bean="lu.resultColumn.cluOfficialIdentifier.level"/>
 		</search:resultColumns>
 	</search:searchResultTypeInfo>
 
@@ -474,7 +476,14 @@
 		<search:desc>Department</search:desc>
 		<search:dataType>string</search:dataType>
 	</search:resultColumn>
-
+	
+	<search:resultColumn id="lu.resultColumn.luOptionalCampusLocation" parent="lu.resultColumn.luOptionalCampusLocation-parent"/>
+	<search:resultColumn id="lu.resultColumn.luOptionalCampusLocation-parent"  abstract="true">
+		<search:name>Campus Location</search:name>
+		<search:desc>Campus Location</search:desc>
+		<search:dataType>string</search:dataType>
+	</search:resultColumn>
+	
 	<search:resultColumn id="lu.resultColumn.luOptionalVersionIndId" parent="lu.resultColumn.luOptionalVersionIndId-parent"/>
 	<search:resultColumn id="lu.resultColumn.luOptionalVersionIndId-parent"  abstract="true">
 		<search:name>VersionIndId</search:name>
@@ -696,6 +705,13 @@
 	<search:resultColumn id="lu.resultColumn.cluOfficialIdentifier.longName-parent"  abstract="true">
         <search:name>Clu Long Name</search:name>
         <search:desc>Official identifier long name of a Clu</search:desc>
+        <search:dataType>string</search:dataType>
+    </search:resultColumn>
+    
+    <search:resultColumn id="lu.resultColumn.cluOfficialIdentifier.level" parent="lu.resultColumn.cluOfficialIdentifier.level-parent"/>
+	<search:resultColumn id="lu.resultColumn.cluOfficialIdentifier.level-parent"  abstract="true">
+        <search:name>Level</search:name>
+        <search:desc>Level</search:desc>
         <search:dataType>string</search:dataType>
     </search:resultColumn>
 
@@ -1773,14 +1789,14 @@
                     <value>rel.luLuRelationType.id = :lu_queryParam_luOptionalRelationType</value>
                 </entry>
                 <entry key="lu.search.browseProgram">
-                    <value>SELECT clu.id, ident.longName, clu.state, options.resultComponentId, org.orgId, '' 
-                    FROM CluIdentifier ident, CluResult result, IN(result.resultOptions) options, Clu clu, IN(clu.adminOrgs) org  
+                    <value>SELECT clu.id, ident.longName, clu.state, options.resultComponentId, org.orgId, '', campus.campusLocation, ident.level 
+                    FROM CluIdentifier ident, CluResult result, IN(result.resultOptions) options, Clu clu, IN(clu.adminOrgs) org, IN(clu.campusLocations) campus 
                     WHERE clu.officialIdentifier.id = ident.id 
                     AND clu.luType.id = 'kuali.lu.type.MajorDiscipline' 
                     AND result.clu.id = clu.id 
                     AND result.cluResultType.id = 'kuali.resultType.degree'
                     AND org.type = 'kuali.adminOrg.type.CurriculumOversightDivision'
-                    AND clu.state IN ('Active','Suspended','Retired')
+                    AND clu.state IN ('Active','Inactive','Retired')
                     </value>
                 </entry>
                 <entry key="lu.search.browseVariations">

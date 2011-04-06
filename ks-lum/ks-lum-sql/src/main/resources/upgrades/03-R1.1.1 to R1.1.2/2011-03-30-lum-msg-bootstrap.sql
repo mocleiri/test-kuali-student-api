@@ -8,3 +8,6 @@ update KSMG_MESSAGE set MSG_VALUE='First select the duration type (term, month, 
 /
 update KSMG_MESSAGE set MSG_VALUE='Duration' where MSG_ID='cluDurationQuantity'
 /
+
+insert into KSMG_MESSAGE (ID, MSG_ID, LOCALE, GRP_NAME, MSG_VALUE, OBJ_ID, VER_NBR) values ('190a411b-a4e5-4798-8eaa-2bb2b4bd8685', 'browseProgram', 'en', 'course', 'Browse Majors and Specializations', '8e0bcc0d-01e7-41e2-b95d-c6302a20bfcb', 1)
+/

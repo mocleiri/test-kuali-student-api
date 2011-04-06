@@ -3039,8 +3039,11 @@ public class LuServiceImpl implements LuService {
 		
 		Map<String, Set<SearchResultCell>> orgIdToCellMapping = new HashMap<String, Set<SearchResultCell>>();
 		Map<String, Set<SearchResultCell>> resultComponentToCellMapping = new HashMap<String, Set<SearchResultCell>>(); 
+		Map<String, Set<SearchResultCell>> campusToCellMapping = new HashMap<String, Set<SearchResultCell>>();
 		Map<String, SearchResultCell> progIdToOrgCellMapping = new HashMap<String, SearchResultCell>(); 
 		Map<String, SearchResultCell> progIdToResultComponentCellMapping = new HashMap<String, SearchResultCell>(); 
+		Map<String, SearchResultCell> progIdToCampusCellMapping = new HashMap<String, SearchResultCell>();
+		
 		
 		//We need to reduce the programSearchResults, translating variations, result options, etc and creating a mapping for org id translation
 		for(Iterator<SearchResultRow> rowIter = programSearchResults.getRows().iterator();rowIter.hasNext();){
@@ -3048,9 +3051,12 @@ public class LuServiceImpl implements LuService {
 			String programId = null;
 			String orgId = null;
 			String resultComponentName = null;
+			String campusCode = null;
 			SearchResultCell orgCell = null;
 			SearchResultCell resultComponentCell = null;
 			SearchResultCell variationCell = null;
+			SearchResultCell campusLocationCell = null;
+			
 			for(SearchResultCell cell:row.getCells()){
 				if("lu.resultColumn.cluId".equals(cell.getKey())){
 					programId = cell.getValue();
@@ -3062,6 +3068,9 @@ public class LuServiceImpl implements LuService {
 					resultComponentCell = cell;
 				}else if("lu.resultColumn.variationId".equals(cell.getKey())){
 					variationCell = cell;
+				}else if("lu.resultColumn.luOptionalCampusLocation".equals(cell.getKey())){
+					campusLocationCell = cell;
+					campusCode = cell.getValue();
 				}
 			}
 			if(!progIdToOrgCellMapping.containsKey(programId)){
@@ -3072,7 +3081,7 @@ public class LuServiceImpl implements LuService {
 					for(Iterator<String> variationIter = variations.iterator();variationIter.hasNext();){
 						String variation = variationIter.next();
 						if(variationIter.hasNext()){
-							variation += ", ";
+							variation += "<br/>";
 						}
 						variationCell.setValue(variationCell.getValue()+variation);
 					}
@@ -3089,6 +3098,15 @@ public class LuServiceImpl implements LuService {
 				
 								
 				//Add this to the map
+				Set<SearchResultCell> campusCells = campusToCellMapping.get(campusCode);
+				if(campusCells == null){
+					campusCells = new HashSet<SearchResultCell>();
+					campusToCellMapping.put(campusCode, campusCells);
+				}
+				campusCells.add(campusLocationCell);
+				campusLocationCell.setValue(null);
+				
+				//Add this to the map
 				Set<SearchResultCell> resultCells = resultComponentToCellMapping.get(resultComponentName);
 				if(resultCells == null){
 					resultCells = new HashSet<SearchResultCell>();
@@ -3099,6 +3117,7 @@ public class LuServiceImpl implements LuService {
 				
 				progIdToOrgCellMapping.put(programId, orgCell);
 				progIdToResultComponentCellMapping.put(programId, resultComponentCell);
+				progIdToCampusCellMapping.put(programId, campusLocationCell);
 			}else{
 				//this row already exists so we need to concatenate the result component and add the org id
 				//Get the result component row
@@ -3117,6 +3136,14 @@ public class LuServiceImpl implements LuService {
 				}
 				orgCells.add(progIdToOrgCellMapping.get(programId));
 				
+				//Concatenate the campus location
+				Set<SearchResultCell> campusCells = campusToCellMapping.get(campusCode);
+				if(campusCells == null){
+					campusCells = new HashSet<SearchResultCell>();
+					campusToCellMapping.put(campusCode, campusCells);
+				}
+				campusCells.add(campusLocationCell);
+				
 				//Remove this row from results
 				rowIter.remove();
 			}
@@ -3133,7 +3160,25 @@ public class LuServiceImpl implements LuService {
 						if(cell.getValue()==null){
 							cell.setValue(resultComponentName);
 						}else{
-							cell.setValue(cell.getValue()+", "+resultComponentName);
+							cell.setValue(cell.getValue()+"<br/>"+resultComponentName);
+						}
+					}
+				}
+			}
+		}
+		
+		if(!campusToCellMapping.isEmpty()){
+			List<String> campusCodes = new ArrayList<String>(campusToCellMapping.keySet());
+			Collections.sort(campusCodes);
+			for(String campusCode:campusCodes){
+				//Concatenate campus code names in the holder cells
+				Set<SearchResultCell> cells = campusToCellMapping.get(campusCode);
+				if(cells!=null){
+					for(SearchResultCell cell:cells){
+						if(cell.getValue()==null){
+							cell.setValue(campusCode);
+						}else{
+							cell.setValue(cell.getValue()+"<br/>"+campusCode);
 						}
 					}
 				}
@@ -3170,7 +3215,7 @@ public class LuServiceImpl implements LuService {
 						if(cell.getValue()==null){
 							cell.setValue(orgName);
 						}else{
-							cell.setValue(cell.getValue()+", "+orgName);
+							cell.setValue(cell.getValue()+"<br/>"+orgName);
 						}
 					}
 				}
