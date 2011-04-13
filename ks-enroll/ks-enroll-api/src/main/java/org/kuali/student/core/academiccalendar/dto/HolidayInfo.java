@@ -27,9 +27,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.kuali.student.common.infc.ModelBuilder;
-import org.kuali.student.core.academiccalendar.infc.HolidayInfc;
-
 import org.kuali.student.r2.common.dto.KeyEntityInfo;
+import org.kuali.student.core.academiccalendar.infc.Holiday;
 
 
 /**
@@ -42,7 +41,7 @@ import org.kuali.student.r2.common.dto.KeyEntityInfo;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "HolidayInfo", propOrder = {"key", "typeKey", "stateKey", "name", "descr", "isDateRange", "startDate", "endDate", "isInstructionalDay", "isExamDay", "metaInfo", "attributes", "_futureElements"})
 
-public class HolidayInfo extends KeyEntityInfo implements HolidayInfc, Serializable {
+public class HolidayInfo extends KeyEntityInfo implements Holiday, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -78,7 +77,7 @@ public class HolidayInfo extends KeyEntityInfo implements HolidayInfc, Serializa
      *
      * @param holiday the Holiday to copy
      */
-    public HolidayInfo(HolidayInfc holiday) {
+    public HolidayInfo(Holiday holiday) {
         super(holiday);
 	this.isDateRange = holiday.getIsDateRange();
         this.startDate = null != holiday.getStartDate() ? new Date(holiday.getStartDate().getTime()) : null;
@@ -149,7 +148,7 @@ public class HolidayInfo extends KeyEntityInfo implements HolidayInfc, Serializa
     /**
      * The builder class for this HolidayInfo.
      */
-    public static class Builder extends KeyEntityInfo.Builder implements ModelBuilder<HolidayInfo>, HolidayInfc {
+    public static class Builder extends KeyEntityInfo.Builder implements ModelBuilder<HolidayInfo>, Holiday {
 
 	private Boolean isDateRange;
         private Date startDate;
@@ -167,7 +166,7 @@ public class HolidayInfo extends KeyEntityInfo implements HolidayInfc, Serializa
 	 *  Constructs a new builder initialized from another
 	 *  Holiday.
 	 */
-        public Builder(HolidayInfc holiday) {
+        public Builder(Holiday holiday) {
             super(holiday);
 	    this.isDateRange = holiday.getIsDateRange();
 	    this.startDate = null != holiday.getStartDate() ? new Date(holiday.getStartDate().getTime()) : null;
@@ -205,7 +204,7 @@ public class HolidayInfo extends KeyEntityInfo implements HolidayInfc, Serializa
 	 *         start end end dates, false if this Holiday
 	 *         represents a single date
 	 */
-	public void dateRange(Boolean isDateRange) {
+	public void setIsDateRange(Boolean isDateRange) {
 	    this.isDateRange = isDateRange;
 	}
 

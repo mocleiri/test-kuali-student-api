@@ -29,14 +29,14 @@ import org.kuali.student.common.infc.Type;
  * @Since Tue Apr 05 14:22:34 EDT 2011
  */ 
 
-public interface AcademicCalendarInfc extends KeyEntity {
+public interface AcademicCalendar extends KeyEntity {
 
     /**
      * Name: CampusCalendar 
      * Gets the campus calendar corresponding to this academic
      * calendar.
      */
-    public CampusCalendarInfc getCampusCalendar();
+    public CampusCalendar getCampusCalendar();
 
     /**
      * Name: StartDate
@@ -67,7 +67,7 @@ public interface AcademicCalendarInfc extends KeyEntity {
      * Gets the terms corresponding to this academic
      * calendar.
      */
-    public List<? extends TermInfc> getTerms();
+    public List<? extends Term> getTerms();
 
     /**
      * Name: CredentialProgramType

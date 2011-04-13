@@ -29,10 +29,10 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.kuali.student.common.infc.ModelBuilder;
-import org.kuali.student.core.academiccalendar.infc.KeyDateInfc;
+import org.kuali.student.r2.common.dto.KeyEntityInfo;
+import org.kuali.student.core.academiccalendar.infc.KeyDate;
 
 import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
-import org.kuali.student.r2.common.dto.KeyEntityInfo;
 
 
 /**
@@ -45,7 +45,7 @@ import org.kuali.student.r2.common.dto.KeyEntityInfo;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "KeyDateInfo", propOrder = {"key", "typeKey", "stateKey", "name", "descr", "isDateRange", "startDate", "endDate", "metaInfo", "attributes", "_futureElements"})
 
-public class KeyDateInfo extends KeyEntityInfo implements KeyDateInfc, Serializable {
+public class KeyDateInfo extends KeyEntityInfo implements KeyDate, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -73,7 +73,7 @@ public class KeyDateInfo extends KeyEntityInfo implements KeyDateInfc, Serializa
      *
      * @param keyDate the KeyDate to copy
      */
-    public KeyDateInfo(KeyDateInfc keyDate) {
+    public KeyDateInfo(KeyDate keyDate) {
         super(keyDate);
 	this.isDateRange = keyDate.getIsDateRange();
         this.startDate = null != keyDate.getStartDate() ? new Date(keyDate.getStartDate().getTime()) : null;
@@ -119,7 +119,7 @@ public class KeyDateInfo extends KeyEntityInfo implements KeyDateInfc, Serializa
     /**
      * The builder class for this KeyDateInfo.
      */
-    public static class Builder extends KeyEntityInfo.Builder implements ModelBuilder<KeyDateInfo>, KeyDateInfc {
+    public static class Builder extends KeyEntityInfo.Builder implements ModelBuilder<KeyDateInfo>, KeyDate {
 
 	private Boolean isDateRange;
         private Date startDate;
@@ -135,7 +135,7 @@ public class KeyDateInfo extends KeyEntityInfo implements KeyDateInfc, Serializa
 	 *  Constructs a new builder initialized from another
 	 *  KeyDate.
 	 */
-        public Builder(KeyDateInfc keyDate) {
+        public Builder(KeyDate keyDate) {
             super(keyDate);
 	    this.isDateRange = keyDate.getIsDateRange();
 	    this.startDate = null != keyDate.getStartDate() ? new Date(keyDate.getStartDate().getTime()) : null;
@@ -164,8 +164,7 @@ public class KeyDateInfo extends KeyEntityInfo implements KeyDateInfc, Serializa
 	}
 
 	/**
-	 * Sets the date range flag (should this flag be inferred from
-	 * the dates?)
+	 * Sets the date range flag.
 	 *
 	 * @param isDateRange true if this KeyDate has different
 	 *         start end end dates, false if this KeyDate

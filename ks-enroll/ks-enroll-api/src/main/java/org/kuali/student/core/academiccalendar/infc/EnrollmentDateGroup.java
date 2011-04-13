@@ -25,7 +25,15 @@ import java.util.Date;
  * @Since Tue Apr 05 14:22:34 EDT 2011
  */ 
 
-public interface EnrollmentDateGroupInfc {
+public interface EnrollmentDateGroup {
+
+    /**
+     * Name: TermKey
+     * Gets the term key for this date group.
+     *
+     * @return the term key
+     */
+    public String getTermKey();
 
     /**
      * Name: RegistrationStart

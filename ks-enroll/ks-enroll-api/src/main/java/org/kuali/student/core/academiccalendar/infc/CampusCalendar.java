@@ -22,20 +22,20 @@ import org.kuali.student.common.infc.KeyEntity;
 
 
 /**
- * Information about an Academic Calendar.
+ * Information about a Campus Calendar.
  *
  * @Author tom
  * @Since Tue Apr 05 14:22:34 EDT 2011
  */ 
 
-public interface TermInfc extends KeyEntity {
+public interface CampusCalendar extends KeyEntity {
 
     /**
      * Name: StartDate
-     * Date and time the term became effective. This
+     * Date and time the campus calendar became effective. This
      * does not provide a bound on date ranges or milestones
-     * associated with this time period, but instead indicates the
-     * time period proper. This is a similar concept to the effective
+     * associated with this calendar, but instead indicates the
+     * calendar proper. This is a similar concept to the effective
      * date on enumerated values. When an expiration date has been
      * specified, this field must be less than or equal to the
      * expiration date.
@@ -44,9 +44,9 @@ public interface TermInfc extends KeyEntity {
 
     /**
      * Name: StartDate
-     * Date and time the term expires. This does not
+     * Date and time the campus calendarexpires. This does not
      * provide a bound on date ranges or milestones associated with
-     * this time period, but instead indicates the time period
+     * this calendar, but instead indicates the calendar
      * proper. If specified, this must be greater than or equal to the
      * effective date. If this field is not specified, then no
      * expiration date has been currently defined and should
@@ -55,8 +55,8 @@ public interface TermInfc extends KeyEntity {
     public Date getEndDate();
 
     /**
-     * Name: Terms
-     * Gets the Terms nested inside this Term.
+     * Name: Location
+     * The campus or location to which this calendar pertains.
      */
-    public List<? extends TermInfc> getTerms();
+    public String getLocation();
 }
