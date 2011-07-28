@@ -1013,9 +1013,9 @@ public class AcademicCalendarServiceImpl implements AcademicCalendarService{
     private MilestoneInfo toMilestoneInfo(KeyDateInfo keyDateInfo){
     	if(keyDateInfo != null){
 			MilestoneInfo msInfo = new MilestoneInfo();
-			msInfo.setAllDay(keyDateInfo.getIsAllDay());
+			msInfo.setIsAllDay(keyDateInfo.getIsAllDay());
 			msInfo.setAttributes(keyDateInfo.getAttributes());
-			msInfo.setDateRange(keyDateInfo.getIsDateRange());
+			msInfo.setIsDateRange(keyDateInfo.getIsDateRange());
 			msInfo.setDescr(keyDateInfo.getDescr());
 			msInfo.setKey(keyDateInfo.getKey());
 			msInfo.setMeta(keyDateInfo.getMeta());

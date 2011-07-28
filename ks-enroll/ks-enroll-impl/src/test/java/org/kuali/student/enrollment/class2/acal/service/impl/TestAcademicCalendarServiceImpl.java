@@ -118,8 +118,17 @@ public class TestAcademicCalendarServiceImpl{
         acal.setTypeKey(AtpServiceConstants.ATP_ACADEMIC_CALENDAR_TYPE_KEY);
         
         try{
-        	List<ValidationResultInfo> vri= acalServiceValidation.validateAcademicCalendar("FULL_VALIDATION", acal, callContext);
-        	assertTrue(vri.isEmpty());
+        	List<ValidationResultInfo> vris= acalServiceValidation.validateAcademicCalendar("FULL_VALIDATION", acal, callContext);
+                if ( ! vris.isEmpty()) {
+                    StringBuilder buf = new StringBuilder ();
+                    buf.append(vris.size()).append (" validaton errors found did not expect any");
+                    for (ValidationResultInfo vri : vris) {
+                        buf.append("\n");
+                        buf.append(vri.getElement()).append(": ").append(vri.getMessage());
+                    }
+                    fail (buf.toString());
+                }
+        	assertTrue(vris.isEmpty());
         }catch (OperationFailedException ex){
         	//dictionary not ready, this is expected
         } catch (Exception ex) {

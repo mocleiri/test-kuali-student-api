@@ -104,8 +104,8 @@ public class HoldEntity extends MetaEntity implements AttributeOwner<HoldAttribu
     	obj.setName(name);
         obj.setEffectiveDate(effectiveDate);
         obj.setReleasedDate(releasedDate);
-        obj.setWarning(isWarning);
-        obj.setOverridable(isOverridable);
+        obj.setIsWarning(isWarning);
+        obj.setIsOverridable(isOverridable);
         obj.setPersonId(personId);
         if(holdType != null)
             obj.setTypeKey(holdType.getId());

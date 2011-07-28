@@ -90,6 +90,9 @@ public void testCreateLui() throws AlreadyExistsException,DataValidationErrorExc
 	info.setEffectiveDate(Calendar.getInstance().getTime());
 	info.setMaximumEnrollment(25);
 	info.setMinimumEnrollment(10);
+        if (info.getOfficialIdentifier() != null) {
+            fail ("official identifier is not null but it was never set");
+        }
 	//	info.setStudySubjectArea("Math");
 	info.setCluId("testCluId");
 	info.setAtpKey("testAtpId1");
@@ -104,22 +107,23 @@ public void testCreateLui() throws AlreadyExistsException,DataValidationErrorExc
 	//info.setInstructors(instructors);
 	
 	LuiInfo created = null;
-	try{
-		created = luiServiceValidation.createLui("testCluId", "testAtpId1", info, callContext);
-		assertNotNull(created);
+//	try{
+        created = luiServiceValidation.createLui("testCluId", "testAtpId1", info, callContext);
+	assertNotNull(created);
         assertEquals("Test lui one", created.getName());
         assertEquals(LuiServiceConstants.LUI_DRAFT_STATE_KEY, created.getStateKey());
         assertEquals(LuiServiceConstants.COURSE_OFFERING_TYPE_KEY, created.getTypeKey());
         assertEquals(Integer.valueOf(25), created.getMaximumEnrollment());
         assertEquals(Integer.valueOf(10), created.getMinimumEnrollment());
-		assertEquals("testCluId", created.getCluId());
-		assertEquals("testAtpId1", created.getAtpKey());
-		//		assertEquals("Math", created.getStudySubjectArea());
-		//assertTrue(created.getInstructors().size() == 1);
+	assertEquals("testCluId", created.getCluId());
+	assertEquals("testAtpId1", created.getAtpKey());
+	//		assertEquals("Math", created.getStudySubjectArea());
+	//assertTrue(created.getInstructors().size() == 1);
         				
-	} catch (Exception e) {
-        fail(e.getMessage());
-    }
+//	} catch (Exception e) {
+//            throw new RuntimeException ("unexpected exception", e);
+//        fail(e.getMessage());
+//    }
 	
 	try {
 		LuiInfo retrieved = luiServiceValidation.getLui(created.getId(), callContext);
@@ -153,16 +157,16 @@ public void testUpdateLui() throws DataValidationErrorException, DoesNotExistExc
 	modified.setMaximumEnrollment(25);
 	modified.setMinimumEnrollment(10);
 	
-	try{
+//	try{
 		LuiInfo updated = luiServiceValidation.updateLui("Lui-1", modified, callContext);
 		assertNotNull(updated);		
         assertEquals(LuiServiceConstants.LUI_APROVED_STATE_KEY, updated.getStateKey());
         assertEquals(LuiServiceConstants.COURSE_OFFERING_TYPE_KEY, updated.getTypeKey());
         assertEquals(Integer.valueOf(25), updated.getMaximumEnrollment());
         assertEquals(Integer.valueOf(10), updated.getMinimumEnrollment());
-	}catch (Exception e) {
-        fail(e.getMessage());
-    }
+//	}catch (Exception e) {
+//        fail(e.getMessage());
+//    }
 	
 }
 

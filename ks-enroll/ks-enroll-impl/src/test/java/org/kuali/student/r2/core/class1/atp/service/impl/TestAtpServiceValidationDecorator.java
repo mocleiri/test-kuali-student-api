@@ -99,8 +99,8 @@ public class TestAtpServiceValidationDecorator {
         existingMilestone.setKey("newId");
         existingMilestone.setName("testCreate");
         existingMilestone.setStartDate(new Date());
-        existingMilestone.setDateRange(false);
-        existingMilestone.setAllDay(true);
+        existingMilestone.setIsDateRange(false);
+        existingMilestone.setIsAllDay(true);
         existingMilestone.setStateKey("kuali.atp.state.Draft");
         existingMilestone.setTypeKey("kuali.atp.milestone.RegistrationPeriod");
         RichTextInfo descr = new RichTextInfo();

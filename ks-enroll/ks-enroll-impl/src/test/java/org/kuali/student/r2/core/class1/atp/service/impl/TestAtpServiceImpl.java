@@ -226,8 +226,8 @@ public class TestAtpServiceImpl extends AbstractServiceTest {
         cal.set(Calendar.YEAR, 2005);
         
         milestone.setStartDate(cal.getTime());
-        milestone.setDateRange(false);
-        milestone.setAllDay(true);
+        milestone.setIsDateRange(false);
+        milestone.setIsAllDay(true);
         milestone.setStateKey(AtpServiceConstants.MILESTONE_DRAFT_STATE_KEY);
         milestone.setTypeKey("kuali.atp.milestone.RegistrationPeriod");
         RichTextInfo descr = new RichTextInfo();
@@ -270,8 +270,8 @@ public class TestAtpServiceImpl extends AbstractServiceTest {
         cal.set(Calendar.YEAR, 2005);
         
         milestone.setStartDate(cal.getTime());
-        milestone.setDateRange(false);
-        milestone.setAllDay(true);
+        milestone.setIsDateRange(false);
+        milestone.setIsAllDay(true);
         milestone.setStateKey(AtpServiceConstants.MILESTONE_DRAFT_STATE_KEY);
         milestone.setTypeKey("kuali.atp.milestone.RegistrationPeriod");
        

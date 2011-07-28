@@ -139,19 +139,20 @@ public class TestHoldServiceImpl {
     	HoldInfo info = new HoldInfo();
     	//info.setId("Test-Hold-1"); id should be system generated
     	info.setName("Test hold one");
+        info.setPersonId("person.1");
     	info.setStateKey(HoldServiceConstants.HOLD_ACIVE_STATE_KEY);
     	info.setTypeKey(HoldServiceConstants.STUDENT_HOLD_TYPE_KEY);
     	info.setIssueId("Hold-Issue-1");
     	info.setEffectiveDate(Calendar.getInstance().getTime());
     	
     	HoldInfo created = null;
-    	try{
-    		created = holdService.createHold(info, callContext);
-    		assertNotNull(created);
-            assertEquals("Test hold one", created.getName());
-    	} catch (Exception e) {
-            fail(e.getMessage());
-        }
+//    	try{
+    	created = holdService.createHold(info, callContext);
+    	assertNotNull(created);
+        assertEquals("Test hold one", created.getName());
+//    	} catch (Exception e) {
+//            fail(e.getMessage());
+//        }
     	
     	try {
 			HoldInfo retrieved = holdService.getHold(created.getId(), callContext);
