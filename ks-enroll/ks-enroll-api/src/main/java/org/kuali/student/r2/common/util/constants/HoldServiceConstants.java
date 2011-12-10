@@ -14,9 +14,10 @@
  */
 package org.kuali.student.r2.common.util.constants;
 
-import org.kuali.student.enrollment.hold.dto.HoldInfo;
-import org.kuali.student.enrollment.hold.dto.IssueInfo;
-import org.kuali.student.enrollment.hold.dto.RestrictionInfo;
+import org.kuali.student.r2.core.hold.dto.HoldInfo;
+import org.kuali.student.r2.core.hold.dto.IssueInfo;
+
+
 
 /**
  * This class holds the constants used by the Hold service
@@ -31,7 +32,7 @@ public class HoldServiceConstants {
     public static final String NAMESPACE = CommonServiceConstants.REF_OBJECT_URI_GLOBAL_PREFIX + "hold";
     public static final String REF_OBJECT_URI_HOLD = NAMESPACE + "/" + HoldInfo.class.getSimpleName();
     public static final String REF_OBJECT_URI_ISSUE = NAMESPACE + "/" + IssueInfo.class.getSimpleName();
-    public static final String REF_OBJECT_URI_RESTRICTION = NAMESPACE + "/" + RestrictionInfo.class.getSimpleName();
+
     /**
      * Hold types
      */
@@ -75,19 +76,19 @@ public class HoldServiceConstants {
      * STATES FOR holds
      */
     public static final String STUDENT_HOLD_PROCESS_KEY = "kuali.hold.process.student";
-    public static final String HOLD_ACIVE_STATE_KEY = "kuali.hold.state.active";
+    public static final String HOLD_ACTIVE_STATE_KEY = "kuali.hold.state.active";
     public static final String HOLD_RELEASED_STATE_KEY = "kuali.hold.state.released";
     public static final String HOLD_CANCELED_STATE_KEY = "kuali.hold.state.canceled";
-    public static final String[] STUDENT_HOLD_PROCESS_KEYS = {HOLD_ACIVE_STATE_KEY,
+    public static final String[] STUDENT_HOLD_PROCESS_KEYS = {HOLD_ACTIVE_STATE_KEY,
         HOLD_RELEASED_STATE_KEY,
         HOLD_CANCELED_STATE_KEY};
     /**
      * STATES FOR hold ISSUES
      */
     public static final String ISSUE_PROCESS_KEY = "kuali.hold.issue.process";
-    public static final String ISSUE_ACIVE_STATE_KEY = "kuali.hold.issue.state.active";
+    public static final String ISSUE_ACTIVE_STATE_KEY = "kuali.hold.issue.state.active";
     public static final String ISSUE_INACTIVE_STATE_KEY = "kuali.hold.issue.state.inactive";
-    public static final String[] ISSUE_PROCESS_KEYS = {ISSUE_ACIVE_STATE_KEY,
+    public static final String[] ISSUE_PROCESS_KEYS = {ISSUE_ACTIVE_STATE_KEY,
         ISSUE_INACTIVE_STATE_KEY};
     /**
      * STATES FOR hold RESTRICTIONS

@@ -31,9 +31,7 @@ import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.RegistrationGroupInfo;
 import org.kuali.student.enrollment.courseoffering.dto.SeatPoolDefinitionInfo;
-import org.kuali.student.enrollment.hold.dto.HoldInfo;
-import org.kuali.student.enrollment.hold.dto.IssueInfo;
-import org.kuali.student.enrollment.hold.dto.RestrictionInfo;
+
 import org.kuali.student.enrollment.lpr.dto.LuiPersonRelationInfo;
 import org.kuali.student.enrollment.lui.dto.LuiCapacityInfo;
 import org.kuali.student.enrollment.lui.dto.LuiInfo;
@@ -41,6 +39,9 @@ import org.kuali.student.enrollment.lui.dto.LuiLuiRelationInfo;
 import org.kuali.student.r2.core.atp.dto.AtpAtpRelationInfo;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
+import org.kuali.student.r2.core.hold.dto.HoldInfo;
+import org.kuali.student.r2.core.hold.dto.IssueInfo;
+import org.kuali.student.r2.core.hold.dto.RestrictionInfo;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -97,7 +98,7 @@ public class TestServiceDictionaries {
         String[] configLocs = configLocations.toArray(new String[0]);
         ApplicationContext ac = new ClassPathXmlApplicationContext(configLocs);
         Map<String, DataObjectEntry> beansOfType =
-                (Map<String, DataObjectEntry>) ac.getBeansOfType(DataObjectEntry.class);
+                ac.getBeansOfType(DataObjectEntry.class);
         for (DataObjectEntry doe : beansOfType.values()) {
             System.out.println("Loading object structure: " + doe.getFullClassName());
             if ("org.kuali.rice.krad.bo.AttributeReferenceDummy".equals(doe.getFullClassName())) {
