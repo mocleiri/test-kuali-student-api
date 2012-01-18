@@ -1,4 +1,4 @@
-package org.kuali.student.r2.core.class1.enumerationmanagemnet.service.decorators;
+package org.kuali.student.r2.core.class1.enumerationmanagement.service.decorators;
 
 import java.util.Date;
 import java.util.List;
