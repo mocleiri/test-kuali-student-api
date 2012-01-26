@@ -15,27 +15,10 @@
 
 package org.kuali.student.r2.core.process.service;
 
-import java.util.List;
-
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
-
-import org.kuali.student.r2.core.process.dto.ProcessCategoryInfo;
-import org.kuali.student.r2.core.process.dto.ProcessInfo;
-import org.kuali.student.r2.core.process.dto.CheckInfo;
-import org.kuali.student.r2.core.process.dto.InstructionInfo;
-
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
-
-import org.kuali.student.r2.common.service.StateService;
-import org.kuali.student.r2.common.service.TypeService;
-import org.kuali.student.r2.common.datadictionary.service.DataDictionaryService;
-
 import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
 import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -45,25 +28,28 @@ import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
-
 import org.kuali.student.r2.common.util.constants.ProcessServiceConstants;
+import org.kuali.student.r2.core.process.dto.CheckInfo;
+import org.kuali.student.r2.core.process.dto.InstructionInfo;
+import org.kuali.student.r2.core.process.dto.ProcessCategoryInfo;
+import org.kuali.student.r2.core.process.dto.ProcessInfo;
+
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import java.util.List;
 
 /**
  * Process Service Description and Assumptions.
  *
  * This service supports the management of Checks. 
  *
- * Version: 1.0 (Dev)
- *
- * @Author tom
- * @Since Mon Nov 21 14:22:34 EDT 2011
  */
 
 @WebService(name = "ProcessService", serviceName = "ProcessService", portName = "ProcessService", targetNamespace = ProcessServiceConstants.NAMESPACE)
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
 
-public interface ProcessService 
-    extends DataDictionaryService, TypeService, StateService {
+public interface ProcessService {
 
     /** 
      * Retrieves a ProcessCategory.
@@ -184,7 +170,7 @@ public interface ProcessService
      * server assigning an identifier.
      *
      * @param validationTypeKey the identifier of the extent of validation
-     * @param processInfo the ProcessCategory information to be tested
+     * @param processCategoryInfo the ProcessCategory information to be tested
      * @param contextInfo Context information containing the
      *        principalId and locale information about the caller of
      *        service operation
@@ -202,7 +188,7 @@ public interface ProcessService
     /** 
      * Creates a new ProcessCategory.
      *
-     * @param processInfo the details of ProcessCategory to be created
+     * @param processCategoryInfo the details of ProcessCategory to be created
      * @param contextInfo Context information containing the
      *        principalId and locale information about the caller of
      *        service operation
@@ -220,7 +206,7 @@ public interface ProcessService
      * @throws ReadOnlyException an attempt at supplying information
      *         designated as read-only
      */
-    public ProcessCategoryInfo createProcessCategory(@WebParam(name = "processInfo") ProcessCategoryInfo processInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
+    public ProcessCategoryInfo createProcessCategory(@WebParam(name = "processCategoryInfo") ProcessCategoryInfo processCategoryInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /** 
      * Updates an existing ProcessCategory.
@@ -639,7 +625,7 @@ public interface ProcessService
      * @throws ReadOnlyException an attempt at supplying information
      *         designated as read-only
      */
-    public CheckInfo createCheck(@WebParam(name = "checkInfo") CheckInfo checkInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;;
+    public CheckInfo createCheck(@WebParam(name = "checkKey") String checkKey, @WebParam(name = "checkInfo") CheckInfo checkInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;;
 
     /** 
      * Updates an existing Check.
@@ -885,7 +871,7 @@ public interface ProcessService
      * @throws ReadOnlyException an attempt at supplying information
      *         designated as read-only
      */
-    public InstructionInfo createInstruction(@WebParam(name = "processKey") String processKey, @WebParam(name = "checkKey") String checkKey, @WebParam(name = "instructionInfo") InstructionInfo instructionInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
+    public InstructionInfo createInstruction(@WebParam(name = "processKey") String processKey, @WebParam(name = "checkKey") String checkKey, @WebParam(name = "instructionInfo") InstructionInfo instructionInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /** 
      * Updates an existing Instruction.

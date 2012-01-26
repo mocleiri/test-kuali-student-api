@@ -1,15 +1,15 @@
 package org.kuali.student.r2.lum.program.infc;
 
-import org.kuali.student.lum.lu.dto.AccreditationInfo;
-import org.kuali.student.lum.lu.dto.CluInstructorInfo;
 import org.kuali.student.r2.common.infc.IdEntity;
 import org.kuali.student.r2.common.infc.RichText;
 import org.kuali.student.r2.common.infc.TimeAmount;
 import org.kuali.student.r2.lum.course.dto.LoDisplayInfo;
-import org.kuali.student.r2.lum.program.dto.CoreProgramInfo;
+import org.kuali.student.r2.lum.lu.infc.Accreditation;
+import org.kuali.student.r2.lum.lu.infc.CluInstructor;
 
 import java.util.Date;
 import java.util.List;
+
 
 /**
  *
@@ -32,7 +32,7 @@ public interface MajorDiscipline extends IdEntity {
      * list, and instead may only be used to indicate potential instructors in
      * publication.
      */
-    public List<CluInstructorInfo> getPublishedInstructors();
+    public List<? extends CluInstructor> getPublishedInstructors();
 
     /**
      * Identifier of the credential program under which the major belongs
@@ -42,7 +42,7 @@ public interface MajorDiscipline extends IdEntity {
     /**
      * Program variations for the Major
      */
-    public List<String> getProgramVariationIds();
+    public List<? extends ProgramVariation> getVariations();
 
     /**
      * The composite string that is used to officially reference or publish the
@@ -83,12 +83,12 @@ public interface MajorDiscipline extends IdEntity {
      * The first academic time period that this clu would be effective. This may
      * not reflect the first "real" academic time period for this Major.
      */
-    public String getStartTermKey();
+    public String getStartTermId();
 
     /**
      * The last academic time period that this Major would be effective.
      */
-    public String getEndTermKey();
+    public String getEndTermId();
     
     public String getNextReviewPeriod();
 
@@ -149,9 +149,9 @@ public interface MajorDiscipline extends IdEntity {
 
     public TimeAmount getStdDuration();
 
-    public String getEndProgramEntryTermKey();
+    public String getEndProgramEntryTermId();
 
-    public List<AccreditationInfo> getAccreditingAgencies();
+    public List<? extends Accreditation> getAccreditingAgencies();
 
     public List<String> getDivisionsContentOwner();
 

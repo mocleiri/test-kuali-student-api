@@ -52,13 +52,13 @@ public class TestCourseRegistrationServiceImpl {
     
 
     public static String principalId = "123";
-    public ContextInfo callContext = ContextInfo.newInstance();
+    public ContextInfo callContext = null;
 
     private RegRequestInfo createDummyRegRequest() {
         RegRequestInfo regRequest = new RegRequestInfo();
         regRequest.setRequestorId("Student1");
-        regRequest.setTermKey(AtpServiceConstants.ATP_SENIOR_YEAR_TERM_1_TYPE_KEY);
-        regRequest.setStateKey(LuiPersonRelationServiceConstants.LPRTRANS_ITEM_NEW_STATE_KEY);
+        regRequest.setTermId(AtpServiceConstants.ATP_SENIOR_YEAR_TERM_1_TYPE_KEY);
+        regRequest.setStateKey(LuiPersonRelationServiceConstants.LPRTRANS_NEW_STATE_KEY);
         regRequest.setTypeKey(LuiPersonRelationServiceConstants.LPRTRANS_REGISTER_TYPE_KEY);
 
         RegRequestItemInfo regRequestItem = new RegRequestItemInfo();
@@ -79,7 +79,7 @@ public class TestCourseRegistrationServiceImpl {
 
     @Before
     public void setUp() throws Exception {
-        callContext = ContextInfo.getInstance(callContext);
+        callContext = new ContextInfo ();
         callContext.setPrincipalId(principalId);
     }
 
@@ -161,7 +161,7 @@ public class TestCourseRegistrationServiceImpl {
 
             assertEquals(1, passedResults.size());
             ValidationResultInfo result = passedResults.get(0);
-            assertEquals(result.getLevel().intValue(), ValidationResult.ErrorLevel.OK.getLevel());
+            assertEquals(result.getLevel(), ValidationResult.ErrorLevel.OK);
         } catch (Exception e) {
             e.printStackTrace();
             fail("call to service method failed due to exception: " + e.getMessage());
@@ -176,7 +176,7 @@ public class TestCourseRegistrationServiceImpl {
 
             assertEquals(1, failedResults.size());
             ValidationResultInfo result = failedResults.get(0);
-            assertEquals(result.getLevel().intValue(), ValidationResult.ErrorLevel.ERROR.getLevel());
+            assertEquals(result.getLevel(), ValidationResult.ErrorLevel.ERROR);
         } catch (Exception e) {
             e.printStackTrace();
             fail("call to service method failed due to exception: " + e.getMessage());
