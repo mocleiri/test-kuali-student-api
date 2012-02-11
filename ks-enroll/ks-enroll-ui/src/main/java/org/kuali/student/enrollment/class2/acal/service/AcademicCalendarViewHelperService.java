@@ -4,6 +4,7 @@ import org.kuali.rice.krad.uif.service.ViewHelperService;
 import org.kuali.student.enrollment.acal.dto.HolidayCalendarInfo;
 import org.kuali.student.enrollment.acal.dto.AcademicCalendarInfo;
 import org.kuali.student.enrollment.acal.dto.HolidayInfo;
+import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.enrollment.class2.acal.dto.AcalEventWrapper;
 import org.kuali.student.enrollment.class2.acal.form.HolidayCalendarForm;
 import org.kuali.student.enrollment.class2.acal.form.AcademicCalendarForm;
@@ -37,4 +38,6 @@ public interface AcademicCalendarViewHelperService extends ViewHelperService {
     public void saveTerm(AcademicCalendarForm academicCalendarForm,ContextInfo context) throws Exception;
 
     public void buildTerm(String termId,AcademicCalendarForm academicCalendarForm,ContextInfo context) throws Exception;
+
+    public AcademicCalendarService getAcalService();
 }

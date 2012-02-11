@@ -7,24 +7,12 @@
                            http://www.springframework.org/schema/util
                            http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
-<!-- THE VIEW BEAN SHOULD BE UIF-INQUIRYVIEW BUT THERE'S A DATADICT PROBLEM OF SOME KIND.
-     FOR NOW UIF-FORMVIEW IS BEING USED, BELOW.  THIS BEAN IS A SIMPLE TEST BEAN THAT FAILS.
-    <bean id="KS-HolidayCalendar-View" parent="KSInquiryView">
-        <property name="id" value="holidayCalendarView"/>
-        <property name="title" value="Holiday Calendar Inquiry"/>
-        <property name="dataObjectClassName" value="org.kuali.student.enrollment.acal.dto.HolidayCalendarInfo"/>
-        <property name="viewHelperServiceClassName"
-                  value="org.kuali.student.enrollment.class2.acal.service.impl.HolidayCalendarViewHelperServiceInquirableImpl"/>
-    </bean>
--->
-
     <bean id="KS-HolidayCalendar-View" parent="KSFormView"
           p:id="holidayCalendarView"
           p:title="@{holidayCalendarInfo.name}"
           p:viewHelperServiceClassName="org.kuali.student.enrollment.class2.acal.service.impl.AcademicCalendarViewHelperServiceImpl"
           p:formClass="org.kuali.student.enrollment.class2.acal.form.HolidayCalendarForm"
-          p:header.id="KS-HolidayCalendar-View_header">
-          <!--p:footer.render="false"-->
+          p:header.id="KS-HolidayCalendar-View-header">
         <property name="header">
             <bean parent="Uif-HeaderField-Two"/>
         </property>
@@ -75,7 +63,7 @@
         <property name="items">
             <list>
                 <bean parent="Uif-GridGroup"
-                      p:id="KS-HolidayCalendar-View-Meta_group"
+                      p:id="KS-HolidayCalendar-View-Meta-GridGroup"
                       p:layoutManager.numberOfColumns="2"
                       p:layoutManager.applyDefaultCellWidths="false">
                     <property name="items">
@@ -83,24 +71,24 @@
                             <bean parent="Uif-DataField"
                                   p:propertyName="holidayCalendarInfo.name"
                                   p:label="Holiday Calendar Name"
-                                  p:id="KS-HolidayCalendar-View-Meta_name"
+                                  p:id="KS-HolidayCalendar-View-Meta-name"
                                   p:labelField.width="40%"
                                   p:width="60%"
                                   p:labelField.renderColon="false"/>
                             <bean parent="Uif-DataField"
-                                  p:propertyName="holidayCalendarInfo.adminOrgId"
+                                  p:propertyName="adminOrgName"
                                   p:label="Organization"
-                                  p:id="KS-HolidayCalendar-View-Meta_org"
+                                  p:id="KS-HolidayCalendar-View-Meta-adminOrgName"
                                   p:labelField.renderColon="false"/>
                             <bean parent="Uif-DataField"
                                   p:propertyName="holidayCalendarInfo.startDate"
                                   p:label="Start Date"
-                                  p:id="KS-HolidayCalendar-View-Meta_startDate"
+                                  p:id="KS-HolidayCalendar-View-Meta-startDate"
                                   p:labelField.renderColon="false"/>
                             <bean parent="Uif-DataField"
                                   p:propertyName="holidayCalendarInfo.endDate"
                                   p:label="End Date"
-                                  p:id="KS-HolidayCalendar-View-Meta_endDate"
+                                  p:id="KS-HolidayCalendar-View-Meta-endDate"
                                   p:labelField.renderColon="false"/>
                         </list>
                     </property>
@@ -126,22 +114,22 @@
         <property name="items">
             <list>
                 <bean parent="Uif-DataField"
-                      p:propertyName="descr.plain"
-                      p:id="KS-HolidayCalendar-View-Holidays_descr"
+                      p:propertyName="name"
+                      p:id="KS-HolidayCalendar-View-Holidays-name"
                       p:style="font-weight:bold;"/>
                 <bean parent="Uif-DataField"
                       p:label="Start Date"
                       p:propertyName="startDate"
-                      p:id="KS-HolidayCalendar-View-Holidays_startDate"/>
+                      p:id="KS-HolidayCalendar-View-Holidays-startDate"/>
                 <bean parent="Uif-DataField"
                       p:label="End Date"
                       p:propertyName="endDate"
-                      p:id="KS-HolidayCalendar-View-Holidays_endDate"/>
+                      p:id="KS-HolidayCalendar-View-Holidays-endDate"/>
                 <bean parent="Uif-DataField"
-                      p:label="Non Instructional"
+                      p:label="Instructional"
                       p:propertyName="isInstructionalDay"
-                      p:id="KS-HolidayCalendar-View-Holidays_isInstructionalDay"
-                      p:alternateDisplayValue="@{#line.isInstructionalDay ? 'Yes' : 'No'}"
+                      p:id="KS-HolidayCalendar-View-Holidays-isInstructionalDay"
+                      p:alternateDisplayValue="@{#line.isInstructionalDay ? 'Yes' : ' '}"
                       p:align="center"/>
             </list>
         </property>
@@ -157,7 +145,7 @@
                        value="[ {'bSortable':false, 'sWidth':'40%'},
                                 {'bSortable':false, 'sTitle':'Start Date', 'sWidth':'20%'},
                                 {'bSortable':false, 'sTitle':'End Date', 'sWidth':'20%'},
-                                {'bSortable':false, 'sTitle':'Non Instructional', 'sWidth':'20%', 'sClass':'ks-cell-align-center'}
+                                {'bSortable':false, 'sTitle':'Instructional', 'sWidth':'20%', 'sClass':'ks-cell-align-center'}
                             ]"/>
             </map>
         </property>

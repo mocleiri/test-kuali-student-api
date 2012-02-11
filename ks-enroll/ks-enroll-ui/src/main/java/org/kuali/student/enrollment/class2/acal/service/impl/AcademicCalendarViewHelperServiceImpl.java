@@ -38,6 +38,7 @@ import org.kuali.student.enrollment.class2.acal.dto.AcademicTermWrapper;
 import org.kuali.student.enrollment.class2.acal.form.HolidayCalendarForm;
 import org.kuali.student.enrollment.class2.acal.form.AcademicCalendarForm;
 import org.kuali.student.enrollment.class2.acal.service.AcademicCalendarViewHelperService;
+import org.kuali.student.test.utilities.TestHelper;
 
 
 /**
@@ -47,6 +48,7 @@ import org.kuali.student.enrollment.class2.acal.service.AcademicCalendarViewHelp
  */
 public class AcademicCalendarViewHelperServiceImpl extends ViewHelperServiceImpl implements AcademicCalendarViewHelperService {
     private AcademicCalendarService acalService;
+    private ContextInfo contextInfo;
 
     public AcademicCalendarService getAcalService() {
            if(acalService == null) {
@@ -230,7 +232,11 @@ public class AcademicCalendarViewHelperServiceImpl extends ViewHelperServiceImpl
 //         academicTermForm.setInstructionalDays(instructionalDays);
     }
 
-    private ContextInfo getContextInfo(){
-        return new ContextInfo();
+    private ContextInfo getContextInfo() {
+        if (null == contextInfo) {
+            //TODO - get real ContextInfo
+            contextInfo = TestHelper.getContext1();
+        }
+        return contextInfo;
     }
 }
