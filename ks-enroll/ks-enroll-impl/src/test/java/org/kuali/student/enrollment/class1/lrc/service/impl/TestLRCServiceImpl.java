@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.infc.RichText;
 import org.kuali.student.r2.common.util.constants.LrcServiceConstants;
 import org.kuali.student.r2.lum.lrc.dto.ResultScaleInfo;
 import org.kuali.student.r2.lum.lrc.dto.ResultValueInfo;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,13 +51,13 @@ public class TestLRCServiceImpl {
     }
 
     @Test
-    public void testGetResultValuesGroupsByIds() throws Exception {
+    public void testGetResultValuesGroupsByIdList() throws Exception {
 
         List<String> resultValuesGroupKeys = new ArrayList<String>();
         resultValuesGroupKeys.add(LrcServiceConstants.RESULT_GROUP_KEY_GRADE_LETTER);
         resultValuesGroupKeys.add(LrcServiceConstants.RESULT_GROUP_KEY_GRADE_PASSFAIL);
 
-        List<ResultValuesGroupInfo> groups = lrcService.getResultValuesGroupsByIds(resultValuesGroupKeys,contextInfo);
+        List<ResultValuesGroupInfo> groups = lrcService.getResultValuesGroupsByIdList(resultValuesGroupKeys,contextInfo);
 
         assertNotNull(groups);
         assertEquals(2,groups.size());
@@ -247,7 +249,7 @@ public class TestLRCServiceImpl {
 
     @Test
     @Ignore("Not implemented.") // TODO implement method
-    public void testGetResultValuesByIds() throws Exception {
+    public void testGetResultValuesByIdList() throws Exception {
 
     }
 

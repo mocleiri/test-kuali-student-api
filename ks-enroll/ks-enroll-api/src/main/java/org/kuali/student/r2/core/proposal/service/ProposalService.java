@@ -16,6 +16,7 @@ import java.util.List;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
@@ -40,6 +41,7 @@ import org.kuali.student.r2.core.proposal.dto.ProposalInfo;
  */
 @WebService(name = "ProposalService", targetNamespace = "http://student.kuali.org/wsdl/proposal")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
+@XmlSeeAlso({org.kuali.student.common.dto.ReferenceTypeInfo.class})
 public interface ProposalService {
 
     /**
@@ -60,14 +62,14 @@ public interface ProposalService {
     /**
      * Retrieves the list of Proposals for the supplied list of proposalIds
      * 
-     * @param proposalIds list of proposal identifiers
+     * @param proposalIdList list of proposal identifiers
      * @return List of proposals that match the supplied proposalId list
      * @throws DoesNotExistException One or more proposalIds not found
      * @throws InvalidParameterException One or more invalid proposalId
-     * @throws MissingParameterException missing proposalIds
+     * @throws MissingParameterException missing proposalIdList
      * @throws OperationFailedException unable to complete request
      */
-    public List<ProposalInfo> getProposalsByIds(@WebParam(name = "proposalIds") List<String> proposalIds, @WebParam(name = "contextInfo") ContextInfo contextInfo)
+    public List<ProposalInfo> getProposalsByIdList(@WebParam(name = "proposalIdList") List<String> proposalIdList, @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
@@ -141,7 +143,7 @@ public interface ProposalService {
      * provides the identifier in the create statement instead of the server
      * assigning an identifier.
      * 
-     * @param validationTypeKey Identifier of the extent of validation
+     * @param validationType Identifier of the extent of validation
      * @param proposalInfo The proposal information to be tested.
      * @return Results from performing the validation
      * @throws DoesNotExistException validationTypeKey not found

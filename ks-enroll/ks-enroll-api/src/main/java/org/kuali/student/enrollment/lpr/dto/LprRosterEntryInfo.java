@@ -24,7 +24,7 @@ public class LprRosterEntryInfo extends RelationshipInfo implements LprRosterEnt
     @XmlElement
     private String lprId;
     @XmlElement
-    private Integer position;
+    private String position;
 
     @XmlAnyElement
     private List<Element> _futureElements;
@@ -52,7 +52,7 @@ public class LprRosterEntryInfo extends RelationshipInfo implements LprRosterEnt
         this.lprId = lprId;
     }
 
-    public void setPosition(Integer position) {
+    public void setPosition(String position) {
         this.position = position;
     }
 
@@ -67,7 +67,7 @@ public class LprRosterEntryInfo extends RelationshipInfo implements LprRosterEnt
     }
 
     @Override
-    public Integer getPosition() {
+    public String getPosition() {
         return position;
     }
 

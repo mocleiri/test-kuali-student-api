@@ -35,10 +35,9 @@ import org.kuali.student.r2.common.infc.HoldsDataDictionaryService;
 import org.kuali.student.r2.common.infc.HoldsValidator;
 import org.kuali.student.r2.core.hold.dto.HoldInfo;
 import org.kuali.student.r2.core.hold.service.HoldServiceDecorator;
-import org.kuali.student.r2.core.class1.util.ValidationUtils;
+import org.kuali.student.r2.core.service.util.ValidationUtils;
 
-public class HoldServiceValidationDecorator extends HoldServiceDecorator 
-implements HoldsDataDictionaryService, HoldsValidator
+public class HoldServiceValidationDecorator extends HoldServiceDecorator implements HoldsDataDictionaryService, HoldsValidator
 {
 	// validator property w/getter & setter
     private DataDictionaryValidator validator;
@@ -81,15 +80,11 @@ implements HoldsDataDictionaryService, HoldsValidator
     }
 
     @Override
-    public HoldInfo createHold(String personId,
-            String issueId,
-            String holdTypeKey,
-            HoldInfo holdInfo,
-            ContextInfo context)
-            throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
-        _holdFullValidation(holdInfo, context);
-        return getNextDecorator().createHold(personId, issueId, holdTypeKey, holdInfo, context);
-
+    public HoldInfo createHold(HoldInfo holdInfo, ContextInfo context)
+    		throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+    	_holdFullValidation(holdInfo, context);
+            return getNextDecorator().createHold(holdInfo, context);
+       
     }
 
     @Override

@@ -64,7 +64,7 @@ public interface CourseService {
             MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
-     * Retrieves a list of courses by Ids
+     * Retrieves a list of courses by ids
      * 
      * @param courseIds
      * @param contextInfo

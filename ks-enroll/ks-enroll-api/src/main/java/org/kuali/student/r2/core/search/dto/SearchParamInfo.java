@@ -13,11 +13,10 @@
  * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package org.kuali.student.r2.core.search.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,18 +31,23 @@ import org.w3c.dom.Element;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SearchParamInfo", propOrder = {
-    "key", "values", "_futureElements"})
-public class SearchParamInfo
-        implements SearchParam, Serializable {
+                 "key", "value", "_futureElements" })
+
+public class SearchParamInfo 
+    implements SearchParam, Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @XmlAttribute
     private String key;
+    
     @XmlElement
-    private List<String> values;
+    private Object value;
+
     @XmlAnyElement
     private List<Element> _futureElements;
 
+    
     /**
      * Constructs a new SearchParamInfo.
      */
@@ -59,26 +63,22 @@ public class SearchParamInfo
     public SearchParamInfo(SearchParam param) {
         if (param != null) {
             this.key = param.getKey();
-            if (param.getValues() != null) {
-                this.values = new ArrayList(param.getValues());
-            }
+            this.value = param.getValue();
         }
     }
-
+    
     /**
      * Constructs a new SearchParamInfo from
      * a pair of key/value strings.
      *
-     * Convenience method to construct a param with a single value
-     * 
      * @param key the key for the parameter
      * @param value the value for the parameter
      */
     public SearchParamInfo(String key, String value) {
         this.key = key;
-        this.values = Arrays.asList(value);
+        this.value = value;
     }
-
+    
     /**
      * Constructs a new SearchParamInfo for a list
      * of string values.
@@ -88,97 +88,48 @@ public class SearchParamInfo
      */
     public SearchParamInfo(String key, List<String> values) {
         this.key = key;
-        this.values = values;
+        this.value = values;
     }
-
+    
     @Override
     public String getKey() {
         return key;
     }
-
+    
     public void setKey(String key) {
         this.key = key;
     }
-
+    
     @Override
-    public List<String> getValues() {
-        return values;
-    }
-
-    /** 
-     * R1 compatibility method to return the value
-     * as an object
-     * If there is only one value set it returns that as a String otherwise it 
-     * returns the value as a list
-     * @deprecated
-     */
-    @Deprecated
     public Object getValue() {
-        if (values == null) {
-            return null;
-        }
-        if (values.size() == 1) {
-            return values.get(0);
-        }
-        return values;
+        return value;
     }
-
-    /** 
-     * R1 compatibility method to set the value as a string
-     * 
-     * Equivalent to calling setValues (Arrays.asList (value))
-     * 
-     * @deprecated
-     */
-    @Deprecated
-    public void setValue(String value) {
-        this.values = Arrays.asList(value);
-    }
-
-    /** 
-     * R1 compatibility method to set the value as a list 
-     * equivalent to calling setValues
-     * as a string
-     * @deprecated
-     */
-    @Deprecated
-    public void setValue(List<String> values) {
-        this.values = values;
-    }
-
-    public void setValues(List<String> values) {
-        this.values = values;
+    
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return "SearchParam[key=" + key + ", value=" + values + "]";
+        return "SearchParam[key=" + key + ", value=" + value + "]";
     }
-
+    
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
         SearchParamInfo that = (SearchParamInfo) o;
 
-        if (key != null ? !key.equals(that.key) : that.key != null) {
-            return false;
-        }
-        if (values != null ? !values.equals(that.values) : that.values != null) {
-            return false;
-        }
+        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        if (value != null ? !value.equals(that.value) : that.value != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = values != null ? values.hashCode() : 0;
+        int result = value != null ? value.hashCode() : 0;
         result = 31 * result + (key != null ? key.hashCode() : 0);
         return result;
     }

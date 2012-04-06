@@ -3,7 +3,7 @@ package org.kuali.student.r2.lum.course.infc;
 import java.util.List;
 
 import org.kuali.student.r2.common.infc.IdNamelessEntity;
-import org.kuali.student.r2.lum.clu.infc.AffiliatedOrg;
+import org.kuali.student.r2.lum.lu.infc.AffiliatedOrg;
 
 public interface CourseRevenue extends IdNamelessEntity {
     /**
@@ -17,7 +17,7 @@ public interface CourseRevenue extends IdNamelessEntity {
     /**
      * List of affiliated organizations.
      * 
-     * @name Affiliated Organization
+     * @name Affiliated Org
      */
     public List<? extends AffiliatedOrg> getAffiliatedOrgs();
 }

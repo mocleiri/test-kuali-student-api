@@ -17,8 +17,8 @@ import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
 
-public class RegistrationGroupAssembler {
-
+public class RegistrationGroupAssembler implements DTOAssembler<RegistrationGroupInfo, LuiInfo> {
+    
     private LuiService luiService;
     private RegistrationGroupTransformer regGroupTransformer;
 
@@ -38,7 +38,8 @@ public class RegistrationGroupAssembler {
         this.luiService = luiService;
     }
 
-    public RegistrationGroupInfo assemble(LuiInfo lui, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+    @Override
+    public RegistrationGroupInfo assemble(LuiInfo lui, ContextInfo context) throws AssemblyException {
         if (lui != null) {
             RegistrationGroupInfo rg = regGroupTransformer.transform(lui);
 
@@ -49,39 +50,49 @@ public class RegistrationGroupAssembler {
             return null;
     }
 
-    private void assembleLuiLuiRelations(RegistrationGroupInfo rg, String luiId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
-            OperationFailedException {
-        String courseOfferingId = null;
-        ;
-        List<String> activityIds = new ArrayList<String>();
-        List<LuiLuiRelationInfo> rels = luiService.getLuiLuiRelationsByLui(luiId, context);
-        if (rels != null && !rels.isEmpty()) {
-            for (LuiLuiRelationInfo rel : rels) {
-                if (rel.getLuiId().equals(luiId)) {
-                    if (rel.getTypeKey().equals(LuiServiceConstants.LUI_LUI_RELATION_REGISTEREDFORVIA_TYPE_KEY)) {
-                        LuiInfo lui = luiService.getLui(rel.getRelatedLuiId(), context);
-                        if (lui != null) {
-                            if (lui.getTypeKey().equals(LuiServiceConstants.COURSE_OFFERING_TYPE_KEY)) {
-                                courseOfferingId = rel.getRelatedLuiId();
-                            } else {
-                                if (!activityIds.contains(rel.getRelatedLuiId())) {
-                                    activityIds.add(rel.getRelatedLuiId());
+    private void assembleLuiLuiRelations(RegistrationGroupInfo rg, String luiId, ContextInfo context) throws AssemblyException {
+        try {
+            String courseOfferingId = null;
+            ;
+            List<String> activityIds = new ArrayList<String>();
+            List<LuiLuiRelationInfo> rels = luiService.getLuiLuiRelationsByLui(luiId, context);
+            if (rels != null && !rels.isEmpty()) {
+                for (LuiLuiRelationInfo rel : rels) {
+                    if (rel.getLuiId().equals(luiId)) {
+                        if (rel.getTypeKey().equals(LuiServiceConstants.LUI_LUI_RELATION_REGISTEREDFORVIA_TYPE_KEY)) {
+                            LuiInfo lui = luiService.getLui(rel.getRelatedLuiId(), context);
+                            if (lui != null) {
+                                if (lui.getTypeKey().equals(LuiServiceConstants.COURSE_OFFERING_TYPE_KEY)) {
+                                    courseOfferingId = rel.getRelatedLuiId();
+                                } else {
+                                    if (!activityIds.contains(rel.getRelatedLuiId())) {
+                                        activityIds.add(rel.getRelatedLuiId());
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
+            if (null != courseOfferingId)
+                rg.setCourseOfferingId(courseOfferingId);
+            if (!activityIds.isEmpty())
+                rg.setActivityOfferingIds(activityIds);
+
+        } catch (DoesNotExistException e) {
+            return;
+        } catch (InvalidParameterException e) {
+            throw new AssemblyException("InvalidParameterException" + e.getMessage());
+        } catch (MissingParameterException e) {
+            throw new AssemblyException("MissingParameterException" + e.getMessage());
+        } catch (OperationFailedException e) {
+            throw new AssemblyException("OperationFailedException" + e.getMessage());
         }
-
-        if (null != courseOfferingId)
-            rg.setCourseOfferingId(courseOfferingId);
-        if (!activityIds.isEmpty())
-            rg.setActivityOfferingIds(activityIds);
-
     }
 
-    public LuiInfo disassemble(RegistrationGroupInfo rg, ContextInfo context) {
+    @Override
+    public LuiInfo disassemble(RegistrationGroupInfo rg, ContextInfo context) throws AssemblyException {
 
         LuiInfo lui = regGroupTransformer.transform(rg);
 

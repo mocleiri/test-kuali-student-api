@@ -469,7 +469,7 @@ public interface CourseRegistrationService  {
      * Bulk operation to drop all students from a reg group if it gets canceled.
      * TODO This is WIP now, DO NOT IMPLEMENT
      * 
-     * @param regGroupIds 
+     * @param regGroupIdList
      * @param context
      * @return
      * @throws DoesNotExistException
@@ -478,8 +478,7 @@ public interface CourseRegistrationService  {
      * @throws OperationFailedException
      * @throws PermissionDeniedException
      */
-    public RegResponseInfo dropStudentsFromRegGroups(@WebParam(name = "regGroupIds") List<String> regGroupIds,
-            @WebParam(name = "context") ContextInfo context) throws DoesNotExistException,
+    public RegResponseInfo dropStudentsFromRegGroups(@WebParam(name = "regGroupIdList") List<String> regGroupIdList, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException,
             InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
@@ -548,7 +547,7 @@ public interface CourseRegistrationService  {
      * @throws OperationFailedException Unable to complete request
      * @throws PermissionDeniedException Not authorized to do this operation
      */
-    public List<RegRequestInfo> getRegRequestsByIds(@WebParam(name = "regRequestIds") List<String> regRequestIds, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException,
+    public List<RegRequestInfo> getRegRequestsByIdList(@WebParam(name = "regRequestIds") List<String> regRequestIds, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException,
             InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
@@ -811,7 +810,7 @@ public interface CourseRegistrationService  {
      * @throws OperationFailedException
      * @throws PermissionDeniedException
      */
-    public List<CourseRegistrationInfo> getCourseRegistrationsByIds(@WebParam(name = "courseRegistrationIds") List<String> courseRegistrationIds, @WebParam(name = "context") ContextInfo context)
+    public List<CourseRegistrationInfo> getCourseRegistrationsByIdList(@WebParam(name = "courseRegistrationIds") List<String> courseRegistrationIds, @WebParam(name = "context") ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
@@ -976,7 +975,7 @@ public interface CourseRegistrationService  {
 
     /**
      * Searches for course registrations based on the criteria, returns a list
-     * of {@link CourseRegistrationInfo} Ids.
+     * of {@link CourseRegistrationInfo} ids.
      * 
      * @param criteria
      * @return

@@ -54,8 +54,9 @@ public abstract class HasAttributesInfo
      */
     public HasAttributesInfo(HasAttributes hasAttrs) {
         if (null != hasAttrs) {
+            attributes = new ArrayList<AttributeInfo>();
+            
             if (null != hasAttrs.getAttributes()) {
-                attributes = new ArrayList<AttributeInfo>();
                 for (Attribute attr : hasAttrs.getAttributes()) {
                     attributes.add(new AttributeInfo(attr));
                 }
@@ -65,9 +66,6 @@ public abstract class HasAttributesInfo
     
     @Override
     public List<AttributeInfo> getAttributes() {
-        if (attributes == null) {
-            attributes = new ArrayList<AttributeInfo>();
-        }
         return attributes;
     }
     

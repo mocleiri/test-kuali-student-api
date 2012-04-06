@@ -15,10 +15,10 @@
 
 package org.kuali.student.r2.core.scheduling.infc;
 
-import org.kuali.student.r2.common.infc.DateRange;
-import org.kuali.student.r2.common.infc.IdEntity;
-
 import java.util.List;
+
+import org.kuali.student.r2.common.infc.IdEntity;
+import org.kuali.student.r2.common.infc.DateRange;
 
 
 /**
@@ -51,18 +51,16 @@ public interface Schedule extends IdEntity {
      * ScheduleComponent is skipped.
      *
      * @name Blackout Dates
-     * @deprecated  Should this point to a shared set (think about the common case of lectures usually having the same non-instructional days)?
      */
-    public List<? extends DateRange> getBlackoutDates();
+    public List<DateRange> getBlackoutDates();
 
     /**
-     * A list of Milestone Ids where a meeting time that occurs
+     * A list of Milestone ids where a meeting time that occurs
      * within a Milestone is considered a blackout date. Milestones of
      * any of the Milestone Types that exist in the related ATP are
      * used to determine the blackout dates.
      *
-     * @name Blackout Milestone Ids
-     * @deprecated  Should this point to a shared set (think about the common case of lectures usually having the same non-instructional days)?
+     * @name Blackout Milestone ids
      */
     public List<String> getBlackoutMilestoneIds();
 
@@ -71,5 +69,5 @@ public interface Schedule extends IdEntity {
      *
      * @name Meeting Times
      */
-    public List<? extends MeetingTime> getAdditionalMeetingTimes();
+    public List<MeetingTime> getMeetingTimes();
 }

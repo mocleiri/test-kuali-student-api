@@ -15,10 +15,10 @@
 
 package org.kuali.student.r2.core.scheduling.infc;
 
-import org.kuali.student.r2.common.infc.HasId;
-import org.kuali.student.r2.common.infc.TimeAmount;
-
 import java.util.Date;
+
+import org.kuali.student.r2.common.infc.TimeAmount;
+import org.kuali.student.r2.common.infc.HasId;
 
 
 /**
@@ -35,7 +35,7 @@ public interface MeetingTime extends HasId {
      * 
      * @name Start Time
      */
-    public Date getStartDate();
+    public Date getStartTime();
 
     /**
      * The duration for this meeting.

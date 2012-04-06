@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.kuali.student.r2.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.enrollment.courseoffering.infc.SeatPoolDefinition;
 import org.kuali.student.r2.common.dto.IdEntityInfo;
 import org.w3c.dom.Element;
@@ -35,7 +36,7 @@ import org.w3c.dom.Element;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SeatPoolDefinitionInfo", propOrder = {"registrationGroupIds", "courseOfferingId", 
-        "maximumSeatCount", "processingPriority", "capacityRestrictionStatementId",
+        "maximumSeatCount", "processingPriority", "capacityRestrictionRule",
         "id", "typeKey", "stateKey", "name", "descr", "meta", "attributes", "_futureElements"})
 public class SeatPoolDefinitionInfo extends IdEntityInfo implements SeatPoolDefinition {
 
@@ -54,13 +55,19 @@ public class SeatPoolDefinitionInfo extends IdEntityInfo implements SeatPoolDefi
     private Integer processingPriority;
     
     @XmlElement
-    private String capacityRestrictionStatementId;
+    private StatementTreeViewInfo capacityRestrictionRule;
     
     @XmlAnyElement
     private List<Element> _futureElements;
     
     
     public SeatPoolDefinitionInfo() {
+        this.courseOfferingId = null;
+        this.registrationGroupIds = new ArrayList<String>();
+        this.maximumSeatCount = null;
+        this.processingPriority = null;
+        this.capacityRestrictionRule = null;
+        this._futureElements = null;
     }
     
     public SeatPoolDefinitionInfo(SeatPoolDefinition seatpool) {
@@ -72,7 +79,8 @@ public class SeatPoolDefinitionInfo extends IdEntityInfo implements SeatPoolDefi
         this.maximumSeatCount = (null != seatpool.getMaximumSeatCount()) ? new Integer(seatpool.getMaximumSeatCount()) : null;
         this.registrationGroupIds = (null != seatpool.getRegistrationGroupIds()) ? new ArrayList<String>(seatpool.getRegistrationGroupIds()) : null;
         this.processingPriority = (null != seatpool.getProcessingPriority()) ? new Integer(seatpool.getProcessingPriority()) : null;
-        this.capacityRestrictionStatementId = seatpool.getCapacityRestrictionStatementId();
+        //TODO: Add copy constructor to statement tree view info
+        this.capacityRestrictionRule = seatpool.getCapacityRestrictionRule();
     }
    
         
@@ -100,10 +108,14 @@ public class SeatPoolDefinitionInfo extends IdEntityInfo implements SeatPoolDefi
     }
 
     @Override
-    public String getCapacityRestrictionStatementId() {
-        return this.capacityRestrictionStatementId;        
+    public StatementTreeViewInfo getCapacityRestrictionRule() {
+        return this.capacityRestrictionRule;        
     }
     
+    public void setCourseOfferingId(String courseOfferingId) {
+        this.courseOfferingId = courseOfferingId;
+    }
+
     public void setRegistrationGroupIds(List<String> registrationGroupIds) {
         this.registrationGroupIds = registrationGroupIds;
     }
@@ -116,7 +128,9 @@ public class SeatPoolDefinitionInfo extends IdEntityInfo implements SeatPoolDefi
         this.processingPriority = processingPriority;
     }
 
-    public void setCapacityRestrictionStatementId(String capacityRestrictionStatementId) {
-        this.capacityRestrictionStatementId = capacityRestrictionStatementId;
+    public void setCapacityRestrictionRule(StatementTreeViewInfo capacityRestrictionRule) {
+        this.capacityRestrictionRule = capacityRestrictionRule;
     }        
+
+
 }

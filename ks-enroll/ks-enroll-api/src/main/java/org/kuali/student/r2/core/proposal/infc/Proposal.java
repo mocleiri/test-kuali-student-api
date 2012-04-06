@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.kuali.student.r2.common.infc.IdEntity;
+import org.kuali.student.r2.common.infc.IdNamelessEntity;
 import org.kuali.student.r2.common.infc.RichText;
 
 /**
@@ -53,7 +54,12 @@ public interface Proposal extends IdEntity {
     /**
      * Brief explanation of the reason for the proposal
      */
-    public RichText getRationale();
+    public String getRationale();
+
+    /**
+     * Detailed description of the proposed changes.
+     */
+    public RichText getDetailDesc();
 
     /**
      * Date and time that this proposal became effective. This is a similar

@@ -108,7 +108,7 @@ public class TestCourseRegistrationServiceImpl {
 
     }
 
-    @Ignore
+    @Test
     public void testSubmitRegRequest() {
 
         try {
@@ -151,7 +151,7 @@ public class TestCourseRegistrationServiceImpl {
         }
     }
 
-    @Ignore
+    @Test
     public void testCheckStudentEligibiltyForCourseOffering() {
         String studentId = "testStudentId1";
         String courseOfferingId = "courseOffering3";

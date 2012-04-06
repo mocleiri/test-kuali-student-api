@@ -29,10 +29,10 @@ public interface SearchParam {
     public String getKey();    
 
     /**
-     * The search parameter values.
+     * The search parameter value.
      *
-     * @name Parameter Value(s)
+     * @name Parameter Value
      * @required
      */
-    public List<String> getValues();
+    public Object getValue();
 }

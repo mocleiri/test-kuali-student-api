@@ -50,12 +50,12 @@ public class LRRServiceMockImpl implements LearningResultRecordService {
 	}
 
 	@Override
-	public List<LearningResultRecordInfo> getLearningResultRecordsForLprIds(
-			List<String> lprIds, ContextInfo context)
+	public List<LearningResultRecordInfo> getLearningResultRecordsForLprIdList(
+			List<String> lprIdList, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
 		List<LearningResultRecordInfo> allLRRsForLPR = new ArrayList<LearningResultRecordInfo>();
-		for (String lprId : lprIds) {
+		for (String lprId : lprIdList) {
 			allLRRsForLPR.addAll(getLearningResultRecordsForLpr(lprId));
 		}
 		return allLRRsForLPR;
@@ -63,12 +63,12 @@ public class LRRServiceMockImpl implements LearningResultRecordService {
 
 	@Override
 	public List<LearningResultRecordInfo> getLearningResultRecordsBySourceId(
-			List<String> sourceIds, ContextInfo context)
+			List<String> sourceIdList, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
 		List<LearningResultRecordInfo> lrrsMatchingSource = new ArrayList<LearningResultRecordInfo>();
 		for (LearningResultRecordInfo lrr : learningResultCache.values()) {
-			if (lrr.getResultSourceIds().retainAll(sourceIds)  ) {
+			if (lrr.getResultSourceIdList().retainAll(sourceIdList)  ) {
 				lrrsMatchingSource.add(lrr);
 			}
 		}
@@ -131,14 +131,14 @@ public class LRRServiceMockImpl implements LearningResultRecordService {
 	}
 
 	@Override
-	public List<ResultSourceInfo> getResultSourcesByIds(
-			List<String> resultSourceIds, ContextInfo context)
+	public List<ResultSourceInfo> getResultSourcesByIdList(
+			List<String> resultSourceIdList, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
 
 		List<ResultSourceInfo> resultSources = new ArrayList<ResultSourceInfo>();
-		for (String sourceId : resultSourceIds) {
+		for (String sourceId : resultSourceIdList) {
 			resultSources.add(getResultSource(sourceId, context));
 
 		}

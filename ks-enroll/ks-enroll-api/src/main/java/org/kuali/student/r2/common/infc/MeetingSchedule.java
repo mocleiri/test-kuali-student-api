@@ -68,7 +68,7 @@ public interface MeetingSchedule
      * P2Y10M15DT10H30M20S A period of 2 years, 10 months, 15 days, 10 hours, 30
      * minutes, and 20 seconds.
      * 
-     * @name Schedule Id
+     * @name Time Periods
      */
-    public String getScheduleId();
+    public String getTimePeriods();
 }

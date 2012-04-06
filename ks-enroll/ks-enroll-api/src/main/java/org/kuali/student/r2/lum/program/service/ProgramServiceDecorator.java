@@ -22,7 +22,6 @@ import org.kuali.student.r2.lum.program.dto.HonorsProgramInfo;
 import org.kuali.student.r2.lum.program.dto.MajorDisciplineInfo;
 import org.kuali.student.r2.lum.program.dto.MinorDisciplineInfo;
 import org.kuali.student.r2.lum.program.dto.ProgramRequirementInfo;
-import org.kuali.student.r2.lum.program.dto.ProgramVariationInfo;
 
 public class ProgramServiceDecorator implements ProgramService {
     private ProgramService nextDecorator;
@@ -38,115 +37,115 @@ public class ProgramServiceDecorator implements ProgramService {
     @Override
     public CredentialProgramInfo getCredentialProgram(String credentialProgramId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getCredentialProgram(credentialProgramId, contextInfo);
+        return this.nextDecorator.getCredentialProgram(credentialProgramId, contextInfo);
     }
 
     @Override
     public List<CredentialProgramInfo> getCredentialProgramsByIds(List<String> credentialProgramId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getCredentialProgramsByIds(credentialProgramId, contextInfo);
+        return this.nextDecorator.getCredentialProgramsByIds(credentialProgramId, contextInfo);
     }
 
     @Override
     public List<ValidationResultInfo> validateCredentialProgram(String validationType, CredentialProgramInfo credentialProgramInfo, ContextInfo contextInfo) throws InvalidParameterException,
             MissingParameterException, OperationFailedException {
-        return this.getNextDecorator().validateCredentialProgram(validationType, credentialProgramInfo, contextInfo);
+        return this.nextDecorator.validateCredentialProgram(validationType, credentialProgramInfo, contextInfo);
     }
 
     @Override
     public CredentialProgramInfo createCredentialProgram(String credentialProgramTypeKey, CredentialProgramInfo credentialProgramInfo, ContextInfo contextInfo) throws AlreadyExistsException,
             DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().createCredentialProgram(credentialProgramTypeKey, credentialProgramInfo, contextInfo);
+        return this.nextDecorator.createCredentialProgram(credentialProgramTypeKey, credentialProgramInfo, contextInfo);
     }
 
     @Override
     public CredentialProgramInfo createNewCredentialProgramVersion(String credentialProgramId, String versionComment, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DataValidationErrorException {
-        return this.getNextDecorator().createNewCredentialProgramVersion(credentialProgramId, versionComment, contextInfo);
+        return this.nextDecorator.createNewCredentialProgramVersion(credentialProgramId, versionComment, contextInfo);
     }
 
     @Override
     public StatusInfo setCurrentCredentialProgramVersion(String credentialProgramId, Date currentVersionStart, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, IllegalVersionSequencingException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().setCurrentCredentialProgramVersion(credentialProgramId, currentVersionStart, contextInfo);
+        return this.nextDecorator.setCurrentCredentialProgramVersion(credentialProgramId, currentVersionStart, contextInfo);
     }
 
     @Override
     public CredentialProgramInfo updateCredentialProgram(String credentialProgramId, CredentialProgramInfo credentialProgramInfo, ContextInfo contextInfo) throws DataValidationErrorException,
             DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().updateCredentialProgram(credentialProgramId, credentialProgramInfo, contextInfo);
+        return this.nextDecorator.updateCredentialProgram(credentialProgramId, credentialProgramInfo, contextInfo);
     }
 
     @Override
     public StatusInfo deleteCredentialProgram(String credentialProgramId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().deleteCredentialProgram(credentialProgramId, contextInfo);
+        return this.nextDecorator.deleteCredentialProgram(credentialProgramId, contextInfo);
     }
 
     @Override
     public MajorDisciplineInfo getMajorDiscipline(String majorDisciplineId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getMajorDiscipline(majorDisciplineId, contextInfo);
+        return this.nextDecorator.getMajorDiscipline(majorDisciplineId, contextInfo);
     }
 
     @Override
     public List<String> getMajorDisciplineIdsByCredentialProgramType(String programType, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException {
-        return this.getNextDecorator().getMajorDisciplineIdsByCredentialProgramType(programType, contextInfo);
+        return this.nextDecorator.getMajorDisciplineIdsByCredentialProgramType(programType, contextInfo);
     }
 
     @Override
     public List<ValidationResultInfo> validateMajorDiscipline(String validationType, MajorDisciplineInfo majorDisciplineInfo, ContextInfo contextInfo) throws InvalidParameterException,
             MissingParameterException, OperationFailedException {
-        return this.getNextDecorator().validateMajorDiscipline(validationType, majorDisciplineInfo, contextInfo);
+        return this.nextDecorator.validateMajorDiscipline(validationType, majorDisciplineInfo, contextInfo);
     }
 
     @Override
     public MajorDisciplineInfo createMajorDiscipline(String majorDisciplineTypeKey, MajorDisciplineInfo majorDisciplineInfo, ContextInfo contextInfo) throws AlreadyExistsException,
             DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().createMajorDiscipline(majorDisciplineTypeKey, majorDisciplineInfo, contextInfo);
+        return this.nextDecorator.createMajorDiscipline(majorDisciplineTypeKey, majorDisciplineInfo, contextInfo);
     }
 
     @Override
     public MajorDisciplineInfo updateMajorDiscipline(String majorDisciplineId, MajorDisciplineInfo majorDisciplineInfo, ContextInfo contextInfo) throws DataValidationErrorException,
             DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().updateMajorDiscipline(majorDisciplineId, majorDisciplineInfo, contextInfo);
+        return this.nextDecorator.updateMajorDiscipline(majorDisciplineId, majorDisciplineInfo, contextInfo);
     }
 
     @Override
     public StatusInfo deleteMajorDiscipline(String majorDisciplineId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().deleteMajorDiscipline(majorDisciplineId, contextInfo);
+        return this.nextDecorator.deleteMajorDiscipline(majorDisciplineId, contextInfo);
     }
 
     @Override
     public MajorDisciplineInfo createNewMajorDisciplineVersion(String majorDisciplineId, String versionComment, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DataValidationErrorException {
-        return this.getNextDecorator().createNewMajorDisciplineVersion(majorDisciplineId, versionComment, contextInfo);
+        return this.nextDecorator.createNewMajorDisciplineVersion(majorDisciplineId, versionComment, contextInfo);
     }
 
     @Override
     public HonorsProgramInfo getHonorsProgram(String honorsProgramId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getHonorsProgram(honorsProgramId, contextInfo);
+        return this.nextDecorator.getHonorsProgram(honorsProgramId, contextInfo);
     }
 
     @Override
     public List<String> getHonorProgramIdsByCredentialProgramType(String programType, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException {
-        return this.getNextDecorator().getHonorProgramIdsByCredentialProgramType(programType, contextInfo);
+        return this.nextDecorator.getHonorProgramIdsByCredentialProgramType(programType, contextInfo);
     }
 
     @Override
     public List<ValidationResultInfo> validateHonorsProgram(String validationType, HonorsProgramInfo honorsProgramInfo, ContextInfo contextInfo) throws InvalidParameterException,
             MissingParameterException, OperationFailedException {
-        return this.getNextDecorator().validateHonorsProgram(validationType, honorsProgramInfo, contextInfo);
+        return this.nextDecorator.validateHonorsProgram(validationType, honorsProgramInfo, contextInfo);
     }
 
     @Override
     public HonorsProgramInfo createHonorsProgram(String honorsProgramTypeKey, HonorsProgramInfo honorsProgramInfo, ContextInfo contextInfo) throws AlreadyExistsException,
             DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().createHonorsProgram(honorsProgramTypeKey, honorsProgramInfo, contextInfo);
+        return this.nextDecorator.createHonorsProgram(honorsProgramTypeKey, honorsProgramInfo, contextInfo);
     }
 
     @Override
@@ -154,129 +153,129 @@ public class ProgramServiceDecorator implements ProgramService {
             throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException,
             PermissionDeniedException {
 
-        return this.getNextDecorator().updateHonorsProgram(honorsProgramId, honorsProgramTypeKey, honorsProgramInfo, contextInfo);
+        return this.nextDecorator.updateHonorsProgram(honorsProgramId, honorsProgramTypeKey, honorsProgramInfo, contextInfo);
     }
 
     @Override
     public StatusInfo deleteHonorsProgram(String honorsProgramId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().deleteHonorsProgram(honorsProgramId, contextInfo);
+        return this.nextDecorator.deleteHonorsProgram(honorsProgramId, contextInfo);
     }
 
     @Override
     public CoreProgramInfo getCoreProgram(String coreProgramId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException,
             PermissionDeniedException {
-        return this.getNextDecorator().getCoreProgram(coreProgramId, contextInfo);
+        return this.nextDecorator.getCoreProgram(coreProgramId, contextInfo);
     }
 
     @Override
     public List<ValidationResultInfo> validateCoreProgram(String validationType, CoreProgramInfo coreProgramInfo, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException,
             OperationFailedException {
-        return this.getNextDecorator().validateCoreProgram(validationType, coreProgramInfo, contextInfo);
+        return this.nextDecorator.validateCoreProgram(validationType, coreProgramInfo, contextInfo);
     }
 
     @Override
     public CoreProgramInfo createCoreProgram(String coreProgramTypeKey, CoreProgramInfo coreProgramInfo, ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException,
             InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().createCoreProgram(coreProgramTypeKey, coreProgramInfo, contextInfo);
+        return this.nextDecorator.createCoreProgram(coreProgramTypeKey, coreProgramInfo, contextInfo);
     }
 
     @Override
     public CoreProgramInfo createNewCoreProgramVersion(String coreProgramId, String versionComment, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DataValidationErrorException {
-        return this.getNextDecorator().createNewCoreProgramVersion(coreProgramId, versionComment, contextInfo);
+        return this.nextDecorator.createNewCoreProgramVersion(coreProgramId, versionComment, contextInfo);
     }
 
     @Override
     public StatusInfo setCurrentCoreProgramVersion(String coreProgramId, Date currentVersionStart, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, IllegalVersionSequencingException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().setCurrentCoreProgramVersion(coreProgramId, currentVersionStart, contextInfo);
+        return this.nextDecorator.setCurrentCoreProgramVersion(coreProgramId, currentVersionStart, contextInfo);
     }
 
     @Override
     public CoreProgramInfo updateCoreProgram(String coreProgramId, String coreProgramTypeKey, CoreProgramInfo coreProgramInfo, ContextInfo contextInfo) throws DataValidationErrorException,
             DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().updateCoreProgram(coreProgramId, coreProgramTypeKey, coreProgramInfo, contextInfo);
+        return this.nextDecorator.updateCoreProgram(coreProgramId, coreProgramTypeKey, coreProgramInfo, contextInfo);
     }
 
     @Override
     public StatusInfo deleteCoreProgram(String coreProgramId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException,
             PermissionDeniedException {
-        return this.getNextDecorator().deleteCoreProgram(coreProgramId, contextInfo);
+        return this.nextDecorator.deleteCoreProgram(coreProgramId, contextInfo);
     }
 
     @Override
     public ProgramRequirementInfo getProgramRequirement(String programRequirementId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getProgramRequirement(programRequirementId, contextInfo);
+        return this.nextDecorator.getProgramRequirement(programRequirementId, contextInfo);
     }
 
     @Override
     public List<ValidationResultInfo> validateProgramRequirement(String validationType, ProgramRequirementInfo programRequirementInfo, ContextInfo contextInfo) throws InvalidParameterException,
             MissingParameterException, OperationFailedException {
-        return this.getNextDecorator().validateProgramRequirement(validationType, programRequirementInfo, contextInfo);
+        return this.nextDecorator.validateProgramRequirement(validationType, programRequirementInfo, contextInfo);
     }
 
     @Override
     public ProgramRequirementInfo createProgramRequirement(String programRequirementTypeKey, ProgramRequirementInfo programRequirementInfo, ContextInfo contextInfo) throws AlreadyExistsException,
             DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().createProgramRequirement(programRequirementTypeKey, programRequirementInfo, contextInfo);
+        return this.nextDecorator.createProgramRequirement(programRequirementTypeKey, programRequirementInfo, contextInfo);
     }
 
     @Override
     public ProgramRequirementInfo updateProgramRequirement(String programRequirementId, String programRequirementTypeKey, ProgramRequirementInfo programRequirementInfo, ContextInfo contextInfo)
             throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException,
             PermissionDeniedException {
-        return this.getNextDecorator().updateProgramRequirement(programRequirementId, programRequirementTypeKey, programRequirementInfo, contextInfo);
+        return this.nextDecorator.updateProgramRequirement(programRequirementId, programRequirementTypeKey, programRequirementInfo, contextInfo);
     }
 
     @Override
     public StatusInfo deleteProgramRequirement(String programRequirementId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().deleteProgramRequirement(programRequirementId, contextInfo);
+        return this.nextDecorator.deleteProgramRequirement(programRequirementId, contextInfo);
     }
 
     @Override
     public StatusInfo setCurrentMajorDisciplineVersion(String majorDisciplineId, Date currentVersionStart, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, IllegalVersionSequencingException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().setCurrentMajorDisciplineVersion(majorDisciplineId, currentVersionStart, contextInfo);
+        return this.nextDecorator.setCurrentMajorDisciplineVersion(majorDisciplineId, currentVersionStart, contextInfo);
     }
 
     @Override
     public MinorDisciplineInfo getMinorDiscipline(String minorDisciplineId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getMinorDiscipline(minorDisciplineId, contextInfo);
+        return this.nextDecorator.getMinorDiscipline(minorDisciplineId, contextInfo);
     }
 
     @Override
     public List<String> getMinorsByCredentialProgramType(String programType, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException {
-        return this.getNextDecorator().getMinorsByCredentialProgramType(programType, contextInfo);
+        return this.nextDecorator.getMinorsByCredentialProgramType(programType, contextInfo);
     }
 
     @Override
     public List<ValidationResultInfo> validateMinorDiscipline(String validationType, MinorDisciplineInfo minorDisciplineInfo, ContextInfo contextInfo) throws InvalidParameterException,
             MissingParameterException, OperationFailedException {
-        return this.getNextDecorator().validateMinorDiscipline(validationType, minorDisciplineInfo, contextInfo);
+        return this.nextDecorator.validateMinorDiscipline(validationType, minorDisciplineInfo, contextInfo);
     }
 
     @Override
     public MinorDisciplineInfo createMinorDiscipline(String minorDisciplineTypeKey, MinorDisciplineInfo minorDisciplineInfo, ContextInfo contextInfo) throws AlreadyExistsException,
             DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().createMinorDiscipline(minorDisciplineTypeKey, minorDisciplineInfo, contextInfo);
+        return this.nextDecorator.createMinorDiscipline(minorDisciplineTypeKey, minorDisciplineInfo, contextInfo);
     }
 
     @Override
     public MinorDisciplineInfo updateMinorDiscipline(String minorDisciplineId, String minorDisciplineTypeKey, MinorDisciplineInfo minorDisciplineInfo, ContextInfo contextInfo)
             throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException,
             PermissionDeniedException {
-        return this.getNextDecorator().updateMinorDiscipline(minorDisciplineId, minorDisciplineTypeKey, minorDisciplineInfo, contextInfo);
+        return this.nextDecorator.updateMinorDiscipline(minorDisciplineId, minorDisciplineTypeKey, minorDisciplineInfo, contextInfo);
     }
 
     @Override
     public StatusInfo deleteMinorDiscipline(String minorDisciplineId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().deleteMinorDiscipline(minorDisciplineId, contextInfo);
+        return this.nextDecorator.deleteMinorDiscipline(minorDisciplineId, contextInfo);
     }
 
     @Override
@@ -289,26 +288,19 @@ public class ProgramServiceDecorator implements ProgramService {
     @Override
     public List<HonorsProgramInfo> getHonorsProgramsByIds(List<String> honorsProgramIds, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getHonorsProgramsByIds(honorsProgramIds, contextInfo);
+        return this.nextDecorator.getHonorsProgramsByIds(honorsProgramIds, contextInfo);
     }
 
     @Override
     public List<CoreProgramInfo> getCoreProgramsByIds(List<String> coreProgramIds, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getCoreProgramsByIds(coreProgramIds, contextInfo);
+        return this.nextDecorator.getCoreProgramsByIds(coreProgramIds, contextInfo);
     }
 
     @Override
     public List<ProgramRequirementInfo> getProgramRequirementsByIds(List<String> programRequirementIds, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return this.getNextDecorator().getProgramRequirementsByIds(programRequirementIds, contextInfo);
+        return this.nextDecorator.getProgramRequirementsByIds(programRequirementIds, contextInfo);
     }
 
-    @Override
-    public List<ProgramVariationInfo> getProgramVariationsByMajorDiscipline(String majorDisciplineId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        return nextDecorator.getProgramVariationsByMajorDiscipline(majorDisciplineId, contextInfo);
-    }
-
-    
-    
 }

@@ -46,7 +46,7 @@ import org.kuali.student.r2.common.util.constants.HoldServiceConstants;
  * Version: DRAFT - NOT READY FOR RELEASE. 
  *
  * The Hold Service defines a service to manage holdss on a Person by
- * Person basis. Holds are a way to put a "stop" on an action
+ * Person basis. Restrictions are a way to put a "stop" on an action
  * implemented by another service, such as registration for a course.
  * Holds are checked in the Process Service.
  *
@@ -115,17 +115,17 @@ public interface HoldService {
     /** 
      * Retrieves all Holds related to the given Issue.
      *
-     * @param issueId a unique identifier for the Issue 
+     * @param issueKey a unique identifier for the Issue 
      * @param contextInfo information containing the principalId and
      *        locale information about the caller of service operation
      * @return the Holds to the given Issue
      * @throws InvalidParameterException contextInfo is not valid
-     * @throws MissingParameterException issueId or contetInfo is missing
+     * @throws MissingParameterException issueKey or contetInfo is missing
      *         or null
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException an authorization failure occurred
      */
-    public List<HoldInfo> getHoldsByIssue(@WebParam(name = "issueId") String issueId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<HoldInfo> getHoldsByIssue(@WebParam(name = "issueKey") String issueKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /** 
      * Retrieves all Holds to the given Person.
@@ -162,7 +162,7 @@ public interface HoldService {
     /** 
      * Retrieves a list of all Holds by Issue for a Person.
      *
-     * @param issueId an Issue
+     * @param issueKey an Issue
      * @param personId Id of a person
      * @param contextInfo Context information containing the principalId
      *                and locale information about the caller of service
@@ -173,14 +173,14 @@ public interface HoldService {
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<HoldInfo> getHoldsByIssueAndPerson(@WebParam(name = "issueId") String issueId, @WebParam(name = "personId") String personId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<HoldInfo> getHoldsByIssueAndPerson(@WebParam(name = "issueKey") String issueKey, @WebParam(name = "personId") String personId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /** 
      * Retrieves a list of active Holds, both warning and blocking, by
      * Issue for a Person. An active Hold is any open Hold that has
      * had not been released or cancelled.
      *
-     * @param issueId an Issue
+     * @param issueKey an Issue
      * @param personId Id of a person
      * @param contextInfo Context information containing the principalId
      *                and locale information about the caller of service
@@ -191,7 +191,7 @@ public interface HoldService {
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<HoldInfo> getActiveHoldsByIssueAndPerson(@WebParam(name = "issueId") String issueId, @WebParam(name = "personId") String personId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<HoldInfo> getActiveHoldsByIssueAndPerson(@WebParam(name = "issueKey") String issueKey, @WebParam(name = "personId") String personId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Searches for Holds based on the criteria and returns a list
@@ -256,9 +256,6 @@ public interface HoldService {
     /** 
      * Creates a new Hold.
      *
-     * @param personId identifying the person for whom the hold is to be applied
-     * @param issueId identifying the exact issue involved
-     * @param holdTypeKey identifying the type of the hold
      * @param holdInfo Details of the Hold to be created
      * @param contextInfo Context information containing the principalId
      *                and locale information about the caller of service
@@ -274,15 +271,7 @@ public interface HoldService {
      *         designated as read only
      * @throws PermissionDeniedException authorization failure
      */
-    public HoldInfo createHold( 
-            @WebParam(name = "personId") String personId,  
-            @WebParam(name = "issueId") String issueId, 
-            @WebParam(name = "holdTypeKey") String holdTypeKey,
-            @WebParam(name = "holdInfo") HoldInfo holdInfo, 
-            @WebParam(name = "contextInfo") ContextInfo contextInfo) 
-            throws AlreadyExistsException, DataValidationErrorException, 
-            InvalidParameterException, MissingParameterException, OperationFailedException,
-            PermissionDeniedException, ReadOnlyException;
+    public HoldInfo createHold(@WebParam(name = "holdInfo") HoldInfo holdInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /** 
      * Updates an existing Hold.
@@ -346,35 +335,35 @@ public interface HoldService {
     /** 
      * Retrieves the details of a single Issue by an issue Id.
      *
-     * @param issueId Unique Id of the Issue to be retrieved
+     * @param issueKey Unique Id of the Issue to be retrieved
      * @param contextInfo Context information containing the principalId
      *                and locale information about the caller of service
      *                operation
      * @return the details of the Issue requested
-     * @throws DoesNotExistException issueId not found
-     * @throws InvalidParameterException invalid issueId
-     * @throws MissingParameterException missing issueId
+     * @throws DoesNotExistException issueKey not found
+     * @throws InvalidParameterException invalid issueKey
+     * @throws MissingParameterException missing issueKey
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public IssueInfo getIssue(@WebParam(name = "issueId") String issueId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public IssueInfo getIssue(@WebParam(name = "issueKey") String issueKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /** 
      * Retrieves a list Issues corresponding to a list of issue Ids.
      *
-     * @param issueIds list of unique Ids of the
+     * @param issueKeys list of unique Ids of the
      *        Issue to be retrieved
      * @param contextInfo Context information containing the principalId
      *                and locale information about the caller of service
      *                operation
      * @return a list of Issues
-     * @throws DoesNotExistException a issueId in list not found
-     * @throws InvalidParameterException invalid issueId in list
-     * @throws MissingParameterException missing issueIds
+     * @throws DoesNotExistException a issueKey in list not found
+     * @throws InvalidParameterException invalid issueKey in list
+     * @throws MissingParameterException missing issueKeys
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<IssueInfo> getIssuesByIds(@WebParam(name = "issueIds") List<String> issueIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<IssueInfo> getIssuesByIds(@WebParam(name = "issueKeys") List<String> issueKeys, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /** 
      * Retrieves a list of Issues by Type.
@@ -389,7 +378,7 @@ public interface HoldService {
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<String> getIssueIdsByType(@WebParam(name = "issueTypeKey") String issueTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<String> getIssueKeysByType(@WebParam(name = "issueTypeKey") String issueTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /** 
      * Retrieves a list of Issues that pertain to the given
@@ -421,7 +410,7 @@ public interface HoldService {
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<String> searchForIssueIds(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<String> searchForIssueKeys(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Searches for Issues based on the criteria and returns a list of
@@ -431,7 +420,7 @@ public interface HoldService {
      * @param contextInfo Context information containing the principalId
      *                and locale information about the caller of service
      *                operation
-     * @return list of IssueIds
+     * @return list of IssueKeys
      * @throws InvalidParameterException invalid parameter
      * @throws MissingParameterException parameter is missing
      * @throws OperationFailedException unable to complete request
@@ -471,7 +460,6 @@ public interface HoldService {
     /** 
      * Creates a new Issue.
      *
-     * @param issueTypeKey indicates the type of issue
      * @param issueInfo Details of the Issue to be created
      * @param contextInfo Context information containing the principalId
      *                and locale information about the caller of service
@@ -486,19 +474,12 @@ public interface HoldService {
      * @throws ReadOnlyException an attempt at supplying information
      *         designated as read only
      */
-    public IssueInfo createIssue(
-            @WebParam(name = "issueTypeKey") String issueTypeKey,
-            @WebParam(name = "issueInfo") IssueInfo issueInfo, 
-            @WebParam(name = "contextInfo") ContextInfo contextInfo) 
-            throws AlreadyExistsException, DataValidationErrorException, 
-            InvalidParameterException, MissingParameterException, 
-            OperationFailedException, 
-            PermissionDeniedException, ReadOnlyException;;
+    public IssueInfo createIssue(@WebParam(name = "issueInfo") IssueInfo issueInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;;
 
     /** 
      * Updates an existing Issue.
      *
-     * @param issueId Id of the Issue to be updated
+     * @param issueKey Id of the Issue to be updated
      * @param issueInfo Details of updates to the Issue
      *        being updated
      * @param contextInfo Context information containing the principalId
@@ -517,12 +498,12 @@ public interface HoldService {
      * @throws VersionMismatchException The action was attempted on an
      *         out of date version.
      */
-    public IssueInfo updateIssue(@WebParam(name = "issueId") String issueId, @WebParam(name = "issueInfo") IssueInfo issueInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
+    public IssueInfo updateIssue(@WebParam(name = "issueKey") String issueKey, @WebParam(name = "issueInfo") IssueInfo issueInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /** 
      * Deletes an existing Issue.
      *
-     * @param issueId the Id of the Issue to
+     * @param issueKey the Id of the Issue to
      *        be deleted
      * @param contextInfo Context information containing the principalId
      *                and locale information about the caller of service
@@ -534,5 +515,5 @@ public interface HoldService {
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public StatusInfo deleteIssue(@WebParam(name = "issueId") String issueId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public StatusInfo deleteIssue(@WebParam(name = "issueKey") String issueKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 }

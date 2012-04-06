@@ -1,7 +1,6 @@
 package org.kuali.student.enrollment.lpr.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,54 +10,28 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.kuali.student.enrollment.lpr.infc.LprTransaction;
-import org.kuali.student.enrollment.lpr.infc.LprTransactionItem;
 import org.kuali.student.r2.common.dto.IdEntityInfo;
 import org.w3c.dom.Element;
 
 /**
  * @author Kuali Student Team (sambit)
  */
+
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "LprTransactionInfo", propOrder = {"id",
-    "typeKey",
-    "stateKey",
-    "name",
-    "descr",
-    "requestingPersonId",
-    "atpId",
-    "lprTransactionItems",
-    "meta",
-    "attributes",
-    "_futureElements"})
+@XmlType(name = "LprTransactionInfo", propOrder = {"id", "typeKey", "stateKey", "name", "requestingPersonId", "descr",
+        "lprTransactionItems", "meta", "attributes", "_futureElements"})
 public class LprTransactionInfo extends IdEntityInfo implements LprTransaction, Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @XmlElement
     private String requestingPersonId;
-    @XmlElement
-    private String atpId;
+
     @XmlElement
     private List<LprTransactionItemInfo> lprTransactionItems;
+
     @XmlAnyElement
     private List<Element> _futureElements;
-
-    public LprTransactionInfo() {
-    }
-
-    public LprTransactionInfo(LprTransaction input) {
-        super(input);
-        if (input == null) {
-            return;
-        }
-        this.requestingPersonId = input.getRequestingPersonId();
-        this.atpId = input.getAtpId();
-        this.lprTransactionItems = new ArrayList<LprTransactionItemInfo>();
-        if (input.getLprTransactionItems() != null) {
-            for (LprTransactionItem item : input.getLprTransactionItems()) {
-                this.lprTransactionItems.add(new LprTransactionItemInfo(item));
-            }
-        }
-    }
 
     @Override
     public List<LprTransactionItemInfo> getLprTransactionItems() {
@@ -78,12 +51,4 @@ public class LprTransactionInfo extends IdEntityInfo implements LprTransaction, 
         this.requestingPersonId = requestingPersonId;
     }
 
-    @Override
-    public String getAtpId() {
-        return atpId;
-    }
-
-    public void setAtpId(String atpId) {
-        this.atpId = atpId;
-    }
 }

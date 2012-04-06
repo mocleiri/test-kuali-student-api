@@ -36,7 +36,6 @@ public class LuiServiceConstants {
      */
 //    public static final String COURSE_BUNDLE_TYPE_KEY = "kuali.lui.type.course.bundle";
     public static final String COURSE_OFFERING_TYPE_KEY = "kuali.lui.type.course.offering";
-     public static final String FORMAT_OFFERING_TYPE_KEY = "kuali.lui.type.format.offering";
     public static final String REGISTRATION_GROUP_TYPE_KEY = "kuali.lui.type.registration.group";
 //    public static final String COURSE_FORMAT_OFFERING_TYPE_KEY = "kuali.lui.type.course.format.offering";
 
@@ -166,10 +165,5 @@ public class LuiServiceConstants {
      *  Registration ordering types?
      */
     public static final String ALL_REGISTRATION_ORDERING_TYPE_KEY = "kuali.registration.ordering.type.all";
-//    public static final String SEQUENCED_REGISTRATION_ORDERING_TYPE_KEY = "kuali.registration.ordering.type.sequenced";   
-    
-    /**
-     * known lu codes
-     */
-    public static final String HONORS_LU_CODE = "kuali.lu.code.honorsOffering";
+//    public static final String SEQUENCED_REGISTRATION_ORDERING_TYPE_KEY = "kuali.registration.ordering.type.sequenced";    
 }

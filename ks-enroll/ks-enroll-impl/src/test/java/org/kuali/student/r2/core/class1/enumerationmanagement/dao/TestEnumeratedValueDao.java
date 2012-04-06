@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kuali.student.common.test.spring.AbstractTransactionalDaoTest;
 import org.kuali.student.common.test.spring.Dao;
@@ -32,7 +31,6 @@ import org.kuali.student.r2.core.class1.enumerationmanagement.model.EnumContextV
 import org.kuali.student.r2.core.class1.enumerationmanagement.model.EnumeratedValueEntity;
 import org.kuali.student.r2.core.class1.enumerationmanagement.model.EnumerationEntity;
 
-@Ignore
 @PersistenceFileLocation("classpath:META-INF/persistence_jta.xml")
 public class TestEnumeratedValueDao extends AbstractTransactionalDaoTest{
     @Dao(value = "org.kuali.student.r2.core.class1.enumerationmanagement.dao.EnumeratedValueDao", testSqlFile = "classpath:ks-em.sql")
@@ -41,7 +39,7 @@ public class TestEnumeratedValueDao extends AbstractTransactionalDaoTest{
     @Dao(value = "org.kuali.student.r2.core.class1.enumerationmanagement.dao.EnumerationDao")
     public EnumerationDao enumerationDao;
     
-    @Ignore
+    @Test
     public void testAddEnumeratedValue() {
         
         EnumerationEntity keyA = enumerationDao.find("kuali.lu.subjectArea");
@@ -89,7 +87,7 @@ public class TestEnumeratedValueDao extends AbstractTransactionalDaoTest{
         }
     }
 
-    @Ignore
+    @Test
     public void testFetchEnumeratedValues(){
     	long baseTime = System.currentTimeMillis();
 
@@ -234,8 +232,8 @@ public class TestEnumeratedValueDao extends AbstractTransactionalDaoTest{
         assertEquals(enumeratedValueList.size(), 2);
 
     }
-
-    @Ignore
+    
+    @Test
     public void testUpdateEnumeratedValue() {
         
         EnumerationEntity existing = enumerationDao.find("kuali.lu.subjectArea");
@@ -276,7 +274,7 @@ public class TestEnumeratedValueDao extends AbstractTransactionalDaoTest{
     }
     
     
-    @Ignore
+    @Test
     public void testRemoveEnumeratedValue(){
         
         EnumerationEntity existing = enumerationDao.find("kuali.lu.subjectArea");

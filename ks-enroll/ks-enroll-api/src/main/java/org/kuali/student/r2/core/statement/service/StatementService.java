@@ -12,6 +12,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package org.kuali.student.r2.core.statement.service;
 
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -37,6 +38,7 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import java.util.List;
 import org.kuali.student.r2.core.type.dto.TypeInfo;
+
 
 /**
  * Statement Service
@@ -133,9 +135,7 @@ public interface StatementService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<RefStatementRelationInfo> getRefStatementRelationsByType(@WebParam(name = "refStatementRelationTypeKey") String refStatementRelationTypeKey,
-            @WebParam(name = "contextInfo") ContextInfo contextInfo)
-            throws InvalidParameterException, MissingParameterException, OperationFailedException;
+    public List<RefStatementRelationInfo> getRefStatementRelationsByType(@WebParam(name = "refStatementRelationTypeKey") String refStatementRelationTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException;
 
     /**
      * Retrieves a list of object statement relationships for a particular
@@ -152,31 +152,7 @@ public interface StatementService {
      * @throws OperationFailedException  Unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<RefStatementRelationInfo> getRefStatementRelationsByStatement(@WebParam(name = "statementId") String statementId,
-            @WebParam(name = "contextInfo") ContextInfo contextInfo)
-            throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
-
-    /**
-     * Retrieves a list of object statement relationships for a particular 
-     * referring object.
-     *
-     * @param refObjectTypeKey         Unique identifier for an object type. 
-     * @param refObjectId              Identifier to the object "anchor" that is associated with this statement
-     * @param contextInfo context information containing the principalId and
-     *                    locale information about the caller of service
-     *                    operation
-     * @return List of object statement relationships for a particular
-     *         statement
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws MissingParameterException missing statementId or contextInfo
-     * @throws OperationFailedException  Unable to complete request
-     * @throws PermissionDeniedException authorization failure
-     */
-    public List<RefStatementRelationInfo> getRefStatementRelationsByRef(
-            @WebParam(name = "refObjectTypeKey") String refObjectTypeKey,
-            @WebParam(name = "refObjectId") String refObjectId,
-            @WebParam(name = "contextInfo") ContextInfo contextInfo)
-            throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<RefStatementRelationInfo> getRefStatementRelationsByStatement(@WebParam(name = "statementId") String statementId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Validates a refStatementRelation. Depending on the value of
@@ -212,20 +188,14 @@ public interface StatementService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<ValidationResultInfo> validateRefStatementRelation(@WebParam(name = "validationTypeKey") String validationTypeKey,
-            @WebParam(name = "statementId") String statementId,
-            @WebParam(name = "refStatementRelationTypeKey") String refStatementRelationTypeKey,
-            @WebParam(name = "refStatementRelationInfo") RefStatementRelationInfo refStatementRelationInfo,
-            @WebParam(name = "contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<ValidationResultInfo> validateRefStatementRelation(@WebParam(name = "validationTypeKey") String validationTypeKey, @WebParam(name = "statementId") String statementId, @WebParam(name = "refStatementRelationTypeKey") String refStatementRelationTypeKey, @WebParam(name = "refStatementRelationInfo") RefStatementRelationInfo refStatementRelationInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Creates a relationship between a statement and an object.
      *
-     * @param refObjectTypeKey         Unique identifier for an object type. 
-     * @param refObjectId              Identifier to the object "anchor" that is associated with this statement
+     * @param refObjectId              object statement relation identifier
      * @param statementId              statement identifier
-     * @param refStatmentRelationTypeKey  type key of this statement relation
+     * @param refObjectTypeKey         type of statement relation
      * @param refStatementRelationInfo information about the object statement
      *                                 relationship
      * @param contextInfo              context information containing the
@@ -250,14 +220,7 @@ public interface StatementService {
      * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read-only
      */
-    public RefStatementRelationInfo createRefStatementRelation(
-            @WebParam(name = "refObjectTypeKey") String refObjectTypeKey,
-            @WebParam(name = "refObjectId") String refObjectId,
-            @WebParam(name = "statementId") String statementId,
-            @WebParam(name = "refStatmentRelationTypeKey") String refStatementRelationTypeKey,
-            @WebParam(name = "refStatementRelationInfo") RefStatementRelationInfo refStatementRelationInfo,
-            @WebParam(name = "contextInfo") ContextInfo contextInfo)
-            throws AlreadyExistsException, DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
+    public RefStatementRelationInfo createRefStatementRelation(@WebParam(name = "refObjectId") String refObjectId, @WebParam(name = "statementId") String statementId, @WebParam(name = "refObjectTypeKey") String refObjectTypeKey, @WebParam(name = "refStatementRelationInfo") RefStatementRelationInfo refStatementRelationInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /**
      * Updates a relationship between an object and statement.
@@ -318,15 +281,12 @@ public interface StatementService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public TypeInfo getNaturalLanguageUsageByType(@WebParam(name = "nlUsageTypeKey") String nlUsageTypeKey, 
-            @WebParam(name = "contextInfo") ContextInfo contextInfo) 
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public TypeInfo getNlUsageByType(@WebParam(name = "nlUsageTypeKey") String nlUsageTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
-     * Translates and retrieves a statement for a specific usage type
-     * (context) and language into natural language.
-     * 
-     * If <code>language</code> is null default language is used.</p> <p/> <p>An
+     * <p>Translates and retrieves a statement for a specific usage type
+     * (context) and language into natural language.</p> <p/> <p>If
+     * <code>language</code> is null default language is used.</p> <p/> <p>An
      * <code>StatementInfo</code> can either have a list of
      * <code>StatementInfo</code>s as children or a list of
      * <code>ReqComponentInfo</code>s but not both. This means that all leaf
@@ -348,11 +308,7 @@ public interface StatementService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public String getNaturalLanguageForStatement(@WebParam(name = "statementId") String statementId,
-            @WebParam(name = "nlUsageTypeKey") String nlUsageTypeKey, 
-            @WebParam(name = "language") String language, 
-            @WebParam(name = "contextInfo") ContextInfo contextInfo) 
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public String getNlByStatementId(@WebParam(name = "statementId") String statementId, @WebParam(name = "nlUsageTypeKey") String nlUsageTypeKey, @WebParam(name = "language") String language, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Retrieves the natural language translation for a particular object
@@ -378,11 +334,7 @@ public interface StatementService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public String getNaturalLanguageForRefStatementRelation(@WebParam(name = "refStatementRelationId") String refStatementRelationId,
-            @WebParam(name = "nlUsageTypeKey") String nlUsageTypeKey,
-            @WebParam(name = "language") String language, 
-            @WebParam(name = "contextInfo") ContextInfo contextInfo) 
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public String getNlByRefStatementRelation(@WebParam(name = "refStatementRelationId") String refStatementRelationId, @WebParam(name = "nlUsageTypeKey") String nlUsageTypeKey, @WebParam(name = "language") String language, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * <p>Translates and retrieves a requirement component for a specific usuage
@@ -406,11 +358,7 @@ public interface StatementService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public String getNaturalLanguageForReqComponent(@WebParam(name = "reqComponentId") String reqComponentId, 
-            @WebParam(name = "nlUsageTypeKey") String nlUsageTypeKey, 
-            @WebParam(name = "language") String language, 
-            @WebParam(name = "contextInfo") ContextInfo contextInfo) 
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public String getNlByReqComponent(@WebParam(name = "reqComponentId") String reqComponentId, @WebParam(name = "nlUsageTypeKey") String nlUsageTypeKey, @WebParam(name = "language") String language, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Translates a statement tree view to natural language for a particular
@@ -494,10 +442,7 @@ public interface StatementService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<StatementInfo> getStatementsByReqComponent(
-            @WebParam(name = "reqComponentId") String reqComponentId, 
-            @WebParam(name = "contextInfo") ContextInfo contextInfo) 
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<StatementInfo> getStatementsByReqComponentId(@WebParam(name = "reqComponentId") String reqComponentId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Retrieves a list of statements of a particular Type
@@ -546,6 +491,7 @@ public interface StatementService {
      * @throws PermissionDeniedException authorization failure
      */
     public List<TypeInfo> getStatementTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+
 
     /**
      * Retrieves the list of statement types which are allowed to be used in a
@@ -632,6 +578,7 @@ public interface StatementService {
      */
     public List<ValidationResultInfo> validateStatement(@WebParam(name = "validationTypeKey") String validationTypeKey, @WebParam(name = "statementTypeKey") String statementTypeKey, @WebParam(name = "statementInfo") StatementInfo statementInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
+
     /**
      * Create a statement.
      *
@@ -711,6 +658,7 @@ public interface StatementService {
      */
     public List<TypeInfo> getReqCompFieldTypesForReqComponentType(@WebParam(name = "reqComponentTypeKey") String reqComponentTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
+
     /**
      * Retrieves a requirement component by its identifier
      *
@@ -789,6 +737,7 @@ public interface StatementService {
      */
     public List<TypeInfo> getReqComponentTypesForStatementType(@WebParam(name = "statementTypeKey") String statementTypeKey) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
+
     /**
      * Validates a ReqComponent. Depending on the value of validationTypeKey,
      * this validation could be limited to tests on just the current object and
@@ -843,6 +792,7 @@ public interface StatementService {
      *                                      designated as read-only
      */
     public ReqComponentInfo createReqComponent(@WebParam(name = "reqComponentTypeKey") String reqComponentTypeKey, @WebParam(name = "reqComponentInfo") ReqComponentInfo reqComponentInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
+
 
     /**
      * Updates a requirement component

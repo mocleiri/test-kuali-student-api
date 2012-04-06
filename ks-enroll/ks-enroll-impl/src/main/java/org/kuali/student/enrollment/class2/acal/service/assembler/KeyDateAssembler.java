@@ -21,11 +21,12 @@ public class KeyDateAssembler implements DTOAssembler<KeyDateInfo, MilestoneInfo
         keyDateInfo.setIsRelativeToKeyDate(baseDTO.getIsRelative());
         keyDateInfo.setMeta(baseDTO.getMeta());
         keyDateInfo.setName(baseDTO.getName());
-        keyDateInfo.setRelativeAnchorKeyDateId (baseDTO.getRelativeAnchorMilestoneId());
+        keyDateInfo.setRelativeAnchirKeyDateId (baseDTO.getRelativeAnchorMilestoneId());
         keyDateInfo.setStartDate(baseDTO.getStartDate());
         keyDateInfo.setStateKey(baseDTO.getStateKey());
         keyDateInfo.setTypeKey(baseDTO.getTypeKey());
 
+        
         return keyDateInfo;
     }
 
@@ -39,8 +40,7 @@ public class KeyDateAssembler implements DTOAssembler<KeyDateInfo, MilestoneInfo
         milestone.setId(businessDTO.getId());
         milestone.setIsAllDay(businessDTO.getIsAllDay());
         milestone.setIsDateRange(businessDTO.getIsDateRange());
-        milestone.setIsRelative(businessDTO.getIsRelativeToKeyDate());
-        milestone.setIsInstructionalDay(false);
+        milestone.setIsRelative(businessDTO.getIsRelativeToKeyDate()) ;
         milestone.setMeta(businessDTO.getMeta());
         milestone.setName(businessDTO.getName());
         milestone.setRelativeAnchorMilestoneId(businessDTO.getRelativeAnchorKeyDateId());
@@ -50,4 +50,5 @@ public class KeyDateAssembler implements DTOAssembler<KeyDateInfo, MilestoneInfo
         
         return milestone;
     }
+
 }

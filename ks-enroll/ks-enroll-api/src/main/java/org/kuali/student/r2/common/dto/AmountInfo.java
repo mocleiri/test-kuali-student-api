@@ -25,6 +25,9 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.kuali.student.r2.common.dto.IdEntityInfo;
+import org.kuali.student.r2.core.atp.infc.Atp;
+import org.kuali.student.r2.common.dto.KeyEntityInfo;
 import org.w3c.dom.Element;
 
 import org.kuali.student.r2.common.infc.Amount;
@@ -35,6 +38,7 @@ import org.kuali.student.r2.common.infc.Amount;
  *
  * @author Kamal
  */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AmountInfo", propOrder = {
                 "unitTypeKey", "unitQuantity", "_futureElements" })
@@ -53,9 +57,19 @@ public class AmountInfo
     @XmlAnyElement
     private List<Element> _futureElements;
 
+
+    /**
+     * Constructs a new AmountInfo.
+     */
     public AmountInfo() {
     }
     
+    /**
+     * Constructs a new AmountInfo from another Amount.
+     * 
+     * @param amount the amount to copy
+     */
+
     public AmountInfo(Amount amount) {
         if (amount != null) {
             this.unitQuantity = amount.getUnitQuantity();

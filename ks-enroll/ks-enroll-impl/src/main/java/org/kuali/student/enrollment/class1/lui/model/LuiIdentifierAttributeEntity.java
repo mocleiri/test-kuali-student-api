@@ -5,15 +5,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.kuali.student.r2.common.entity.BaseAttributeEntityNew;
+import org.kuali.student.r2.common.entity.BaseAttributeEntity;
 import org.kuali.student.r2.common.infc.Attribute;
 
 @Entity
 @Table(name = "KSEN_LUI_IDENT_ATTR")
-public class LuiIdentifierAttributeEntity extends BaseAttributeEntityNew<LuiIdentifierEntity> {
+public class LuiIdentifierAttributeEntity extends BaseAttributeEntity<LuiIdentifierEntity> {
     
     @ManyToOne
-    @JoinColumn(name = "OWNER_ID")
+    @JoinColumn(name = "OWNER")
     private LuiIdentifierEntity owner;
 
     public LuiIdentifierAttributeEntity(){}
@@ -29,6 +29,7 @@ public class LuiIdentifierAttributeEntity extends BaseAttributeEntityNew<LuiIden
     @Override
     public void setOwner(LuiIdentifierEntity owner) {
         this.owner = owner;
+        
     }
 
     @Override

@@ -30,7 +30,7 @@ import javax.persistence.Table;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.entity.AttributeOwner;
 import org.kuali.student.r2.common.entity.MetaEntity;
-import org.kuali.student.r2.common.infc.Attribute;
+import org.kuali.student.r2.core.class1.state.model.StateEntity;
 import org.kuali.student.r2.core.hold.dto.IssueInfo;
 import org.kuali.student.r2.core.hold.infc.Issue;
 
@@ -40,46 +40,47 @@ import org.kuali.student.r2.core.hold.infc.Issue;
  * @author Kuali Rice Team (kuali-rice@googlegroups.com)
  *
  */
+
 @Entity
 @Table(name = "KSEN_ISSUE")
 public class IssueEntity extends MetaEntity implements AttributeOwner<IssueAttributeEntity> {
 
     @Column(name = "NAME")
     private String name;
+    
     @Column(name = "ORG_ID")
     private String organizationId;
-    @Column(name = "TYPE_ID")
-    private String issueType;
+    
+    @ManyToOne(optional=false)
+    @JoinColumn(name = "TYPE_ID")
+    private HoldTypeEntity issueType;
+    
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "RT_DESCR_ID")
     private HoldRichTextEntity descr;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<IssueAttributeEntity> attributes;
-    @Column(name = "STATE_ID")
-    private String issueState;
-
+    
+    @ManyToOne
+    @JoinColumn(name = "STATE_ID")
+    private StateEntity issueState;
+    
     public IssueEntity() {
     }
 
     public IssueEntity(Issue issue) {
         super(issue);
-        this.setId(this.getId());
-        this.setIssueType(issue.getTypeKey());
-        this.fromDto(issue);
-    }
-
-    public void fromDto(Issue issue) {
         setName(issue.getName());
         setOrganizationId(issue.getOrganizationId());
-        setIssueState(issue.getStateKey());
+        setIssueType(new HoldTypeEntity());
+        issueType.setId(issue.getTypeKey());
+        setIssueState(new StateEntity());
+        issueState.setId(issue.getStateKey());
+        
         setDescr(new HoldRichTextEntity(issue.getDescr()));
-        this.setAttributes(new ArrayList<IssueAttributeEntity>());
-        for (Attribute att : issue.getAttributes()) {
-            IssueAttributeEntity attEntity = new IssueAttributeEntity(att);
-            this.getAttributes().add(attEntity);
-        }
     }
-
+    
     @Override
     public void setAttributes(List<IssueAttributeEntity> attributes) {
         this.attributes = attributes;
@@ -106,19 +107,19 @@ public class IssueEntity extends MetaEntity implements AttributeOwner<IssueAttri
         this.organizationId = organizationId;
     }
 
-    public String getIssueType() {
+    public HoldTypeEntity getIssueType() {
         return issueType;
     }
 
-    public void setIssueType(String issueType) {
+    public void setIssueType(HoldTypeEntity issueType) {
         this.issueType = issueType;
     }
 
-    public String getIssueState() {
+    public StateEntity getIssueState() {
         return issueState;
     }
 
-    public void setIssueState(String issueState) {
+    public void setIssueState(StateEntity issueState) {
         this.issueState = issueState;
     }
 
@@ -129,20 +130,27 @@ public class IssueEntity extends MetaEntity implements AttributeOwner<IssueAttri
     public void setDescr(HoldRichTextEntity descr) {
         this.descr = descr;
     }
-
+    
     public IssueInfo toDto() {
         IssueInfo info = new IssueInfo();
-        info.setId(getId());
+        
+        info.setKey(getId());
         info.setName(getName());
-        info.setTypeKey(getIssueType());
-        info.setStateKey(getIssueState());
+        info.setTypeKey(getIssueType().getId());
+        info.setStateKey(getIssueState().getId());
         info.setOrganizationId(getOrganizationId());
-        info.setDescr(getDescr().toDto());
         info.setMeta(super.toDTO());
+        
+        List<AttributeInfo> atts = new ArrayList<AttributeInfo>();
         for (IssueAttributeEntity att : getAttributes()) {
             AttributeInfo attInfo = att.toDto();
-            info.getAttributes().add(attInfo);
+            atts.add(attInfo);
         }
+        info.setAttributes(atts);
+        
+        info.setDescr(getDescr().toDto());
+        
         return info;
     }
+    
 }

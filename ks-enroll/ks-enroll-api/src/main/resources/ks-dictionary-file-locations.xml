@@ -69,11 +69,15 @@
     <bean id="issueInfoDictionaryLocation" class="java.lang.String">
         <constructor-arg value="classpath:ks-IssueInfo-dictionary.xml" />
     </bean>
+    <bean id="restrictionInfoDictionaryLocation" class="java.lang.String">
+        <constructor-arg value="classpath:ks-RestrictionInfo-dictionary.xml" />
+    </bean>
     <bean name="holdServiceDictionaryLocations" class="java.util.ArrayList">
         <constructor-arg>
             <list>
                 <bean parent="holdInfoDictionaryLocation" />
                 <bean parent="issueInfoDictionaryLocation" />                
+                <bean parent="restrictionInfoDictionaryLocation" />
             </list>
         </constructor-arg>
      </bean>
@@ -96,22 +100,10 @@
     <bean id="courseOfferingInfoDictionaryLocation" class="java.lang.String">
         <constructor-arg value="classpath:ks-CourseOfferingInfo-dictionary.xml" />
     </bean>
-
-    <bean id="formatOfferingInfoDictionaryLocation" class="java.lang.String">
-        <constructor-arg value="classpath:ks-FormatOfferingInfo-dictionary.xml" />
-    </bean>
-    <bean id="registrationGroupInfoDictionaryLocation" class="java.lang.String">
-           <constructor-arg value="classpath:ks-RegistrationGroupInfo-dictionary.xml" />
-       </bean>
-
-
     <bean name="courseOfferingServiceDictionaryLocations" class="java.util.ArrayList">
         <constructor-arg>
             <list>
-                <bean parent="courseOfferingInfoDictionaryLocation" />
-                <bean parent="formatOfferingInfoDictionaryLocation"/>
-                <bean parent="registrationGroupInfoDictionaryLocation"/>
-
+                <bean parent="courseOfferingInfoDictionaryLocation" />          
             </list>
         </constructor-arg>
      </bean>
@@ -132,6 +124,7 @@
                 <bean parent="keyDateInfoDictionaryLocation" />   
                 <bean parent="holdInfoDictionaryLocation" />
                 <bean parent="issueInfoDictionaryLocation" />                
+                <bean parent="restrictionInfoDictionaryLocation" />    
                 <bean parent="luiInfoDictionaryLocation" />
                 <bean parent="luiLuiRelationInfoDictionaryLocation" />  
                 <bean parent="courseOfferingInfoDictionaryLocation" />                  

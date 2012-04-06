@@ -32,6 +32,7 @@ public class HoldServiceMockImpl implements HoldService {
     private Map<String, HoldInfo> holds = new HashMap<String, HoldInfo>();
     private Map<String, IssueInfo> issues = new HashMap<String, IssueInfo>();
 
+ 
     @Override
     public HoldInfo getHold(String holdId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException,
@@ -42,12 +43,12 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public List<HoldInfo> getHoldsByIssue(String issueId, ContextInfo context)
+    public List<HoldInfo> getHoldsByIssue(String issueKey, ContextInfo context)
             throws InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         List<HoldInfo> list = new ArrayList<HoldInfo>();
         for (HoldInfo hold : this.holds.values()) {
-            if (hold.getIssueId().equals(issueId)) {
+            if (hold.getIssueKey().equals(issueKey)) {
                 list.add(hold);
             }
         }
@@ -83,10 +84,7 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public HoldInfo createHold(String personId, 
-            String issueId,
-            String holdTypeKey,
-            HoldInfo holdInfo, ContextInfo context)
+    public HoldInfo createHold(HoldInfo holdInfo, ContextInfo context)
             throws AlreadyExistsException, DataValidationErrorException,
             InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
@@ -144,15 +142,15 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public IssueInfo getIssue(String issueId, ContextInfo context)
+    public IssueInfo getIssue(String issueKey, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException,
             PermissionDeniedException {
-        return issues.get(issueId);
+        return issues.get(issueKey);
     }
 
     @Override
-    public List<String> getIssueIdsByType(String issueTypeKey,
+    public List<String> getIssueKeysByType(String issueTypeKey,
             ContextInfo context) throws InvalidParameterException,
             MissingParameterException, OperationFailedException,
             PermissionDeniedException {
@@ -160,7 +158,7 @@ public class HoldServiceMockImpl implements HoldService {
 
         for (IssueInfo issue : issues.values()) {
             if (issue.getTypeKey().equals(issueTypeKey)) {
-                issueList.add(issue.getId());
+                issueList.add(issue.getKey());
             }
         }
         return issueList;
@@ -182,7 +180,7 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public List<String> searchForIssueIds(QueryByCriteria criteria, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+    public List<String> searchForIssueKeys(QueryByCriteria criteria, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         return new ArrayList<String>();
     }
 
@@ -200,29 +198,29 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public IssueInfo createIssue(String issueTypeKey, IssueInfo issueInfo, ContextInfo context)
+    public IssueInfo createIssue(IssueInfo issueInfo, ContextInfo context)
             throws AlreadyExistsException, DataValidationErrorException,
             InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         IssueInfo copy = new IssueInfo(issueInfo);
         copy.setMeta(newMeta(context));
-        issues.put(copy.getId(), copy);
+        issues.put(copy.getKey(), copy);
         return new IssueInfo(copy);
     }
 
     @Override
-    public IssueInfo updateIssue(String issueId, IssueInfo issueInfo,
+    public IssueInfo updateIssue(String issueKey, IssueInfo issueInfo,
             ContextInfo context) throws DataValidationErrorException,
             DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException,
             PermissionDeniedException, VersionMismatchException {
         IssueInfo copy = new IssueInfo(issueInfo);
-        IssueInfo old = this.getIssue(issueId, context);
+        IssueInfo old = this.getIssue(issueKey, context);
         if (!old.getMeta().getVersionInd().equals(copy.getMeta().getVersionInd())) {
             throw new VersionMismatchException(old.getMeta().getVersionInd());
         }
         copy.setMeta(updateMeta(copy.getMeta(), context));
-        this.issues.put(issueInfo.getId(), copy);
+        this.issues.put(issueInfo.getKey(), copy);
         return new IssueInfo(copy);
     }
 
@@ -233,12 +231,12 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public StatusInfo deleteIssue(String issueId, ContextInfo context)
+    public StatusInfo deleteIssue(String issueKey, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException,
             PermissionDeniedException {
-        if (this.issues.remove(issueId) == null) {
-            throw new DoesNotExistException(issueId);
+        if (this.issues.remove(issueKey) == null) {
+            throw new DoesNotExistException(issueKey);
         }
         return newStatus();
     }
@@ -280,11 +278,11 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public List<HoldInfo> getHoldsByIssueAndPerson(String issueId, String personId, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException,
+    public List<HoldInfo> getHoldsByIssueAndPerson(String issueKey, String personId, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException,
             PermissionDeniedException {
         List<HoldInfo> list = new ArrayList<HoldInfo>();
         for (HoldInfo info : this.getHoldsByPerson(personId, contextInfo)) {
-            if (info.getIssueId().equals(issueId)) {
+            if (info.getIssueKey().equals(issueKey)) {
                 list.add(info);
             }
         }
@@ -292,10 +290,10 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public List<HoldInfo> getActiveHoldsByIssueAndPerson(String issueId, String personId, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException,
+    public List<HoldInfo> getActiveHoldsByIssueAndPerson(String issueKey, String personId, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         List<HoldInfo> list = new ArrayList<HoldInfo>();
-        for (HoldInfo info : this.getHoldsByIssueAndPerson(issueId, personId, contextInfo)) {
+        for (HoldInfo info : this.getHoldsByIssueAndPerson(issueKey, personId, contextInfo)) {
             if (info.getStateKey().equals(HoldServiceConstants.HOLD_ACTIVE_STATE_KEY)) {
                 list.add(info);
             }
@@ -304,7 +302,7 @@ public class HoldServiceMockImpl implements HoldService {
     }
 
     @Override
-    public List<IssueInfo> getIssuesByIds(List<String> issueIds, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException,
+    public List<IssueInfo> getIssuesByIds(List<String> issueKeys, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException,
             PermissionDeniedException {
         // TODO sambit - THIS METHOD NEEDS JAVADOCS
         return null;

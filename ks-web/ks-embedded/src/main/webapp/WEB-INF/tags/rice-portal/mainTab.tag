@@ -19,7 +19,6 @@
 <td class="content" valign="top">
 	<mainChannel:ksApplications/>
     <mainChannel:wc1Applications/>
-    <mainChannel:ec1Applications/>
 	<mainChannel:ksR2Applications/>
 </td>
 <td class="content" valign="top">

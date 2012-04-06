@@ -39,7 +39,6 @@ import org.kuali.student.r2.lum.program.dto.MinorDisciplineInfo;
 
 import org.kuali.student.r2.lum.program.dto.CoreProgramInfo;
 import org.kuali.student.r2.lum.program.dto.ProgramRequirementInfo;
-import org.kuali.student.r2.lum.program.dto.ProgramVariationInfo;
 
 /**
  * The Program Service allows for the creation and management of programs.
@@ -215,6 +214,7 @@ public interface ProgramService {
     public MajorDisciplineInfo getMajorDiscipline(@WebParam(name = "majorDisciplineId") String majorDisciplineId, @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
+    
     /**
      * Retrieves a list of MajorDiscipline corresponding to the given list of
      * major discipline Ids
@@ -244,26 +244,10 @@ public interface ProgramService {
      * @throws MissingParameterException program type is not specified
      * @throws OperationFailedException unable to complete request
      */
-    public List<String> getMajorDisciplineIdsByCredentialProgramType(@WebParam(name = "programType") String programType,
-            @WebParam(name = "contextInfo") ContextInfo contextInfo)
+    public List<String> getMajorDisciplineIdsByCredentialProgramType(@WebParam(name = "programType") String programType, @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
 
-    /** 
-     * Retrieves a list of program variations for a particular major
-     * @param majorDisciplineId Major Discipline Identifier
-     * @return list of program variations associated with the specified Major
-     * @throws DoesNotExistException Major not found
-     * @throws InvalidParameterException invalid majorDisciplineId
-     * @throws MissingParameterException majorDisciplineId not specified
-     * @throws OperationFailedException unable to complete request
-     */
-    public List<ProgramVariationInfo> getProgramVariationsByMajorDiscipline(@WebParam(name = "majorDisciplineId") String majorDisciplineId,
-            @WebParam(name = "contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException,
-            InvalidParameterException,
-            MissingParameterException,
-            OperationFailedException;
-
+  
     /**
      * Validates a Major discipline against its data dictionary
      * 
@@ -364,7 +348,7 @@ public interface ProgramService {
 
     /**
      * 
-     * Retrieves a list of honors program by Ids
+     * Retrieves a list of honors program by ids
      * 
      * @param honorsProgramIds
      * @param contextInfo
@@ -376,7 +360,7 @@ public interface ProgramService {
      * @throws PermissionDeniedException
      */
     public List<HonorsProgramInfo> getHonorsProgramsByIds(@WebParam(name = "honorsProgramIds") List<String> honorsProgramIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException,
-            InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Retrieves the list of Honors Program Program a given Credential Program
@@ -468,10 +452,10 @@ public interface ProgramService {
      */
     public CoreProgramInfo getCoreProgram(@WebParam(name = "coreProgramId") String coreProgramId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException,
             InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
-
+    
     /**
      * 
-     * Retrieves a list of core program by Ids
+     * Retrieves a list of core program by ids
      * 
      * @param coreProgramIds
      * @param contextInfo
@@ -483,7 +467,7 @@ public interface ProgramService {
      * @throws PermissionDeniedException
      */
     public List<CoreProgramInfo> getCoreProgramsByIds(@WebParam(name = "coreProgramIds") List<String> coreProgramIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException,
-            InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Validates a Core Program against its data dictionary
@@ -609,10 +593,10 @@ public interface ProgramService {
      */
     public ProgramRequirementInfo getProgramRequirement(@WebParam(name = "programRequirementId") String programRequirementId, @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
-
+    
     /**
      * 
-     * Retrieves a list of ProgramRequirements by Ids
+     * Retrieves a list of ProgramRequirements by ids
      * 
      * @param programRequirementIds
      * @param contextInfo
@@ -624,7 +608,7 @@ public interface ProgramService {
      * @throws PermissionDeniedException
      */
     public List<ProgramRequirementInfo> getProgramRequirementsByIds(@WebParam(name = "programRequirementIds") List<String> programRequirementIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException,
-            InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Validates a Program Requirement against its data dictionary

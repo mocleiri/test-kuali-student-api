@@ -1,5 +1,6 @@
 package org.kuali.student.r2.core.class1.process.model;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,13 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.entity.AttributeOwner;
 import org.kuali.student.r2.common.entity.MetaEntity;
 import org.kuali.student.r2.common.infc.Attribute;
-import org.kuali.student.r2.core.class1.population.model.PopulationEntity;
+import org.kuali.student.r2.core.class1.state.model.StateEntity;
+import org.kuali.student.r2.core.population.model.PopulationEntity;
 import org.kuali.student.r2.core.process.dto.InstructionInfo;
 import org.kuali.student.r2.core.process.infc.Instruction;
 
@@ -37,11 +38,13 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
     @Column(name = "EXPIR_DT")
     private Date expirationDate;
 
-    @Column(name = "INSTRUCTION_TYPE")
-    private String instructionType;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "TYPE_ID")
+    private InstructionTypeEntity instructionType;
 
-    @Column(name = "INSTRUCTION_STATE")
-    private String instructionState;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "STATE_ID")
+    private StateEntity instructionState;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "PROCESS_ID")
@@ -71,13 +74,14 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
     @JoinTable(name = "KSEN_INSTR_POPLTN_RELTN", joinColumns = @JoinColumn(name = "INSTR_ID"), inverseJoinColumns = @JoinColumn(name = "POPLTN_ID"))
     private List<PopulationEntity> appliedPopulation;
 
-    @Transient
-    private List<String> appliedAtpTypes;
+    private transient List<String> appliedAtpTypes;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner",orphanRemoval = true)
     private List<InstructionAttributeEntity> attributes = new ArrayList<InstructionAttributeEntity>();
 
-    public InstructionEntity() {}
+
+    public InstructionEntity() {
+    }
 
     public InstructionEntity(Instruction dto) {
         super(dto);
@@ -87,12 +91,12 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
         setExemptable(dto.getIsExemptable());
         setPosition(dto.getPosition());
         setWarning(dto.getIsWarning());
-        this.setInstructionState(dto.getStateKey());
-        if (dto.getExpirationDate() != null) {
+
+        if (dto.getExpirationDate() != null){
             setExpirationDate(dto.getExpirationDate());
         }
 
-        if (dto.getEffectiveDate() != null) {
+        if (dto.getEffectiveDate() != null){
             setEffectiveDate(dto.getEffectiveDate());
         }
 
@@ -118,32 +122,32 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
         dto.setIsExemptable(isExemptable());
         dto.setIsWarning(isWarning());
 
-        if (getEffectiveDate() != null) {
+        if (getEffectiveDate() != null){
             dto.setEffectiveDate(getEffectiveDate());
         }
 
-        if (getExpirationDate() != null) {
+        if (getExpirationDate() != null){
             dto.setExpirationDate(getExpirationDate());
         }
 
-        if (getInstructionState() != null) {
-            dto.setStateKey(getInstructionState());
+        if (getInstructionState() != null){
+            dto.setStateKey(getInstructionState().getId());
         }
 
-        if (getProcess() != null) {
+        if (getProcess() != null){
             dto.setProcessKey(getProcess().getId());
         }
 
-        if (getCheck() != null) {
+        if (getCheck() != null){
             dto.setCheckKey(getCheck().getId());
         }
 
-        if (getInstructionType() != null) {
-            dto.setTypeKey(getInstructionType());
+        if (getInstructionType() != null){
+            dto.setTypeKey(getInstructionType().getId());
         }
 
         List<String> appliedPopulation = new ArrayList<String>();
-        if (getAppliedPopulation() != null) {
+        if (getAppliedPopulation() != null){
             for (PopulationEntity population : getAppliedPopulation()) {
                 appliedPopulation.add(population.getId());
             }
@@ -151,7 +155,7 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
         dto.setAppliedPopulationKeys(appliedPopulation);
 
         List<String> appliedAtpTypeKeys = new ArrayList<String>();
-        if (getAppliedAtpTypes() != null) {
+        if (getAppliedAtpTypes() != null){
             for (String atpType : getAppliedAtpTypes()) {
                 appliedAtpTypeKeys.add(atpType);
             }
@@ -159,7 +163,7 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
         dto.setAppliedAtpTypeKeys(appliedAtpTypeKeys);
 
         dto.setMeta(super.toDTO());
-        if (getMessage() != null) {
+        if (getMessage() != null){
             dto.setMessage(message.toDto());
         }
 
@@ -189,19 +193,19 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
         this.expirationDate = expirationDate;
     }
 
-    public String getInstructionType() {
+    public InstructionTypeEntity getInstructionType() {
         return instructionType;
     }
 
-    public void setInstructionType(String instructionType) {
+    public void setInstructionType(InstructionTypeEntity instructionType) {
         this.instructionType = instructionType;
     }
 
-    public String getInstructionState() {
+    public StateEntity getInstructionState() {
         return instructionState;
     }
 
-    public void setInstructionState(String instructionState) {
+    public void setInstructionState(StateEntity instructionState) {
         this.instructionState = instructionState;
     }
 

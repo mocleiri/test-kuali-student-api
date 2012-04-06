@@ -192,10 +192,10 @@ public class CourseRegistrationServiceDecorator implements CourseRegistrationSer
     }
 
     @Override
-    public List<RegRequestInfo> getRegRequestsByIds(List<String> regRequestIds, ContextInfo context)
+    public List<RegRequestInfo> getRegRequestsByIdList(List<String> regRequestIds, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().getRegRequestsByIds(regRequestIds, context);
+        return getNextDecorator().getRegRequestsByIdList(regRequestIds, context);
     }
 
     @Override
@@ -299,10 +299,10 @@ public class CourseRegistrationServiceDecorator implements CourseRegistrationSer
     }
 
     @Override
-    public List<CourseRegistrationInfo> getCourseRegistrationsByIds(List<String> courseRegistrationIds,
+    public List<CourseRegistrationInfo> getCourseRegistrationsByIdList(List<String> courseRegistrationIds,
             ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().getCourseRegistrationsByIds(courseRegistrationIds, context);
+        return getNextDecorator().getCourseRegistrationsByIdList(courseRegistrationIds, context);
     }
 
     @Override
@@ -418,10 +418,10 @@ public class CourseRegistrationServiceDecorator implements CourseRegistrationSer
     }
 
     @Override
-    public RegResponseInfo dropStudentsFromRegGroups(List<String> regGroupIds, ContextInfo context)
+    public RegResponseInfo dropStudentsFromRegGroups(List<String> regGroupIdList, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().dropStudentsFromRegGroups(regGroupIds, context);
+        return getNextDecorator().dropStudentsFromRegGroups(regGroupIdList, context);
     }
 
     @Override

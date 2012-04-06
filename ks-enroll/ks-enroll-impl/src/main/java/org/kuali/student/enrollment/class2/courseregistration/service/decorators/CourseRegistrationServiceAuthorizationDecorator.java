@@ -394,7 +394,7 @@ public class CourseRegistrationServiceAuthorizationDecorator extends CourseRegis
 
 	@Override
 	public RegResponseInfo dropStudentsFromRegGroups(
-			List<String> regGroupIds, ContextInfo context)
+			List<String> regGroupIdList, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
@@ -403,7 +403,7 @@ public class CourseRegistrationServiceAuthorizationDecorator extends CourseRegis
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "dropStudentsFromRegGroups", null)) {
-	        return getNextDecorator().dropStudentsFromRegGroups(regGroupIds, context);
+	        return getNextDecorator().dropStudentsFromRegGroups(regGroupIdList, context);
         }
         else {
            throw new PermissionDeniedException();
@@ -463,7 +463,7 @@ public class CourseRegistrationServiceAuthorizationDecorator extends CourseRegis
 	}
 
 	@Override
-	public List<RegRequestInfo> getRegRequestsByIds(
+	public List<RegRequestInfo> getRegRequestsByIdList(
 			List<String> regRequestIds, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
@@ -473,7 +473,7 @@ public class CourseRegistrationServiceAuthorizationDecorator extends CourseRegis
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getRegRequestsByIdList", null)) {
-	        return getNextDecorator().getRegRequestsByIds(regRequestIds, context);
+	        return getNextDecorator().getRegRequestsByIdList(regRequestIds, context);
         }
         else {
            throw new PermissionDeniedException();
@@ -749,7 +749,7 @@ public class CourseRegistrationServiceAuthorizationDecorator extends CourseRegis
 	}
 
 	@Override
-	public List<CourseRegistrationInfo> getCourseRegistrationsByIds(
+	public List<CourseRegistrationInfo> getCourseRegistrationsByIdList(
 			List<String> courseRegistrationIds, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
@@ -759,7 +759,7 @@ public class CourseRegistrationServiceAuthorizationDecorator extends CourseRegis
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getCourseRegistrationsByIdList", null)) {
-	        return getNextDecorator().getCourseRegistrationsByIds(courseRegistrationIds, context);
+	        return getNextDecorator().getCourseRegistrationsByIdList(courseRegistrationIds, context);
         }
         else {
            throw new PermissionDeniedException();

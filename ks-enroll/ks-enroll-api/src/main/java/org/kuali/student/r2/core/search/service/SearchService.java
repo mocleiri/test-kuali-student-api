@@ -46,12 +46,9 @@ public interface SearchService {
      * @param contextInfo information containing the principalId and
      *        locale information about the caller of service operation
      * @return list of search type information
-     * @throws InvalidParameterException contextInfo is not valid
-     * @throws MissingParameterException contextInfo
-     *         is missing or null
      * @throws OperationFailedException unable to complete request
      */
-    public List<TypeInfo> getSearchTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException;
+    public List<TypeInfo> getSearchTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws OperationFailedException;
 
     /** 
      * Retrieves information about a particular search type.
@@ -61,9 +58,8 @@ public interface SearchService {
      *        locale information about the caller of service operation
      * @return information on the search type
      * @throws DoesNotExistException specified searchTypeKey not found
-     * @throws InvalidParameterException contextInfo is not valid
-     * @throws MissingParameterException searchTypeKey or contextInfo
-     *         is missing or null
+     * @throws InvalidParameterException invalid searchTypeKey
+     * @throws MissingParameterException searchTypeKey not specified
      * @throws OperationFailedException unable to complete request
      */
     public TypeInfo getSearchType(@WebParam(name="searchTypeKey")String searchTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
@@ -77,9 +73,8 @@ public interface SearchService {
      *        locale information about the caller of service operation
      * @return list of search type information
      * @throws DoesNotExistException specified searchResultTypeKey not found
-     * @throws InvalidParameterException contextInfo is not valid
-     * @throws MissingParameterException searchResultTypeKey or contextInfo
-     *         is missing or null
+     * @throws InvalidParameterException invalid searchResultTypeKey
+     * @throws MissingParameterException searchResultTypeKey not specified
      * @throws OperationFailedException unable to complete request
      */
     public List<TypeInfo> getSearchTypesByResult(@WebParam(name="searchResultTypeKey") String searchResultTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
@@ -93,12 +88,11 @@ public interface SearchService {
      *        locale information about the caller of service operation
      * @return list of search type information
      * @throws DoesNotExistException specified searchCriteriaTypeKey not found
-     * @throws InvalidParameterException contextInfo is not valid
-     * @throws MissingParameterException searchCriteriaTypeKey or
-     *         contextInfo is missing or null
+     * @throws InvalidParameterException invalid searchCriteriaTypeKey
+     * @throws MissingParameterException searchCriteriaTypeKey not specified
      * @throws OperationFailedException unable to complete request
      */
-    public List<TypeInfo> getSearchTypesByCriteria(@WebParam(name="searchCriteriaTypeKey") String searchCriteriaTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
+    public List<TypeInfo> getSearchTypesByCriteria(@WebParam(name="searchCriteriaTypeKey")String searchCriteriaTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
 
     /** 
      * Retrieves the list of search result types known by this
@@ -107,11 +101,10 @@ public interface SearchService {
      *
      * @param contextInfo information containing the principalId and
      *        locale information about the caller of service operation
-     * @throws InvalidParameterException contextInfo is not valid
-     * @throws MissingParameterException contextInfo is missing or null
+     * @return list of search result type information
      * @throws OperationFailedException unable to complete request
      */
-    public List<TypeInfo> getSearchResultTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException;
+    public List<TypeInfo> getSearchResultTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws OperationFailedException;
 
     /** 
      * Retrieves the list of search criteria types known by this
@@ -120,24 +113,9 @@ public interface SearchService {
      * @param contextInfo information containing the principalId and
      *        locale information about the caller of service operation
      * @return list of search criteria type information
-     * @throws InvalidParameterException contextInfo is not valid
-     * @throws MissingParameterException contextInfo is missing or null
      * @throws OperationFailedException unable to complete request
      */
-    public List<TypeInfo> getSearchCriteriaTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException;
+    public List<TypeInfo> getSearchCriteriaTypes(@WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
-    /** 
-     * Performs a search.
-     *
-     * @param searchRequestInfo the search request
-     * @param contextInfo information containing the principalId and
-     *        locale information about the caller of service operation
-     * @return the results of the search
-     * @throws InvalidParameterException contextInfo is not valid
-     * @throws MissingParameterException searchRequestInfo or
-     *         contextInfo is missing or null
-     * @throws OperationFailedException unable to complete request
-     * @throws PermissionDeniedException an authorization failure occurred
-     */
-    public SearchResultInfo search(SearchRequestInfo searchRequestInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public SearchResultInfo search(SearchRequestInfo searchRequestInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws MissingParameterException;
 }

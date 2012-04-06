@@ -1,14 +1,14 @@
 package org.kuali.student.r2.lum.program.infc;
 
+import org.kuali.student.r2.common.infc.IdEntity;
 
 import java.util.List;
-import org.kuali.student.r2.common.infc.IdNamelessEntity;
 
 /**
  * Created by IntelliJ IDEA. User: sambitpatnaik Date: 10/27/11 Time: 10:38 AM
  * To change this template use File | Settings | File Templates.
  */
-public interface MinorDiscipline extends IdNamelessEntity {
+public interface MinorDiscipline extends IdEntity {
 
     /**
      * Identifier of the credential program under which the minor belongs
@@ -19,11 +19,10 @@ public interface MinorDiscipline extends IdNamelessEntity {
     public String getCredentialProgramId();
 
     /**
-     * Identifiers for Minor Discipline Program Requirements.
+     * Minor Discipline Program Requirements.
      * 
-     * @Name Program Requirement Ids
+     * @Name Program Requirements
      */
     public List<String> getProgramRequirements();
-    
 
 }

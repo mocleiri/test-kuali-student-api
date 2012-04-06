@@ -14,34 +14,18 @@ import org.kuali.student.r2.common.infc.IdEntity;
  */
 public interface LprTransaction extends IdEntity {
     /**
-     * The person who requested for this transaction
+     * The person who requested for this LPR - differenet from the person on the
+     * relation.
      * 
-     * Note this does not have to be the same as the person on the transaction 
-     * item. It could be, for example, an administrator creating registrations 
-     * on behalf of the student.
-     * 
-     * @required
-     * @name Requesting Person Id
+     * @return
      */
     public String getRequestingPersonId();
 
-    
-    /**
-     * The ATP for which this transaction applies.
-     * 
-     * This constrains which lui's can be manipulated by this transaction's items. 
-     * The items may only refer to this ATP or nested ATPs.
-     * 
-     * @required
-     * @name ATP Id
-     */
-    public String getAtpId();
-    
     /**
      * Transaction item for this 
      * 
-     * @name LPR Transaction Items
+     * @return
      */
-    List<? extends LprTransactionItem> getLprTransactionItems();
+    List<? extends LPRTransactionItem> getLprTransactionItems();
 
 }

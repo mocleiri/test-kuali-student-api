@@ -86,13 +86,13 @@ public class ExemptionServiceDecorator implements ExemptionService {
     }
 
     @Override
-    public List<ExemptionInfo> getExemptionsByIds(List<String> exemptionIds, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().getExemptionsByIds(exemptionIds, context);
+    public List<ExemptionInfo> getExemptionsByIdList(List<String> exemptionIdList, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        return getNextDecorator().getExemptionsByIdList(exemptionIdList, context);
     }
 
     @Override
-    public List<ExemptionRequestInfo> getExemptionRequestsByIds(List<String> exemptionRequestIds, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().getExemptionRequestsByIds(exemptionRequestIds, context);
+    public List<ExemptionRequestInfo> getExemptionRequestsByIdList(List<String> exemptionRequestIdList, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        return getNextDecorator().getExemptionRequestsByIdList(exemptionRequestIdList, context);
     }
 
     @Override

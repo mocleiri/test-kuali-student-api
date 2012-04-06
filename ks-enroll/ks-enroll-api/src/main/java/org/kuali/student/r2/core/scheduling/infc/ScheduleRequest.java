@@ -15,9 +15,9 @@
 
 package org.kuali.student.r2.core.scheduling.infc;
 
-import org.kuali.student.r2.common.infc.IdEntity;
-
 import java.util.List;
+
+import org.kuali.student.r2.common.infc.IdEntity;
 
 
 /**
@@ -30,29 +30,18 @@ import java.util.List;
 public interface ScheduleRequest extends IdEntity {
 
     /**
-     *  Reference object identifier
+     * The Requester is the Person who made this request.
      *
-     * @name Ref Object Id
+     * @name Requester
      * @required
      * @readonly
      */
-    public String getRefObjectId();
+    public String getRequestingPersonId();
 
     /**
-     * Referenced object type key
+     * The Organization Id for this request.
      *
-     * @name Ref Object Type Key
-     * @required
-     * @readonly
+     * @name Organization Id
      */
-    public String getRefObjectTypeKey();
-
-
-    /**
-     * The Schedule Request Component Ids. These provide a list of preferences.
-     *
-     * @name Schedule Request Component Ids
-     */
-    public List<? extends ScheduleRequestComponent> getScheduleRequestComponents();
-
+    public String getOrganizationId();
 }

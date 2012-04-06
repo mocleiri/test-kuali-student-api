@@ -40,10 +40,10 @@ public abstract class LRCServiceDecorator implements LRCService {
     }
 
     @Override
-    public List<ResultValuesGroupInfo> getResultValuesGroupsByIds(List<String> resultValuesGroupIds, ContextInfo context)
+    public List<ResultValuesGroupInfo> getResultValuesGroupsByIdList(List<String> resultValuesGroupIdList, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().getResultValuesGroupsByIds(resultValuesGroupIds, context);
+        return getNextDecorator().getResultValuesGroupsByIdList(resultValuesGroupIdList, context);
     }
 
     @Override
@@ -94,10 +94,10 @@ public abstract class LRCServiceDecorator implements LRCService {
     }
 
     @Override
-    public List<ResultValueInfo> getResultValuesByIds(List<String> resultValueIds, ContextInfo context)
+    public List<ResultValueInfo> getResultValuesByIdList(List<String> resultValueIdList, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().getResultValuesByIds(resultValueIds, context);
+        return getNextDecorator().getResultValuesByIdList(resultValueIdList, context);
     }
 
     @Override

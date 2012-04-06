@@ -20,10 +20,10 @@ import java.util.List;
 import org.kuali.student.r2.common.infc.HasEffectiveDates;
 import org.kuali.student.r2.common.infc.IdEntity;
 import org.kuali.student.r2.common.infc.MeetingSchedule;
-import org.kuali.student.r2.lum.clu.infc.Expenditure;
-import org.kuali.student.r2.lum.clu.infc.Fee;
-import org.kuali.student.r2.lum.clu.infc.LuCode;
-import org.kuali.student.r2.lum.clu.infc.Revenue;
+import org.kuali.student.r2.lum.lu.infc.Expenditure;
+import org.kuali.student.r2.lum.lu.infc.Fee;
+import org.kuali.student.r2.lum.lu.infc.LuCode;
+import org.kuali.student.r2.lum.lu.infc.Revenue;
 
 /**
  * Detailed information about a single LUI.
@@ -102,43 +102,32 @@ public interface Lui extends IdEntity, HasEffectiveDates {
     public String getReferenceURL();
 
     /**
-     * Identifiers for Organization(s) that is responsible for the delivery - and all
+     * Organization(s) that is responsible for the delivery - and all
      * associated logistics - of the Lui.
      *
-     * @name Units Deployment Org Id
+     * @name Units Deployment
      */
     public List<String> getUnitsDeployment();
 
     /**
-     * Identifiers for Organization(s) that is responsible for the academic content of
+     * Organization(s) that is responsible for the academic content of
      * the Lui as approved in its canonical form.
      *
-     * @name Units Content Owner Org Id
+     * @name Units Content Owner
      */
     public List<String> getUnitsContentOwner();
 
     /**
      * The options/scales that indicate the allowable grades that can
-     * be awarded or credits applied.  
-     * 
-     * If the value is set here then the Clu must have a
-     * grading option or credit options set on the canonical activity.
+     * be awarded.  If the value is set here then the Clu must have a
+     * grading option set on the canonical activity.
      * 
      * ResultValuesGroup will contain grade values valid for this
-     * course offering.
+     * course offering
      * 
-     * @name: Result Values Group Ids
+     * @name: Result Options Ids
      */
     public List<String> getResultValuesGroupKeys();
-
-    /**
-     *  These are the related lui types which may be related to this lui, e.g., activty
-     *  offering types to format offering
-     *
-      * @name Related Lui Types
-     */
-    public List<String> getRelatedLuiTypes();
-
     
     /**
      * The fees associated with the course offering. 

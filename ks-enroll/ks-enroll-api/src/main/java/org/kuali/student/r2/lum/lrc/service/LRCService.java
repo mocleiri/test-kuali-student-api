@@ -59,7 +59,7 @@ public interface LRCService {
      * @param context Context information containing the principalId
      *                and locale information about the caller of service
      *                operation     
-     * @return details of the results for these Ids
+     * @return details of the results for these ids
      * @throws DoesNotExistException  resultValuesGroupId not found
      * @throws InvalidParameterException invalid resultValuesGroupId
      * @throws MissingParameterException invalid resultValuesGroupId
@@ -71,18 +71,18 @@ public interface LRCService {
     /**
      * Retrieves result components by a list of identifiers.
      * 
-     * @param resultValuesGroupIds  identifiers for result component
+     * @param resultValuesGroupIdList  identifiers for result component
      * @param context Context information containing the principalId
      *                and locale information about the caller of service
      *                operation     
      * @return result component list
      * @throws DoesNotExistException resultValuesGroup not found
-     * @throws InvalidParameterException invalid resultValuesGroupIds
-     * @throws MissingParameterException invalid resultValuesGroupIds
+     * @throws InvalidParameterException invalid resultValuesGroupIdList
+     * @throws MissingParameterException invalid resultValuesGroupIdList
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<ResultValuesGroupInfo> getResultValuesGroupsByIds(@WebParam(name = "resultValuesGroupIds") List<String> resultValuesGroupIds, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<ResultValuesGroupInfo> getResultValuesGroupsByIdList(@WebParam(name = "resultValuesGroupIdList") List<String> resultValuesGroupIdList, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Retrieves a list of existing result components that a result value is tied to.
@@ -91,7 +91,7 @@ public interface LRCService {
      * @param context Context information containing the principalId
      *                and locale information about the caller of service
      *                operation
-     * @return details of the results for these Ids
+     * @return details of the results for these ids
      * @throws DoesNotExistException resultValue not found
      * @throws InvalidParameterException invalid resultValueId
      * @throws MissingParameterException invalid resultValueId
@@ -214,18 +214,18 @@ public interface LRCService {
     /**
      * Retrieves a list of result value objects for a list of identifiers. 
      * 
-     * @param resultValueIds identifier for the result
+     * @param resultValueIdList identifier for the result
      * @param context Context information containing the principalId
      *                and locale information about the caller of service
      *                operation      
      * @return list of result group identifiers
      * @throws DoesNotExistException a resultValueId from the list is not found
-     * @throws InvalidParameterException invalid resultValueIds
-     * @throws MissingParameterException missing resultValueIds
+     * @throws InvalidParameterException invalid resultValueIdList
+     * @throws MissingParameterException missing resultValueIdList
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure 
      */
-    public List<ResultValueInfo> getResultValuesByIds(@WebParam(name = "resultValueIds") List<String> resultValueIds, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<ResultValueInfo> getResultValuesByIdList(@WebParam(name = "resultValueIdList") List<String> resultValueIdList, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Retrieves a list of result value objects for a specified result

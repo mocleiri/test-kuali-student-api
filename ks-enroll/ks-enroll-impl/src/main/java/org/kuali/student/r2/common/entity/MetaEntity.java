@@ -8,6 +8,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package org.kuali.student.r2.common.entity;
 
 import java.util.Date;
@@ -30,22 +31,29 @@ public abstract class MetaEntity extends BaseVersionEntity {
     // Hibernate will not allow @Version in @Embeddable for some annoying reason
     // @Version
     // private long versionInd;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
     private Date createTime;
+
     @Column(updatable = false)
     private String createId;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
+
     private String updateId;
 
     // public long getVersionInd() {
     // return versionInd;
     // }
+
     // public void setVersionInd(long versionInd) {
     // this.versionInd = versionInd;
     // }
+
     protected MetaEntity() {
+
     }
 
     // TODO - need a BaseEntity(HasMeta) to deal w/ version, id, and other
@@ -98,18 +106,12 @@ public abstract class MetaEntity extends BaseVersionEntity {
     @Override
     protected void onPrePersist() {
         super.onPrePersist();
-        if (createTime == null) {
-            setCreateTime(new Date());
-        }
-        if (updateTime == null) {
-            setUpdateTime(new Date());
-        }
-        if (createId == null) {
-            setCreateId(SecurityUtils.getCurrentUserId());
-        }
-        if (updateId == null) {
-            setUpdateId(SecurityUtils.getCurrentUserId());
-        }
+        setCreateTime(new Date());
+        setUpdateTime(new Date());
+
+        String user = SecurityUtils.getCurrentUserId();
+        setCreateId(user);
+        setUpdateId(user);
 
     }
 
@@ -117,23 +119,18 @@ public abstract class MetaEntity extends BaseVersionEntity {
     protected void onPreUpdate() {
         super.onPreUpdate();
         // This code should not be here, but hibernate is calling update
-        // callback instead of prepersit if the id is not null.        
-        if (createTime == null) {
+        // callback instead of prepersit if the id is not null.
+        if (getCreateTime() == null) {
             setCreateTime(new Date());
         }
-        if (updateTime == null) {
-            setUpdateTime(new Date());
-        }
-        if (createId == null) {
-            setCreateId(SecurityUtils.getCurrentUserId());
-        }
-        if (updateId == null) {
-            setUpdateId(SecurityUtils.getCurrentUserId());
-        }
+        setUpdateTime(new Date());
+
+        String user = SecurityUtils.getCurrentUserId();
+        setUpdateId(user);
     }
 
     public MetaInfo toDTO() {
-        MetaInfo miInfo = new MetaInfo();
+        MetaInfo miInfo = MetaInfo.newInstance();
         miInfo.setCreateId(getCreateId());
         miInfo.setCreateTime(getCreateTime());
         miInfo.setUpdateId(getUpdateId());

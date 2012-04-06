@@ -1,7 +1,12 @@
 package org.kuali.student.r2.core.class1.process.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.kuali.student.r2.common.dto.AttributeInfo;
+import org.kuali.student.r2.common.entity.AttributeOwner;
+import org.kuali.student.r2.common.entity.MetaEntity;
+import org.kuali.student.r2.common.infc.Attribute;
+import org.kuali.student.r2.core.class1.state.model.StateEntity;
+import org.kuali.student.r2.core.process.dto.CheckInfo;
+import org.kuali.student.r2.core.process.infc.Check;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,17 +15,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.kuali.student.r2.common.dto.AttributeInfo;
-import org.kuali.student.r2.common.entity.AttributeOwner;
-import org.kuali.student.r2.common.entity.MetaEntity;
-import org.kuali.student.r2.common.infc.Attribute;
-import org.kuali.student.r2.core.process.dto.CheckInfo;
-import org.kuali.student.r2.core.process.infc.Check;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "KSEN_CHECK")
-public class CheckEntity extends MetaEntity implements AttributeOwner<CheckAttributeEntity> {
+public class CheckEntity extends MetaEntity implements AttributeOwner<CheckAttributeEntity>{
 
     //NAME
     @Column(name = "NAME")
@@ -31,21 +31,23 @@ public class CheckEntity extends MetaEntity implements AttributeOwner<CheckAttri
     @JoinColumn(name = "RT_DESCR_ID")
     private CheckRichTextEntity descr;
 
-    //STATE_ID
-    @Column(name = "CHECK_STATE")
-    private String checkState;
+	//STATE_ID
+	@ManyToOne(optional=false)
+	@JoinColumn(name = "STATE_ID")
+	private StateEntity checkState;
 
     //TYPE_ID
-    @Column(name = "CHECK_TYPE")
-    private String checkType;
+	@ManyToOne(optional=false)
+	@JoinColumn(name = "TYPE_ID")
+	private CheckTypeEntity checkType;
 
     @Column(name = "ISSUE_ID")
-    private String issueId;
+	private String issueId;
 
     @Column(name = "MILESTONE_TYPE_ID")
     private String milestoneTypeId;
 
-    @ManyToOne(optional = true)
+    @ManyToOne(optional=true)
     @JoinColumn(name = "PROCESS_ID")
     private ProcessEntity process;
 
@@ -55,23 +57,20 @@ public class CheckEntity extends MetaEntity implements AttributeOwner<CheckAttri
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<CheckAttributeEntity> attributes;
 
-    @Override
-    public void setAttributes(List<CheckAttributeEntity> attributes) {
-        this.attributes = attributes;
-    }
+	@Override
+	public void setAttributes(List<CheckAttributeEntity> attributes) {
+		this.attributes = attributes;
+	}
 
     public CheckEntity() {}
-
-    public CheckEntity(Check check) {
-        super(check);
+	public CheckEntity(Check check){
+	    super(check);
         this.setId(check.getKey());
         this.setName(check.getName());
-        if (check.getDescr() != null) {
+        if(check.getDescr() != null) {
             this.setDescr(new CheckRichTextEntity(check.getDescr()));
         }
-        if (check.getStateKey() != null) {
-            this.setCheckState(check.getStateKey());
-        }
+
         this.setAttributes(new ArrayList<CheckAttributeEntity>());
         if (null != check.getAttributes()) {
             for (Attribute att : check.getAttributes()) {
@@ -80,24 +79,24 @@ public class CheckEntity extends MetaEntity implements AttributeOwner<CheckAttri
             }
         }
 
-        this.setIssueId(check.getIssueId());
+        this.setIssueId(check.getIssueKey());
         this.setMilestoneTypeId(check.getMilestoneTypeKey());
         this.setAgendaId(check.getAgendaId());
-    }
+	}
 
     /**
      * @return Process Information DTO
      */
-    public CheckInfo toDto() {
+    public CheckInfo toDto(){
         CheckInfo obj = new CheckInfo();
         obj.setMeta(super.toDTO());
         obj.setKey(getId());
         obj.setName(name);
         if (checkType != null) {
-            obj.setTypeKey(checkType);
+            obj.setTypeKey(checkType.getId());
         }
         if (checkState != null) {
-            obj.setStateKey(checkState);
+            obj.setStateKey(checkState.getId());
         }
         if (descr != null) {
             obj.setDescr(descr.toDto());
@@ -107,7 +106,7 @@ public class CheckEntity extends MetaEntity implements AttributeOwner<CheckAttri
             obj.setProcessKey(process.getId());
         }
 
-        obj.setIssueId(issueId);
+        obj.setIssueKey(issueId);
         obj.setMilestoneTypeKey(milestoneTypeId);
         obj.setAgendaId(agendaId);
 
@@ -119,39 +118,45 @@ public class CheckEntity extends MetaEntity implements AttributeOwner<CheckAttri
         obj.setAttributes(atts);
 
         return obj;
-    }
+	}
 
-    // NAME
-    public String getName() {
-        return name;
-    }
+	// NAME
+	public String getName() { return name; }
+	public void setName(String name) { this.name = name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	// RT_DESCR_ID
+	public CheckRichTextEntity getDescr() { return descr; }
+	public void setDescr(CheckRichTextEntity descr) { this.descr = descr; }
 
-    // RT_DESCR_ID
-    public CheckRichTextEntity getDescr() {
-        return descr;
-    }
-
-    public void setDescr(CheckRichTextEntity descr) {
-        this.descr = descr;
-    }
-
-    public String getCheckState() {
+	//PROCESS_ID
+	public StateEntity getCheckStateID() {
         return checkState;
     }
-
-    public void setCheckState(String checkState) {
+	public void setCheckStateID(StateEntity checkState) {
         this.checkState = checkState;
     }
 
-    public String getCheckType() {
+	//PROCESS_TYPE_ID
+	public CheckTypeEntity getCheckTypeID() {
+        return checkType;
+    }
+	public void setCheckTypeID(CheckTypeEntity checkType) {
+        this.checkType = checkType;
+    }
+
+    public StateEntity getCheckState() {
+        return checkState;
+    }
+
+    public void setCheckState(StateEntity checkState) {
+        this.checkState = checkState;
+    }
+
+    public CheckTypeEntity getCheckType() {
         return checkType;
     }
 
-    public void setCheckType(String checkType) {
+    public void setCheckType(CheckTypeEntity checkType) {
         this.checkType = checkType;
     }
 
@@ -188,7 +193,7 @@ public class CheckEntity extends MetaEntity implements AttributeOwner<CheckAttri
     }
 
     @Override
-    public List<CheckAttributeEntity> getAttributes() {
-        return attributes;
-    }
+	public List<CheckAttributeEntity> getAttributes() {
+		 return attributes;
+	}
 }

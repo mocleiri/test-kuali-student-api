@@ -51,19 +51,19 @@ public abstract class LearningResultRecordServiceDecorator implements LearningRe
 	}
 
 	@Override
-	public List<LearningResultRecordInfo> getLearningResultRecordsForLprIds(
-			List<String> lprIds, ContextInfo context)
+	public List<LearningResultRecordInfo> getLearningResultRecordsForLprIdList(
+			List<String> lprIdList, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		return getNextDecorator().getLearningResultRecordsForLprIds(lprIds, context);
+		return getNextDecorator().getLearningResultRecordsForLprIdList(lprIdList, context);
 	}
 
 	@Override
 	public List<LearningResultRecordInfo> getLearningResultRecordsBySourceId(
-			List<String> lprIds, ContextInfo context)
+			List<String> lprIdList, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		return getNextDecorator().getLearningResultRecordsBySourceId(lprIds, context);
+		return getNextDecorator().getLearningResultRecordsBySourceId(lprIdList, context);
 	}
 
 	@Override
@@ -113,12 +113,12 @@ public abstract class LearningResultRecordServiceDecorator implements LearningRe
 	}
 
 	@Override
-	public List<ResultSourceInfo> getResultSourcesByIds(
-			List<String> resultSourceIds, ContextInfo context)
+	public List<ResultSourceInfo> getResultSourcesByIdList(
+			List<String> resultSourceIdList, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
-		return getNextDecorator().getResultSourcesByIds(resultSourceIds, context);
+		return getNextDecorator().getResultSourcesByIdList(resultSourceIdList, context);
 	}
 
 	@Override

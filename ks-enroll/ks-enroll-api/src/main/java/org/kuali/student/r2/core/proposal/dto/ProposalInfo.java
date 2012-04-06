@@ -8,6 +8,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package org.kuali.student.r2.core.proposal.dto;
 
 import java.io.Serializable;
@@ -27,71 +28,64 @@ import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.core.proposal.infc.Proposal;
 import org.w3c.dom.Element;
 
-@XmlType(name = "ProposalInfo", propOrder = {"id", 
-    "typeKey", 
-    "stateKey",
-    "name", 
-    "descr",
-    "proposerPerson", 
-    "proposerOrg", 
-    "proposalReferenceType",
-    "proposalReference", 
-    "rationale", 
-    "effectiveDate",
-    "expirationDate",
-    "workflowId",
-    "meta", 
-    "attributes", 
-    "_futureElements"})
+@XmlType(name = "ProposalInfo", propOrder = {"id", "typeKey", "stateKey", 
+    "name", "descr",
+    "proposerPerson", "proposerOrg", "proposalReferenceType", 
+    "proposalReference", "rationale", "detailDesc", "effectiveDate",
+        "expirationDate", 
+        "workflowId",
+        "meta", "attributes", "_futureElements"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProposalInfo extends IdEntityInfo implements Proposal, Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @XmlElement
     private List<String> proposerPerson;
+
     @XmlElement
     private List<String> proposerOrg;
+
     @XmlElement
     private String proposalReferenceType;
+
     @XmlElement
     private List<String> proposalReference;
+
     @XmlElement
-    private RichTextInfo rationale;
+    private String rationale;
+
+    @XmlElement
+    private RichTextInfo detailDesc;
+
     @XmlElement
     private Date effectiveDate;
+
     @XmlElement
     private Date expirationDate;
+
     @XmlElement
     private String workflowId;
+
     @XmlAnyElement
     private List<Element> _futureElements;
 
     public ProposalInfo() {
+
     }
 
-    public ProposalInfo(Proposal input) {
-        super(input);
-        if (input != null) {
-            if (input.getProposerPerson() != null) {
-                this.proposerPerson = new ArrayList<String>(input.getProposerPerson());
-            }
-            if (input.getProposerOrg() != null) {
-                this.proposerOrg = new ArrayList<String>(input.getProposerOrg());
-            }
-            this.proposalReferenceType = input.getProposalReferenceType();
-            if (input.getProposalReference() != null) {
-                this.proposalReference = new ArrayList<String>(input.getProposalReference());
-            }
-            if (input.getRationale() != null) {
-                this.rationale = new RichTextInfo (input.getRationale());
-            }
-            if (input.getEffectiveDate() != null) {
-                this.effectiveDate = new Date(input.getEffectiveDate().getTime());
-            }
-            if (input.getExpirationDate() != null) {
-                this.expirationDate = new Date(input.getExpirationDate().getTime());
-            }
-            this.workflowId = input.getWorkflowId();
+    public ProposalInfo(Proposal proposal) {
+        super(proposal);
+        if (proposal != null) {
+            this.proposerPerson = new ArrayList<String>(proposal.getProposerPerson());
+            this.proposerOrg = new ArrayList<String>(proposal.getProposerOrg());
+            this.proposalReferenceType = proposal.getProposalReferenceType();
+            this.proposalReference = new ArrayList<String>(proposal.getProposalReference());
+            this.rationale = proposal.getRationale();
+            this.detailDesc = new RichTextInfo(proposal.getDetailDesc());
+            this.effectiveDate = new Date(proposal.getEffectiveDate().getTime());
+            this.expirationDate = new Date(proposal.getExpirationDate().getTime());
+            this.workflowId = proposal.getWorkflowId();
         }
 
     }
@@ -142,12 +136,21 @@ public class ProposalInfo extends IdEntityInfo implements Proposal, Serializable
     }
 
     @Override
-    public RichTextInfo getRationale() {
+    public String getRationale() {
         return rationale;
     }
 
-    public void setRationale(RichTextInfo rationale) {
+    public void setRationale(String rationale) {
         this.rationale = rationale;
+    }
+
+    @Override
+    public RichTextInfo getDetailDesc() {
+        return detailDesc;
+    }
+
+    public void setDetailDesc(RichTextInfo detailDesc) {
+        this.detailDesc = detailDesc;
     }
 
     @Override
@@ -176,4 +179,5 @@ public class ProposalInfo extends IdEntityInfo implements Proposal, Serializable
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
     }
+
 }
