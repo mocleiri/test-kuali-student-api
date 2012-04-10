@@ -22,9 +22,11 @@ import org.kuali.student.common.util.UUIDHelper;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.TimeAmountInfo;
 import org.kuali.student.r2.common.dto.TimeOfDayInfo;
-import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.common.util.constants.AtpServiceConstants;
+import org.kuali.student.r2.common.util.constants.PopulationServiceConstants;
 import org.kuali.student.r2.core.appointment.constants.AppointmentServiceConstants;
+import org.kuali.student.r2.core.appointment.dto.AppointmentInfo;
 import org.kuali.student.r2.core.appointment.dto.AppointmentSlotInfo;
 import org.kuali.student.r2.core.appointment.dto.AppointmentSlotRuleInfo;
 import org.kuali.student.r2.core.appointment.dto.AppointmentWindowInfo;
@@ -88,6 +90,33 @@ public class TestAppointmentServiceImpl {
         Date endDate = createDate(2012, 3, 16, 14, 0);
         apptWindowInfo.setStartDate(startDate);
         apptWindowInfo.setEndDate(endDate);
+        apptWindowInfo.setAssignedPopulationId(PopulationServiceConstants.EVERYONE_POPULATION_KEY);
+    }
+
+    private AppointmentSlotInfo createAppointmentSlotInfo(String apptWinId) {
+        AppointmentSlotInfo apptSlotInfo = new AppointmentSlotInfo();
+        Date startDate = createDate(2012, 3, 5, 12, 0);
+        apptSlotInfo.setStartDate(startDate);
+        apptSlotInfo.setAppointmentWindowId(apptWinId);
+        return apptSlotInfo;
+    }
+
+    private AppointmentWindowInfo createAppoinmentWindowInfo(String milestoneId, int offset) {
+        AppointmentWindowInfo apptWindowInfo = new AppointmentWindowInfo();
+        // Uses rule from makeSlotRule
+        apptWindowInfo.setSlotRule(rule);
+        apptWindowInfo.setTypeKey(AppointmentServiceConstants.APPOINTMENT_WINDOW_TYPE_ONE_SLOT_KEY);
+        apptWindowInfo.setStateKey(AppointmentServiceConstants.APPOINTMENT_WINDOW_STATE_ACTIVE_KEY);
+        //
+        Date startDate = createDate(2012, 3, 5 + offset, 12, 0);
+        Date endDate = createDate(2012, 3, 16 + offset, 14, 0);
+        apptWindowInfo.setStartDate(startDate);
+        apptWindowInfo.setEndDate(endDate);
+
+        apptWindowInfo.setPeriodMilestoneId(milestoneId);
+        apptWindowInfo.setAssignedPopulationId(PopulationServiceConstants.EVERYONE_POPULATION_KEY);
+
+        return apptWindowInfo;
     }
 
     private Date createDate(int year, int month, int dayOfMonth, int hourOfDay, int minute) {
@@ -199,6 +228,104 @@ public class TestAppointmentServiceImpl {
         }
     }
     // --------------------------------------------------- TESTS ------------------------------------------------------
+//    @Test
+//    public void testCreateAppointment() {
+//        before();
+//        try {
+//            AppointmentWindowInfo info =
+//                    appointmentService.createAppointmentWindow(apptWindowInfo.getTypeKey(), apptWindowInfo, contextInfo);
+//            List<AppointmentSlotInfo> slotInfoList =
+//                    appointmentService.generateAppointmentSlotsByWindow(info.getId(), contextInfo);
+//            String personId = UUIDHelper.genStringUUID();
+//            AppointmentSlotInfo slotInfo = slotInfoList.get(0);
+//            AppointmentInfo apptInfo = new AppointmentInfo();
+//            apptInfo.setPersonId(personId);
+//            apptInfo.setSlotId(slotInfo.);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            assert(false);
+//        }
+//    }
+    
+    @Test
+    public void testGenerateAppointmentsByWindow() {
+        before();
+        try {
+            AppointmentWindowInfo windowInfo =
+                    appointmentService.createAppointmentWindow(apptWindowInfo.getTypeKey(), apptWindowInfo, contextInfo);
+            List<AppointmentSlotInfo> slotInfoList =
+                    appointmentService.generateAppointmentSlotsByWindow(windowInfo.getId(), contextInfo);
+            appointmentService.generateAppointmentsByWindow(windowInfo.getId(), windowInfo.getTypeKey(), contextInfo);
+            AppointmentSlotInfo slotInfo = slotInfoList.get(0);
+            List<AppointmentInfo> apptInfoList =
+                    appointmentService.getAppointmentsBySlot(slotInfo.getId(), contextInfo);
+            for (AppointmentInfo apptInfo: apptInfoList) {
+                assertEquals(apptInfo.getSlotId(), slotInfo.getId());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert(false);
+        }
+    }
+
+    @Test
+    public void testGetAppointmentWindowsByPeriod() {
+        before();
+        String milestoneId = UUIDHelper.genStringUUID();
+        String milestoneId2 = UUIDHelper.genStringUUID();
+        List<AppointmentWindowInfo> infoList = new ArrayList<AppointmentWindowInfo>();
+        for (int i = 0; i < 3; i++) {
+            AppointmentWindowInfo info = createAppoinmentWindowInfo(milestoneId, i + 1);
+            infoList.add(info);
+        }
+        for (int i = 3; i < 5; i++) {
+            AppointmentWindowInfo info = createAppoinmentWindowInfo(milestoneId2, i + 1);
+            infoList.add(info);
+        }
+        for (AppointmentWindowInfo info: infoList) {
+            try {
+                appointmentService.createAppointmentWindow(info.getTypeKey(), info, contextInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+                assert(false);
+            }
+        }
+        // Now fetch the windows
+        try {
+            List<AppointmentWindowInfo> list = appointmentService.getAppointmentWindowsByPeriod(milestoneId, contextInfo);
+            assertEquals(3, list.size());
+            System.err.println("Got here");
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert(false);
+        }
+    }
+
+    @Test
+    public void testApptWindowDeleteOneSlot() {
+        before();
+        try {
+            AppointmentWindowInfo info =
+                    appointmentService.createAppointmentWindow(apptWindowInfo.getTypeKey(), apptWindowInfo, contextInfo);
+            List<AppointmentSlotInfo> slotInfoList =
+                    appointmentService.generateAppointmentSlotsByWindow(info.getId(), contextInfo);
+            assertEquals(slotInfoList.size(), 1);
+            appointmentService.deleteAppointmentWindow(info.getId(), contextInfo);
+            try {
+                AppointmentSlotInfo slotInfo = appointmentService.getAppointmentSlot(slotInfoList.get(0).getId(), contextInfo);
+                assert(false); // Shouldn't reach here
+            } catch (DoesNotExistException e) {
+                assert(true);
+            } catch (Exception e) {
+                assert(false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            assert(false);
+        }
+    }
+    
     @Test
     public void testGenerateMaxSlotsByWindow() {
         before();
