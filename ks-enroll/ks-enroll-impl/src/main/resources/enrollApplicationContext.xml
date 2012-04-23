@@ -20,7 +20,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
   </bean>
 
   <bean id="lprServiceOnBus" parent="lprServiceAuthorization" />
-  <bean id="luiServiceOnBus" parent="luiServiceValidation" />
+  <bean id="luiServiceOnBus" parent="luiService" />
   <bean id="atpServiceOnBus" parent="atpServiceValidation" />
   <bean id="acalServiceOnBus" parent="acalServiceValidation" />
   <bean id="courseOfferingServiceOnBus" class="courseOfferingValidation" />
@@ -42,25 +42,23 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
   <bean id="atpService" class="org.kuali.student.r2.core.class1.atp.service.impl.AtpServiceImpl">
     <property name="atpDao" ref="atpEnrDao" />
-    <property name="atpTypeDao" ref="atpTypeDao" />
-    <property name="atpStateDao" ref="atpStateDao" />
-    <property name="atpRichTextDao" ref="atpRichTextDao" />
     <property name="atpRelDao" ref="atpAtpRelationDao" />
     <!-- <property name="atpRelTypeDao" ref="atpAtpRelationTypeDao"/> -->
     <property name="milestoneDao" ref="milestoneDao" />
     <!-- <property name="milestoneTypeDao" ref="milestoneTypeDao"/> -->
     <property name="atpMilestoneRelationDao" ref="atpMilestoneRelationDao" />
     <!-- <property name="atpMilestoneRelationTypeDao" ref="atpMilestoneRelationTypeDao"/> -->
-    <property name="stateService" ref="stateService" />
   </bean>
 
   <bean id="stateService" class="org.kuali.student.r2.core.class1.state.service.impl.StateServiceImpl">
     <property name="stateDao" ref="stateDao" />
-    <property name="spDao" ref="stateProcessDao" />
-    <property name="sprDao" ref="stateProcessRelationDao" />
+    <property name="lifecycleDao" ref="lifecycleDao" />
   </bean>
 
-  <bean id="typeService" class="org.kuali.student.r2.common.service.impl.TypeServiceImpl"/>
+    <bean id="typeService" class="org.kuali.student.r2.core.class1.type.service.TypeServiceImpl">
+        <property name="typeDao" ref="typeDao"/>
+        <property name="typeTypeRelationDao" ref="typeTypeRelationDao"/>
+    </bean>
 
 
   <bean id="acalService" class="org.kuali.student.enrollment.class2.acal.service.impl.AcademicCalendarServiceImpl">
@@ -125,17 +123,6 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
     class="org.kuali.student.enrollment.class1.lpr.service.decorators.LuiPersonRelationServiceAuthorizationDecorator">
     <property name="nextDecorator" ref="lprServiceValidation" />
     <property name="permissionService" ref="permissionService" />
-  </bean>
-
-
-  <bean id="luiServiceAuthorization" class="org.kuali.student.enrollment.class1.lui.service.decorators.LuiServiceAuthorizationDecorator">
-    <property name="nextDecorator" ref="luiService" />
-    <property name="permissionService" ref="permissionService" />
-  </bean>
-
-  <bean id="luiServiceValidation" class="org.kuali.student.enrollment.class1.lui.service.decorators.LuiServiceValidationDecorator">
-    <property name="nextDecorator" ref="luiServiceAuthorization" />
-
   </bean>
 
   <bean id="atpServiceValidation" class="org.kuali.student.r2.core.class1.atp.service.decorators.AtpServiceValidationDecorator">

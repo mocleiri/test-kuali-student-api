@@ -17,11 +17,9 @@
 package org.kuali.student.r2.core.class1.appointment.model;
 
 import org.kuali.student.common.entity.KSEntityConstants;
-import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.dto.TimeAmountInfo;
 import org.kuali.student.r2.common.dto.TimeOfDayInfo;
-import org.kuali.student.r2.common.entity.AttributeOwner;
 import org.kuali.student.r2.common.entity.MetaEntity;
 import org.kuali.student.r2.common.infc.Attribute;
 import org.kuali.student.r2.core.appointment.dto.AppointmentSlotRuleInfo;
@@ -29,7 +27,13 @@ import org.kuali.student.r2.core.appointment.dto.AppointmentWindowInfo;
 import org.kuali.student.r2.core.appointment.infc.AppointmentSlotRule;
 import org.kuali.student.r2.core.appointment.infc.AppointmentWindow;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,11 +45,13 @@ import java.util.List;
  */
 @Entity
 @Table(name = "KSEN_APPT_WINDOW")
-public class AppointmentWindowEntity extends MetaEntity implements AttributeOwner<AppointmentWindowAttributeEntity> {
+public class AppointmentWindowEntity extends MetaEntity {
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "START_DT")
     private Date startDate;  // When registration starts (for individual) month/day/year 
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "END_DT")
     private Date endDate;    // When registration ends (for individual) month/day/year 
 
@@ -70,7 +76,7 @@ public class AppointmentWindowEntity extends MetaEntity implements AttributeOwne
 
     @Column(name = "SR_END_TIME_MS")
     private Long endTime; // milliseconds since end of day
-    
+
     // Next two fields correspond to "slot start interval" which is a TimeAmount (has two fields)
     @Column(name = "SR_START_INTVL_DUR_TYPE")
     private String startIntervalDurationType;
@@ -91,16 +97,16 @@ public class AppointmentWindowEntity extends MetaEntity implements AttributeOwne
     @Column(name = "NAME")
     private String name;
 
-    @Column(name = "DESCR_FORMATTED", length = KSEntityConstants.EXTRA_LONG_TEXT_LENGTH)
-    private String formatted;
-
     @Column(name = "DESCR_PLAIN", length = KSEntityConstants.EXTRA_LONG_TEXT_LENGTH)
     private String plain;
 
-    @Column(name = "APPT_WINDOW_TYPE_ID")
+    @Column(name = "DESCR_FORMATTED", length = KSEntityConstants.EXTRA_LONG_TEXT_LENGTH)
+    private String formatted;
+
+    @Column(name = "APPT_WINDOW_TYPE")
     private String apptWindowType;
 
-    @Column(name = "APPT_WINDOW_STATE_ID")
+    @Column(name = "APPT_WINDOW_STATE")
     private String apptWindowState;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
@@ -109,59 +115,11 @@ public class AppointmentWindowEntity extends MetaEntity implements AttributeOwne
     public AppointmentWindowEntity() {
     }
 
-    public AppointmentWindowEntity(AppointmentWindow apptWin) {
+    public AppointmentWindowEntity(String appointmentWindowTypeKey, AppointmentWindow apptWin) {
         super(apptWin);
         this.setId(apptWin.getId());
-        // AppointmentWindow specific initialization
-        this.setStartDate(apptWin.getStartDate()); // startDate not null
-        if (apptWin.getEndDate() != null) { // endDate could be null
-            this.setEndDate(apptWin.getEndDate());
-        }
-        this.setPeriodMilestoneId(apptWin.getPeriodMilestoneId());
-        this.setAssignedPopulationId(apptWin.getAssignedPopulationId());
-        this.setAssignedOrderType(apptWin.getAssignedOrderTypeKey());
-        this.setMaxAppointmentsPerSlot(apptWin.getMaxAppointmentsPerSlot());
-
-        // Generate comma delimited days of week to save (max length is 13 characters)
-        List<Integer> weekdays = apptWin.getSlotRule().getWeekdays(); // not null
-        StringBuilder weekdaysStr = new StringBuilder();
-        for (Integer day: weekdays) {
-            if (weekdaysStr.length() > 0) {
-                weekdaysStr.append(",");
-            }
-            weekdaysStr.append(day);
-        }
-        this.setWeekdays(weekdaysStr.toString());
-        AppointmentSlotRule slotRule = apptWin.getSlotRule();
-        // start time not null, end time not null
-        this.setStartTime(slotRule.getStartTimeOfDay().getMilliSeconds());
-        this.setEndTime(slotRule.getEndTimeOfDay().getMilliSeconds());
-        // start interval could be null, duration
-        if (slotRule.getSlotStartInterval() != null) {
-            this.setStartIntervalDurationType(slotRule.getSlotStartInterval().getAtpDurationTypeKey());
-            this.setStartIntervalTimeQuantity(Integer.parseInt(slotRule.getSlotStartInterval().getTimeQuantity()));
-        }
-        // slot duration could be null
-        if (slotRule.getSlotDuration() != null) {
-            this.setDurationType(slotRule.getSlotDuration().getAtpDurationTypeKey());
-            this.setDurationTimeQuantity(Integer.parseInt(slotRule.getSlotDuration().getTimeQuantity()));
-        }
-        // --- These getters/setters are for inherited fields
-        this.setName(apptWin.getName());
-        if (apptWin.getDescr() != null) {
-            this.setDescrPlain(apptWin.getDescr().getPlain());
-            this.setDescrFormatted(apptWin.getDescr().getFormatted());
-        }
-        // The state/type keys are in every entity, but are not explicitly inherited
-        this.setApptWindowState(apptWin.getStateKey());
-        this.setApptWindowType(apptWin.getTypeKey());
-        // Add attributes individually
-        this.setAttributes(new ArrayList<AppointmentWindowAttributeEntity>());
-        if (null != apptWin.getAttributes()) {
-            for (Attribute att : apptWin.getAttributes()) {
-                this.getAttributes().add(new AppointmentWindowAttributeEntity(att, this));
-            }
-        }
+        this.setApptWindowType(appointmentWindowTypeKey);
+        this.fromDto(apptWin);
     }
 
     public String getDescrFormatted() {
@@ -311,92 +269,145 @@ public class AppointmentWindowEntity extends MetaEntity implements AttributeOwne
         this.apptWindowState = apptWinState;
     }
 
-    @Override
     public void setAttributes(List<AppointmentWindowAttributeEntity> attributes) {
         this.attributes = attributes;
     }
 
-    @Override
     public List<AppointmentWindowAttributeEntity> getAttributes() {
         return attributes;
     }
 
     private TimeOfDayInfo convertToTimeOfDayInfo(Long time) {
+        if(time == null){
+            return null;
+        }
         TimeOfDayInfo info = new TimeOfDayInfo();
         info.setMilliSeconds(time);
         return info;
     }
-    
-    private TimeAmountInfo convertToTimeAmountInfo(String typeKey, String quantity) {
+
+    private TimeAmountInfo convertToTimeAmountInfo(String typeKey, Integer quantity) {
+        if ((typeKey == null) && (quantity == null)) {
+            return null;
+        }
         TimeAmountInfo info = new TimeAmountInfo();
         info.setAtpDurationTypeKey(typeKey);
-        info.setTimeQuantity(quantity);
+        if (quantity != null) {
+            info.setTimeQuantity(quantity);
+        }
         return info;
     }
 
+    public void fromDto(AppointmentWindow apptWin) {
+
+        // AppointmentWindow specific initialization; readOnly fields go only in the ctor
+        this.setPeriodMilestoneId(apptWin.getPeriodMilestoneId());
+        this.setAssignedPopulationId(apptWin.getAssignedPopulationId());
+        this.setAssignedOrderType(apptWin.getAssignedOrderTypeKey());
+        this.setStartDate(apptWin.getStartDate()); // startDate not null
+        this.setEndDate(apptWin.getEndDate());
+        this.setMaxAppointmentsPerSlot(apptWin.getMaxAppointmentsPerSlot());
+
+        AppointmentSlotRule slotRule = apptWin.getSlotRule();
+
+        if(slotRule != null){
+            if(slotRule.getWeekdays() != null){
+                // Generate comma delimited days of week to save (max length is 13 characters)
+                List<Integer> weekdays = slotRule.getWeekdays(); // not null
+                StringBuilder weekdaysStr = new StringBuilder();
+                for (Integer day : weekdays) {
+                    if (weekdaysStr.length() > 0) {
+                        weekdaysStr.append(",");
+                    }
+                    weekdaysStr.append(day);
+                }
+                this.setWeekdays(weekdaysStr.toString());
+            }else{
+                this.setWeekdays(null);
+            }
+
+            this.setStartTime(slotRule.getStartTimeOfDay()==null?null:slotRule.getStartTimeOfDay().getMilliSeconds());
+            this.setEndTime(slotRule.getEndTimeOfDay()==null?null:slotRule.getEndTimeOfDay().getMilliSeconds());
+
+            // start interval could be null, duration
+            if (slotRule.getSlotStartInterval() != null) {
+                this.setStartIntervalDurationType(slotRule.getSlotStartInterval().getAtpDurationTypeKey());
+                this.setStartIntervalTimeQuantity(slotRule.getSlotStartInterval().getTimeQuantity());
+            }
+            // slot duration could be null
+            if (slotRule.getSlotDuration() != null) {
+                this.setDurationType(slotRule.getSlotDuration().getAtpDurationTypeKey());
+                this.setDurationTimeQuantity(slotRule.getSlotDuration().getTimeQuantity());
+            }
+        }else{
+            //Default the slot rule info to null
+            this.setWeekdays(null);
+            this.setStartTime(null);
+            this.setEndTime(null);
+            this.setDurationType(null);
+            this.setDurationTimeQuantity(null);
+        }
+        // --- These getters/setters are for inherited fields
+        this.setName(apptWin.getName());
+        if (apptWin.getDescr() != null) {
+            this.setDescrPlain(apptWin.getDescr().getPlain());
+            this.setDescrFormatted(apptWin.getDescr().getFormatted());
+        }
+        // The state keys are in every entity, but are not explicitly inherited
+        this.setApptWindowState(apptWin.getStateKey());
+        // Add attributes individually
+        this.setAttributes(new ArrayList<AppointmentWindowAttributeEntity>());
+        if (null != apptWin.getAttributes()) {
+            for (Attribute att : apptWin.getAttributes()) {
+                this.getAttributes().add(new AppointmentWindowAttributeEntity(att, this));
+            }
+        }
+    }
+
     public AppointmentWindowInfo toDto() {
+
         AppointmentWindowInfo info = new AppointmentWindowInfo();
+        info.setStartDate(getStartDate());
+        info.setEndDate(getEndDate());
         // AppointmentWindow-specific updates
-        AppointmentSlotRuleInfo rule = new AppointmentSlotRuleInfo();
-        info.setSlotRule(rule);
+        AppointmentSlotRuleInfo appointmentSlotRuleInfo = new AppointmentSlotRuleInfo();
+        info.setSlotRule(appointmentSlotRuleInfo);
         // Set weekdays which takes comma delimited string of numbers and creates List<Integer>
-        String[] numArr = getWeekdays().split(",");
-        List<Integer> weekdays = new ArrayList<Integer>();
-        for (String s: numArr) {
-            weekdays.add(Integer.parseInt(s));
+        if(getWeekdays()!=null){
+            String[] numArr = getWeekdays().split(",");
+            List<Integer> weekdays = new ArrayList<Integer>();
+            for (String s : numArr) {
+                weekdays.add(Integer.parseInt(s));
+            }
+            appointmentSlotRuleInfo.setWeekdays(weekdays);
+        }else{
+            appointmentSlotRuleInfo.setWeekdays(null);
         }
-        rule.setWeekdays(weekdays);
-        // Start time (could be null)
-        Long startTime = getStartTime();
-        if (startTime != null) {
-            rule.setStartTimeOfDay(convertToTimeOfDayInfo(startTime));
-        }
-        // End time (could be null)
-        Long endTime = getEndTime();
-        if (endTime != null) {
-            rule.setEndTimeOfDay(convertToTimeOfDayInfo(endTime));
-        }
-        // start interval duration (could be null)
-        String durType = getStartIntervalDurationType();
-        if (durType != null) {
-            // Assume duration also not null
-            Integer quantity = getStartIntervalTimeQuantity();
-            rule.setSlotStartInterval(convertToTimeAmountInfo(durType, "" + quantity));
-        }
-        // slot interval duration (could be null)
-        durType = getDurationType();
-        if (durType != null) {
-            // Assume duration also not null
-            Integer quantity = getDurationTimeQuantity();
-            rule.setSlotStartInterval(convertToTimeAmountInfo(durType, "" + quantity));
-        }
+        appointmentSlotRuleInfo.setStartTimeOfDay(convertToTimeOfDayInfo(getStartTime()));
+        appointmentSlotRuleInfo.setEndTimeOfDay(convertToTimeOfDayInfo(getEndTime()));
+        appointmentSlotRuleInfo.setSlotStartInterval(convertToTimeAmountInfo(getStartIntervalDurationType(), getStartIntervalTimeQuantity()));
+        appointmentSlotRuleInfo.setSlotDuration(convertToTimeAmountInfo(getDurationType(), getDurationTimeQuantity()));
         info.setPeriodMilestoneId(getPeriodMilestoneId());
         info.setAssignedPopulationId(getAssignedPopulationId());
         info.setAssignedOrderTypeKey(getAssignedOrderType());
         info.setMaxAppointmentsPerSlot(getMaxAppointmentsPerSlot()); // could be null
+        info.setName(getName());
         // -------------------------------------------------
         // Stuff that is updated for nearly all entities
         info.setId(getId());
-        if (apptWindowType != null) {
-            info.setTypeKey(apptWindowType);
-        }
-        if (apptWindowState != null) {
-            info.setStateKey(apptWindowState);
-        }
+        info.setTypeKey(apptWindowType);
+        info.setStateKey(apptWindowState);
         info.setMeta(super.toDTO());
         if (getDescrPlain() != null) { // assume if this is not null, formatted also not null
             RichTextInfo textInfo = new RichTextInfo();
-            textInfo.setFormatted(formatted);
-            textInfo.setPlain(plain);
+            textInfo.setFormatted(getDescrFormatted());
+            textInfo.setPlain(getDescrPlain());
             info.setDescr(textInfo);
         }
 
-        List<AttributeInfo> attrs = new ArrayList<AttributeInfo>();
         for (AppointmentWindowAttributeEntity att : getAttributes()) {
-            AttributeInfo attInfo = att.toDto();
-            attrs.add(attInfo);
+            info.getAttributes().add(att.toDto());
         }
-        info.setAttributes(attrs);
         return info;
     }
 }

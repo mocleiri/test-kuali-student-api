@@ -43,14 +43,14 @@ public class LuiPersonRelationEntity extends MetaEntity implements AttributeOwne
     private Date expirationDate;
 
     @Column(name = "RELATION_TYPE_ID")
-    private String personRelationType;
+    private String personRelationTypeId;
 
     @Column(name = "RELATION_STATE_ID")
-    private String personRelationState;
+    private String personRelationStateId;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "KSEN_LPR_RV_GRP_RELTN", joinColumns = @JoinColumn(name = "LPR_ID"), inverseJoinColumns = @JoinColumn(name = "RV_GRP_ID"))
-    private List<ResultValuesGroupEntity> resultValuesGroups;
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinTable(name = "KSEN_LPR_RV_GRP_RELTN", joinColumns = @JoinColumn(name = "LPR_ID"), inverseJoinColumns = @JoinColumn(name = "RV_GRP_ID"))
+//    private List<ResultValuesGroupEntity> resultValuesGroups;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     // @JoinColumn(name = "LPR_ATTR_ID")
@@ -72,15 +72,8 @@ public class LuiPersonRelationEntity extends MetaEntity implements AttributeOwne
         this.setCommitmentPercent(dto.getCommitmentPercent());
         this.setExpirationDate(dto.getExpirationDate());
         this.setEffectiveDate(dto.getEffectiveDate());
-        this.setPersonRelationType(dto.getTypeKey());
-        this.setPersonRelationState(dto.getStateKey());
-        // TODO - need to retrieve the LuiPersonRelationState based on the
-        // return of dto.getState()?
-        // this.setPersonRelationState(new
-        // TODO - need to retrieve the LuiPersonRelationType based on the return
-        // of dto.getType()?
-        // this.setPersonRelationType(new
-        // LuiPersonRelationTypeEntity(dto.getTypeKey()));
+        this.setPersonRelationTypeId(dto.getTypeKey());
+        this.setPersonRelationStateId(dto.getStateKey());
         this.setAttributes(new ArrayList<LuiPersonRelationAttributeEntity>());
         if (null != dto.getAttributes()) {
             for (Attribute att : dto.getAttributes()) {
@@ -129,29 +122,29 @@ public class LuiPersonRelationEntity extends MetaEntity implements AttributeOwne
         this.expirationDate = expirationDate;
     }
 
-    public String getPersonRelationType() {
-        return personRelationType;
+    public String getPersonRelationTypeId() {
+        return personRelationTypeId;
     }
 
-    public void setPersonRelationType(String personRelationType) {
-        this.personRelationType = personRelationType;
+    public void setPersonRelationTypeId(String personRelationTypeId) {
+        this.personRelationTypeId = personRelationTypeId;
     }
 
-    public String getPersonRelationState() {
-        return personRelationState;
+    public String getPersonRelationStateId() {
+        return personRelationStateId;
     }
 
-    public void setPersonRelationState(String personRelationState) {
-        this.personRelationState = personRelationState;
+    public void setPersonRelationStateId(String personRelationStateId) {
+        this.personRelationStateId = personRelationStateId;
     }
 
-    public List<ResultValuesGroupEntity> getResultValuesGroups() {
-        return resultValuesGroups;
-    }
-
-    public void setResultValuesGroups(List<ResultValuesGroupEntity> resultValuesGroups) {
-        this.resultValuesGroups = resultValuesGroups;
-    }
+//    public List<ResultValuesGroupEntity> getResultValuesGroups() {
+//        return resultValuesGroups;
+//    }
+//
+//    public void setResultValuesGroups(List<ResultValuesGroupEntity> resultValuesGroups) {
+//        this.resultValuesGroups = resultValuesGroups;
+//    }
 
     @Override
     public List<LuiPersonRelationAttributeEntity> getAttributes() {
@@ -171,16 +164,18 @@ public class LuiPersonRelationEntity extends MetaEntity implements AttributeOwne
         lprInfo.setPersonId(personId);
         lprInfo.setEffectiveDate(effectiveDate);
         lprInfo.setExpirationDate(expirationDate);
-        lprInfo.setTypeKey(personRelationType);
-        lprInfo.setStateKey(personRelationState);
+        lprInfo.setTypeKey(personRelationTypeId);
+        lprInfo.setStateKey(personRelationStateId);
 
-        List<String> rvGroupIds = new ArrayList();
-        if (null != getResultValuesGroups()) {
-            for (ResultValuesGroupEntity rvGroup : getResultValuesGroups()) {
-                rvGroupIds.add(rvGroup.getId());
-            }
-        }
-        lprInfo.setResultValuesGroupKeys(rvGroupIds);
+        // TODO: fix this it was trying to use the entity from LRC directly here!
+        // instead need to create a new JPA entity to hold the lpr to rvg mapping
+//        List<String> rvGroupIds = new ArrayList();
+//        if (null != getResultValuesGroups()) {
+//            for (ResultValuesGroupEntity rvGroup : getResultValuesGroups()) {
+//                rvGroupIds.add(rvGroup.getId());
+//            }
+//        }
+//        lprInfo.setResultValuesGroupKeys(rvGroupIds);
 
         lprInfo.setMeta(super.toDTO());
         List<AttributeInfo> atts = new ArrayList<AttributeInfo>();

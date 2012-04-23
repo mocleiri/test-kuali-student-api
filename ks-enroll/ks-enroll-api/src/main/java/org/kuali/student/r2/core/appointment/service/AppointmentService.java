@@ -74,7 +74,7 @@ public interface AppointmentService {
      * @return a list of Appointments
      * @throws DoesNotExistException     a appointmentId in list not found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws MissingParameterException missing appointmentId or contextInfo is
+     * @throws MissingParameterException appointmentId or contextInfo is
      *                                   missing or null
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException an authorization failure occurred
@@ -267,7 +267,7 @@ public interface AppointmentService {
      *                                      designated as read only
      * @impl AppointmentSlots are assumed to be already generated for the
      * AppointmentWindow
-     * @impl Return the number of appointments created as aprt of StatusInfo
+     * @impl Return the number of appointments created as part of StatusInfo
      * message field
      */
     public StatusInfo generateAppointmentsByWindow(@WebParam(name = "appointmentWindowId") String appointmentWindowId, @WebParam(name = "appointmentTypeKey") String appointmentTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
@@ -315,10 +315,15 @@ public interface AppointmentService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException an authorization failure occurred
      */
-    public StatusInfo deleteAppointment(@WebParam(name = "appointmentId") String appointmentId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public StatusInfo deleteAppointment(@WebParam(name = "appointmentId") String appointmentId, 
+            @WebParam(name = "contextInfo") ContextInfo contextInfo) 
+            throws DoesNotExistException, InvalidParameterException, 
+            MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
-     * Remove relationships referencing an AppointmentSlot
+     * Delete all appointments connected to this slot.
+     * 
+     * This does NOT delete the slot itself.
      *
      * @param appointmentSlotId object Appointment relationship identifier
      * @param contextInfo       context information containing the principalId
@@ -337,7 +342,12 @@ public interface AppointmentService {
     public StatusInfo deleteAppointmentsBySlot(@WebParam(name = "appointmentSlotId") String appointmentSlotId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
-     * Remove appointment relationships belonging to an AppointmentWindow
+     * Delete all appointments connected to the AppointmentWindow
+     * 
+     * This chains through and deletes all appointments attached to slots that
+     * are attached to the window.
+     * 
+     * This does NOT delete the slots.
      *
      * @param appointmentWindowId object Appointment relationship identifier
      * @param contextInfo         context information containing the principalId
@@ -572,6 +582,7 @@ public interface AppointmentService {
      *                            and locale information about the caller of
      *                            service operation
      * @return status of the operation (success, failed)
+     * @throws DependentObjectsExistException delete would leave orphaned slots
      * @throws DoesNotExistException     appointmentWindowId not found
      * @throws InvalidParameterException invalid contextInfo
      * @throws MissingParameterException appointmentWindowId or contextInfo is
@@ -579,7 +590,11 @@ public interface AppointmentService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException an authorization failure occurred
      */
-    public StatusInfo deleteAppointmentWindow(@WebParam(name = "appointmentWindowId") String appointmentWindowId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public StatusInfo deleteAppointmentWindow(@WebParam(name = "appointmentWindowId") String appointmentWindowId, 
+            @WebParam(name = "contextInfo") ContextInfo contextInfo)
+            throws DependentObjectsExistException, DoesNotExistException, 
+            InvalidParameterException, MissingParameterException, 
+            OperationFailedException, PermissionDeniedException;
 
     /**
      * Retrieves an AppointmentSlot
@@ -597,6 +612,24 @@ public interface AppointmentService {
      * @throws PermissionDeniedException an authorization failure occurred
      */
     public AppointmentSlotInfo getAppointmentSlot(@WebParam(name = "appointmentSlotId") String appointmentSlotId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+
+    /**
+     * Retrieves a list of AppointmentSlots corresponding to the given list of
+     * AppointmentSlot Ids.
+     *
+     * @param appointmentSlotIds list of Appointments to be retrieved
+     * @param contextInfo    Context information containing the principalId and
+     *                       locale information about the caller of service
+     *                       operation
+     * @return a list of Appointments
+     * @throws DoesNotExistException     an appointmentSlotId in list not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentSlotId or contextInfo is
+     *                                   missing or null
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
+     */
+    public List<AppointmentSlotInfo> getAppointmentSlotsByIds(@WebParam(name = "appointmentSlotIds") List<String> appointmentSlotIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Retrieves all AppointmentWindows belonging to the person and period
@@ -779,9 +812,7 @@ public interface AppointmentService {
      *                          and locale information about the caller of
      *                          service operation
      * @return status of the operation (success, failed)
-     * @throws DependentObjectsExistException delete would leave orphaned
-     *                                        objects or violate integrity
-     *                                        constraints
+     * @throws DependentObjectsExistException delete would leave orphaned appointments
      * @throws DoesNotExistException          appointmentWindowId or appointmentSlotId
      *                                        not found
      * @throws InvalidParameterException      invalid contextInfo

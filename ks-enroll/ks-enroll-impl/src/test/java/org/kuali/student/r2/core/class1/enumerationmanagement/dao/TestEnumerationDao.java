@@ -27,7 +27,6 @@ import org.kuali.student.common.test.spring.AbstractTransactionalDaoTest;
 import org.kuali.student.common.test.spring.Dao;
 import org.kuali.student.common.test.spring.PersistenceFileLocation;
 import org.kuali.student.r2.core.class1.enumerationmanagement.model.EnumerationEntity;
-import org.kuali.student.r2.core.class1.enumerationmanagement.model.EnumerationRichTextEntity;
 
 /**
  * Enumeration Dao test class.
@@ -47,10 +46,9 @@ public class TestEnumerationDao extends AbstractTransactionalDaoTest{
         
         EnumerationEntity returnedEntity = list.get(0);
         
-        assertEquals(returnedEntity.getName(), "Subject Area Enumeration");
         assertEquals(returnedEntity.getId(), "kuali.lu.subjectArea");
-        assertEquals(returnedEntity.getDescr().getPlain(), "Subject Area Enumeration");
-       
+        assertEquals(returnedEntity.getName(), "Subject Area Enumeration");
+        assertEquals(returnedEntity.getDescrPlain(), "subjectArea.descr");
     }    
 
     @Test
@@ -63,14 +61,14 @@ public class TestEnumerationDao extends AbstractTransactionalDaoTest{
         entity.setEnumerationType(existingEntity.getEnumerationType());
         entity.setId("Key3");
 
-        entity.setDescr(new EnumerationRichTextEntity("desc3", "desc3"));
+        entity.setDescrPlain("desc3");
         
         enumerationDao.persist(entity);
         
         EnumerationEntity returnedEntity = enumerationDao.find("Key3");
         assertEquals(returnedEntity.getName(), entity.getName());
         assertEquals(returnedEntity.getId(), entity.getId());
-        assertEquals(returnedEntity.getDescr(), entity.getDescr());
+        assertEquals(returnedEntity.getDescrPlain(), entity.getDescrPlain());
         
         returnedEntity = enumerationDao.find("Does not Exist");
         assertNull(returnedEntity);

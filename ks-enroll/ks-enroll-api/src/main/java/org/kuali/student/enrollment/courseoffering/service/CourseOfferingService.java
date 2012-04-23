@@ -1,13 +1,19 @@
-/*
- * Copyright 2007 The Kuali Foundation Licensed under the Educational Community
- * License, Version 1.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.opensource.org/licenses/ecl1.php Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+/**
+ * Copyright 2010 The Kuali Foundation
+ *
+ * Licensed under the the Educational Community License, Version 1.0
+ * (the "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.opensource.org/licenses/ecl1.php
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.kuali.student.enrollment.courseoffering.service;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
@@ -21,7 +27,17 @@ import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
-import org.kuali.student.r2.common.exceptions.*;
+
+import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
+import org.kuali.student.r2.common.exceptions.DependentObjectsExistException;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.common.exceptions.ReadOnlyException;
+import org.kuali.student.r2.common.exceptions.VersionMismatchException;
+
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
 import org.kuali.student.r2.core.type.dto.TypeInfo;
 
@@ -31,32 +47,35 @@ import javax.jws.soap.SOAPBinding;
 import java.util.List;
 
 /**
- * Course Offering is a Class II service supporting the process of offering courses for student registration. 
+ * Course Offering is a Class II service supporting the process of
+ * offering courses for student registration.
  * 
- * Courses
- * are offered for a specific term which is associated with a specific Academic
- * Calendar. At the canonical level a course is defined by formats for which the
- * course will be offered. Each format describes the activity types that
- * comprise that format, e.g., lecture and lab. 
+ * Courses are offered for a specific term which is associated with a
+ * specific Academic Calendar. At the canonical level a course is
+ * defined by formats for which the course will be offered. Each
+ * format describes the activity types that comprise that format,
+ * e.g., lecture and lab.
  * 
- * The purpose of multiple formats
- * is to support different formats based on a term type, e.g., Fall versus
- * Spring offering, or to offer multiple formats in the same term, e.g., in
- * person (traditional) versus online. Offering a course is the process of
- * creating specific instances of the course, and for each format to be offered
- * in the selected term, creating a specified number of each activity type that
- * comprises the format, e.g. five (5) lectures and ten (10) labs of Biology
- * 101. Individual activity offerings correspond to events in a scheduling
- * system, each with a meeting pattern. The term 'section' varies by
- * institution, but refers to either the individual activity offering, or it
- * refers to the combination of activity offerings, when the course has more
- * than one activity type, that the student registers in as part of that course.
- * To avoid confusion, this service introduces a new entity to capture the
- * second definition of section. A registration group represents a valid
- * combination of activity offerings, even if the number is one, in which a
- * student registers. The design supports unrestricted matching, e.g., any
- * lecture with any lab, as well as specific matching, e.g., lecture 1 with lab
- * A or B, and lecture 2 with lab C or D. Version: 1.0 (Dev)
+ * The purpose of multiple formats is to support different formats
+ * based on a term type, e.g., Fall versus Spring offering, or to
+ * offer multiple formats in the same term, e.g., in person
+ * (traditional) versus online. Offering a course is the process of
+ * creating specific instances of the course, and for each format to
+ * be offered in the selected term, creating a specified number of
+ * each activity type that comprises the format, e.g. five (5)
+ * lectures and ten (10) labs of Biology 101. Individual activity
+ * offerings correspond to events in a scheduling system, each with a
+ * meeting pattern. The term 'section' varies by institution, but
+ * refers to either the individual activity offering, or it refers to
+ * the combination of activity offerings, when the course has more
+ * than one activity type, that the student registers in as part of
+ * that course.  To avoid confusion, this service introduces a new
+ * entity to capture the second definition of section. A registration
+ * group represents a valid combination of activity offerings, even if
+ * the number is one, in which a student registers. The design
+ * supports unrestricted matching, e.g., any lecture with any lab, as
+ * well as specific matching, e.g., lecture 1 with lab A or B, and
+ * lecture 2 with lab C or D. Version: 1.0 (Dev)
  *
  * @author Kuali Student Team (Kamal)
  */
@@ -244,6 +263,8 @@ public interface CourseOfferingService {
 
     /**
      * Creates a new CourseOffering from a canonical course.
+     * 
+     * Fields in course offering will be initialized with data from the canonical.
      *
      * @param courseId     Canonical course Id of courseOffering Id that the
      *                     ActivityOffering will belong to
@@ -252,7 +273,6 @@ public interface CourseOfferingService {
      * @param context      Context information containing the principalId and locale
      *                     information about the caller of service operation
      * @return newly created CourseOfferingInfo
-     * @throws AlreadyExistsException       the CourseOffering being created already exists
      * @throws DoesNotExistException        courseId not found
      * @throws DataValidationErrorException One or more values invalid for this operation
      * @throws InvalidParameterException    One or more parameters invalid
@@ -260,7 +280,7 @@ public interface CourseOfferingService {
      * @throws OperationFailedException     unable to complete request
      * @throws PermissionDeniedException    authorization failure
      */
-    public CourseOfferingInfo createCourseOffering(@WebParam(name = "courseId") String courseId, @WebParam(name = "termId") String termId, @WebParam(name = "courseOfferingTypeKey") String courseOfferingTypeKey, @WebParam(name = "courseOfferingInfo") CourseOfferingInfo courseOfferingInfo, @WebParam(name = "context") ContextInfo context) throws AlreadyExistsException, DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public CourseOfferingInfo createCourseOffering(@WebParam(name = "courseId") String courseId, @WebParam(name = "termId") String termId, @WebParam(name = "courseOfferingTypeKey") String courseOfferingTypeKey, @WebParam(name = "courseOfferingInfo") CourseOfferingInfo courseOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /**
      * Updates an existing CourseOffering.
@@ -278,7 +298,7 @@ public interface CourseOfferingService {
      * @throws PermissionDeniedException    authorization failure
      * @throws VersionMismatchException     The action was attempted on an out of date version.
      */
-    public CourseOfferingInfo updateCourseOffering(@WebParam(name = "courseOfferingId") String courseOfferingId, @WebParam(name = "courseOfferingInfo") CourseOfferingInfo courseOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException;
+    public CourseOfferingInfo updateCourseOffering(@WebParam(name = "courseOfferingId") String courseOfferingId, @WebParam(name = "courseOfferingInfo") CourseOfferingInfo courseOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
      * Updates an existing CourseOffering from its canonical. This should
@@ -391,12 +411,13 @@ public interface CourseOfferingService {
      * @param formatOfferingInfo  The activity offering template info object
      * @return
      * @throws DataValidationErrorException
+     * @throws DoesNotExistException if courseOfferingId or formatId does not exist for the course in the course offering
      * @throws InvalidParameterException Invalid course offering id
      * @throws MissingParameterException     Missing course offering id, formatOfferingTemplate  or formatOfferingType
      * @throws OperationFailedException    unable to complete request
      * @throws PermissionDeniedException
      */
-    public FormatOfferingInfo createFormatOffering(@WebParam(name = "courseOfferingId") String courseOfferingId, @WebParam(name = "formatId") String formatId, @WebParam(name = "formatOfferingType") String formatOfferingType, @WebParam(name = "formatOfferingInfo") FormatOfferingInfo formatOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public FormatOfferingInfo createFormatOffering(@WebParam(name = "courseOfferingId") String courseOfferingId, @WebParam(name = "formatId") String formatId, @WebParam(name = "formatOfferingType") String formatOfferingType, @WebParam(name = "formatOfferingInfo") FormatOfferingInfo formatOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /**
      * Update an activity offering template.
@@ -411,10 +432,10 @@ public interface CourseOfferingService {
      * @throws MissingParameterException Missing formatOffering or  formatOfferingId
      * @throws OperationFailedException    unable to complete request
      * @throws PermissionDeniedException   authorization failure
+     * @throws VersionMismatchException stale version being updated
      */
-    public FormatOfferingInfo updateFormatOffering(@WebParam(name = "formatOfferingId") String formatOfferingId, @WebParam(name = "formatOfferingInfo") FormatOfferingInfo formatOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public FormatOfferingInfo updateFormatOffering(@WebParam(name = "formatOfferingId") String formatOfferingId, @WebParam(name = "formatOfferingInfo") FormatOfferingInfo formatOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
-    ;
 
     /**
         * Validates a format offering. Depending on the value of validationType,
@@ -603,20 +624,28 @@ public interface CourseOfferingService {
      *
      *
      * @param formatOfferingId       courseOffering that the ActivityOffering belongs to
+     * @param activityId  the canonical activity this is associated with
      * @param activityOfferingInfo Details of the ActivityOffering to be created
      * @param context              Context information containing the principalId and locale
      *                             information about the caller of service operation
      * @return newly created ActivityOffering
+     * @throws DoesNotExistException        if the format offering does not exist
      * @throws DataValidationErrorException One or more values invalid for this operation
      * @throws InvalidParameterException    One or more parameters invalid
      * @throws MissingParameterException    One or more parameters missing
      * @throws OperationFailedException     unable to complete request
      * @throws PermissionDeniedException    authorization failure
      */
-    public ActivityOfferingInfo createActivityOffering(@WebParam(name = "formatOfferingId") String formatOfferingId, @WebParam(name = "activityOfferingTypeKey") String activityOfferingTypeKey, @WebParam(name = "activityOfferingInfo") ActivityOfferingInfo activityOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public ActivityOfferingInfo createActivityOffering(@WebParam(name = "formatOfferingId") String formatOfferingId, 
+            @WebParam(name = "activityId") String activityId, 
+            @WebParam(name = "activityOfferingTypeKey") String activityOfferingTypeKey, 
+            @WebParam(name = "activityOfferingInfo") ActivityOfferingInfo activityOfferingInfo, 
+            @WebParam(name = "context") ContextInfo context) 
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException,
+                                                       OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /**
-     * Generates actvity offerings based on a format offering.
+     * Generates activity offerings based on a format offering.
      *
      * @param formatOfferingId
      * @param context
@@ -644,7 +673,7 @@ public interface CourseOfferingService {
      * @throws PermissionDeniedException    authorization failure
      * @throws VersionMismatchException     The action was attempted on an out of date version.
      */
-    public ActivityOfferingInfo updateActivityOffering(@WebParam(name = "activityOfferingId") String activityOfferingId, @WebParam(name = "activityOfferingInfo") ActivityOfferingInfo activityOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException;
+    public ActivityOfferingInfo updateActivityOffering(@WebParam(name = "activityOfferingId") String activityOfferingId, @WebParam(name = "activityOfferingInfo") ActivityOfferingInfo activityOfferingInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, ReadOnlyException;
 
     /**
      * Deletes an existing ActivityOffering. Deleting an activity will also
@@ -845,7 +874,7 @@ public interface CourseOfferingService {
      * @throws OperationFailedException     unable to complete request
      * @throws PermissionDeniedException    authorization failure
      */
-    public RegistrationGroupInfo createRegistrationGroup(@WebParam(name = "registrationGroupType") String registrationGroupType, @WebParam(name = "registrationGroupInfo") RegistrationGroupInfo registrationGroupInfo, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public RegistrationGroupInfo createRegistrationGroup(@WebParam(name = "registrationGroupType") String registrationGroupType, @WebParam(name = "registrationGroupInfo") RegistrationGroupInfo registrationGroupInfo, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /**
      * Generates all possible registration groups needed (not already in a regGroup) for the given format
@@ -878,7 +907,7 @@ public interface CourseOfferingService {
      * @throws PermissionDeniedException    authorization failure
      * @throws VersionMismatchException     The action was attempted on an out of date version.
      */
-    public RegistrationGroupInfo updateRegistrationGroup(@WebParam(name = "registrationGroupId") String registrationGroupId, @WebParam(name = "registrationGroupInfo") RegistrationGroupInfo registrationGroupInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException;
+    public RegistrationGroupInfo updateRegistrationGroup(@WebParam(name = "registrationGroupId") String registrationGroupId, @WebParam(name = "registrationGroupInfo") RegistrationGroupInfo registrationGroupInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
      * Deletes an existing Registration Group. Removes the relationship to the
@@ -949,7 +978,7 @@ public interface CourseOfferingService {
      * @throws PermissionDeniedException
      * @throws VersionMismatchException
      */
-    public RegistrationGroupTemplateInfo updateRegistrationGroupTemplate(@WebParam(name = "registrationGroupTemplateId") String registrationGroupTemplateId, @WebParam(name = "registrationGroupTemplateInfo") RegistrationGroupTemplateInfo registrationGroupTemplateInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException;
+    public RegistrationGroupTemplateInfo updateRegistrationGroupTemplate(@WebParam(name = "registrationGroupTemplateId") String registrationGroupTemplateId, @WebParam(name = "registrationGroupTemplateInfo") RegistrationGroupTemplateInfo registrationGroupTemplateInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
      * Deletes a registration group template based on the identifier
@@ -1020,14 +1049,13 @@ public interface CourseOfferingService {
      * @param context                Context information containing the principalId and locale
      *                               information about the caller of service operation
      * @return newly created SeatPoolDefinition
-     * @throws AlreadyExistsException       the SeatPoolDefinition being created already exists
      * @throws DataValidationErrorException One or more values invalid for this operation
      * @throws InvalidParameterException    One or more parameters invalid
      * @throws MissingParameterException    One or more parameters missing
      * @throws OperationFailedException     unable to complete request
      * @throws PermissionDeniedException    authorization failure
      */
-    public SeatPoolDefinitionInfo createSeatPoolDefinition(@WebParam(name = "seatPoolDefinitionInfo") SeatPoolDefinitionInfo seatPoolDefinitionInfo, @WebParam(name = "context") ContextInfo context) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public SeatPoolDefinitionInfo createSeatPoolDefinition(@WebParam(name = "seatPoolDefinitionInfo") SeatPoolDefinitionInfo seatPoolDefinitionInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
 
     /**
      * Updates an existing SeatPoolDefinition.
@@ -1045,7 +1073,7 @@ public interface CourseOfferingService {
      * @throws PermissionDeniedException    authorization failure
      * @throws VersionMismatchException     The action was attempted on an out of date version.
      */
-    public SeatPoolDefinitionInfo updateSeatPoolDefinition(@WebParam(name = "seatPoolDefinitionId") String seatPoolDefinitionId, @WebParam(name = "seatPoolDefinitionInfo") SeatPoolDefinitionInfo seatPoolDefinitionInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException;
+    public SeatPoolDefinitionInfo updateSeatPoolDefinition(@WebParam(name = "seatPoolDefinitionId") String seatPoolDefinitionId, @WebParam(name = "seatPoolDefinitionInfo") SeatPoolDefinitionInfo seatPoolDefinitionInfo, @WebParam(name = "context") ContextInfo context) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
      * Validate a seat pool definition

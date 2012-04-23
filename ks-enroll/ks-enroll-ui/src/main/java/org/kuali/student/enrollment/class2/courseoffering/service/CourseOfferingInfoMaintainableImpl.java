@@ -2,7 +2,7 @@ package org.kuali.student.enrollment.class2.courseoffering.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.rice.krad.document.MaintenanceDocument;
+import org.kuali.rice.krad.maintenance.MaintenanceDocument;
 import org.kuali.rice.krad.maintenance.MaintainableImpl;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.kuali.student.enrollment.courseoffering.dto.FormatOfferingInfo;
 
 
 public class CourseOfferingInfoMaintainableImpl extends MaintainableImpl {
@@ -130,6 +131,8 @@ public class CourseOfferingInfoMaintainableImpl extends MaintainableImpl {
                 System.out.println("call courseOfferingService.updateCourseOffering() method, and get PermissionDeniedException:  " + pde.toString());
             } catch (MissingParameterException mpe) {
                 System.out.println("call courseOfferingService.updateCourseOffering() method, and get MissingParameterException:  " + mpe.toString());
+            } catch (ReadOnlyException roe) {
+                System.out.println("call courseOfferingService.updateCourseOffering() method, and get ReadOnlyException:  " + roe.toString());
             } catch (VersionMismatchException vme) {
                 System.out.println("call courseOfferingService.updateCourseOffering() method, and get VersionMismatchException:  " + vme.toString());
             } catch (DataValidationErrorException dvee) {
@@ -162,13 +165,16 @@ public class CourseOfferingInfoMaintainableImpl extends MaintainableImpl {
                     //only take the first one.
                     activityOfferingInfo.setTypeKey(activityOfferingTypes.get(0).getKey());
                     activityOfferingInfo.setStateKey(LuiServiceConstants.LUI_OFFERED_STATE_KEY);
-                     //TODO remove this fake generation when we are getting real times from the form
+                    //TODO remove this fake generation when we are getting real times from the form
                     // TODO: fix this to set the schedule id from the schedule service
                     String scheduleId = null;
                     activityOfferingInfo.setScheduleId(scheduleId);
-//                    activityOfferingInfo.setMeetingSchedules(generateFakeMeetingTimes());
+                    // activityOfferingInfo.setMeetingSchedules(generateFakeMeetingTimes());
+                    List<FormatOfferingInfo> formats = this. getCourseOfferingService().getFormatOfferingByCourseOfferingId(coi.getId(), new ContextInfo ());
+                    activityOfferingInfo.setFormatOfferingId(formats.get(0).getId ());
                     activityOfferingInfo = getCourseOfferingService().createActivityOffering
-                            (coi.getId (),
+                            (activityOfferingInfo.getFormatOfferingId(),
+                            activityOfferingInfo.getActivityId(),
                             activityOfferingInfo.getTypeKey(),
                             activityOfferingInfo, 
                             new ContextInfo());
@@ -197,8 +203,9 @@ public class CourseOfferingInfoMaintainableImpl extends MaintainableImpl {
                         System.out.println("call courseOfferingService.createRegistrationGroup() method, and get MissingParameterException:  " + mpe.toString());
                     } catch (DataValidationErrorException dvee) {
                         System.out.println("call courseOfferingService.createRegistrationGroup() method, and get DataValidationErrorException:  " + dvee.toString());
+                    } catch (ReadOnlyException roe) {
+                        System.out.println("call courseOfferingService.createRegistrationGroup() method, and get ReadOnlyException:  " + roe.toString());
                     }
-
                 } catch (OperationFailedException ofe) {
                     System.out.println("call courseOfferingService.getActivityOfferingTypesForActivityType() or createActivityOffering() method, and get OperationFailedException:  " + ofe.toString());
                 } catch (InvalidParameterException ipe) {
@@ -211,8 +218,9 @@ public class CourseOfferingInfoMaintainableImpl extends MaintainableImpl {
                     System.out.println("call courseOfferingService.createActivityOffering() method, and get DataValidationErrorException:  " + dvee.toString());
                 } catch (DoesNotExistException dnee) {
                     System.out.println("call courseOfferingService.getActivityOfferingTypesForActivityType() method, and get DoesNotExistException:  " + dnee.toString());
+                } catch (ReadOnlyException roe) {
+                    System.out.println("call courseOfferingService.getActivityOfferingTypesForActivityType() method, and get ReadOnlyException:  " + roe.toString());
                 }
-
             }
         }
     }

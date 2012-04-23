@@ -23,72 +23,63 @@ import org.kuali.student.r2.lum.clu.infc.LuCode;
 
 @Entity
 @Table(name = "KSEN_LUI_LU_CD")
-public class LuCodeEntity extends MetaEntity implements AttributeOwner<LuCodeAttributeEntity>{
-	
+public class LuCodeEntity extends MetaEntity implements AttributeOwner<LuCodeAttributeEntity> {
+
     @Column(name = "DESCR_FORMATTED", length = KSEntityConstants.EXTRA_LONG_TEXT_LENGTH)
     private String formatted;
-
-    @Column(name = "DESCR_PLAIN", length = KSEntityConstants.EXTRA_LONG_TEXT_LENGTH, nullable = false)
-    private String plain; 
-
-	@Column(name = "VALUE")
-	private String value;
-
-	@Column(name = "LUI_LUCD_TYPE")
-	private String type;
-
-	@ManyToOne
-	@JoinColumn(name="LUI_ID")
-	private LuiEntity lui;
-
+    @Column(name = "DESCR_PLAIN", length = KSEntityConstants.EXTRA_LONG_TEXT_LENGTH)
+    private String plain;
+    @Column(name = "VALUE")
+    private String value;
+    @Column(name = "LUI_LUCD_TYPE")
+    private String type;
+    @ManyToOne
+    @JoinColumn(name = "LUI_ID")
+    private LuiEntity lui;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<LuCodeAttributeEntity> attributes;
 
-    public LuCodeEntity(){}
-    
-    public LuCodeEntity(LuCode luCode){
-    	super(luCode);
-    	try{
-    		this.setId(luCode.getId());
-    		this.setValue(luCode.getValue());
-    		this.setType(luCode.getTypeKey());
-    		if (luCode.getDescr() != null) {
-                RichText rt = luCode.getDescr();
-                this.setDescrFormatted(rt.getFormatted());
-                this.setDescrPlain(rt.getPlain());
+    public LuCodeEntity() {
+    }
+
+    public LuCodeEntity(LuCode luCode) {
+        super(luCode);
+        this.setId(luCode.getId());
+        this.setType(luCode.getTypeKey());
+        this.setValue(luCode.getValue());
+        if (luCode.getDescr() != null) {
+            RichText rt = luCode.getDescr();
+            this.setDescrFormatted(rt.getFormatted());
+            this.setDescrPlain(rt.getPlain());
+        }
+        this.setAttributes(new ArrayList<LuCodeAttributeEntity>());
+        if (null != luCode.getAttributes()) {
+            for (Attribute att : luCode.getAttributes()) {
+                LuCodeAttributeEntity attEntity = new LuCodeAttributeEntity(att);
+                this.getAttributes().add(attEntity);
             }
-    		
-	        this.setAttributes(new ArrayList<LuCodeAttributeEntity>());
-	        if (null != luCode.getAttributes()) {
-	            for (Attribute att : luCode.getAttributes()) {
-	            	LuCodeAttributeEntity attEntity = new LuCodeAttributeEntity(att);
-	                this.getAttributes().add(attEntity);
-	            }
-	        }
-    	} catch (Exception e){
-            e.printStackTrace();
         }
     }
-    
+
     public LuCodeInfo toDto() {
-    	LuCodeInfo obj = new LuCodeInfo();
-    	obj.setId(getId());
-    	obj.setTypeKey(type);
-    	obj.setValue(value);
-    	if (getDescrPlain() != null) {
+        LuCodeInfo obj = new LuCodeInfo();
+        obj.setId(getId());
+        obj.setTypeKey(type);
+        obj.setValue(value);
+        if (getDescrPlain() != null) {
             RichTextInfo rti = new RichTextInfo();
             rti.setPlain(getDescrPlain());
             rti.setFormatted(getDescrFormatted());
             obj.setDescr(rti);
         }
-    	obj.setMeta(super.toDTO());
+        obj.setMeta(super.toDTO());
         List<AttributeInfo> atts = new ArrayList<AttributeInfo>();
         for (LuCodeAttributeEntity att : getAttributes()) {
             AttributeInfo attInfo = att.toDto();
             atts.add(attInfo);
         }
         obj.setAttributes(atts);
-        
+
         return obj;
     }
 
@@ -108,39 +99,37 @@ public class LuCodeEntity extends MetaEntity implements AttributeOwner<LuCodeAtt
         this.plain = plain;
     }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public LuiEntity getLui() {
-		return lui;
-	}
+    public LuiEntity getLui() {
+        return lui;
+    }
 
-	public void setLui(LuiEntity lui) {
-		this.lui = lui;
-	}
+    public void setLui(LuiEntity lui) {
+        this.lui = lui;
+    }
 
-	@Override
-	public void setAttributes(List<LuCodeAttributeEntity> attributes) {
-		this.attributes = attributes;
-		
-	}
+    @Override
+    public void setAttributes(List<LuCodeAttributeEntity> attributes) {
+        this.attributes = attributes;
+    }
 
-	@Override
-	public List<LuCodeAttributeEntity> getAttributes() {
-		return attributes;
-	}
-
+    @Override
+    public List<LuCodeAttributeEntity> getAttributes() {
+        return attributes;
+    }
 }
