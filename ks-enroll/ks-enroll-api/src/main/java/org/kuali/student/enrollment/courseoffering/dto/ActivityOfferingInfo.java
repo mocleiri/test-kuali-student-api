@@ -40,8 +40,8 @@ import org.w3c.dom.Element;
                 "activityId", "termId",  "activityCode", "scheduleId", 
                 "isHonorsOffering", "gradingOptionKeys", "instructors",
                 "weeklyInclassContactHours", "weeklyOutofclassContactHours", 
-                "weeklyTotalContactHours",  "evaluationFlag",
-                "maximumEnrollment", "minimumEnrollment", 
+                "weeklyTotalContactHours",  "isEvaluated",
+                "maximumEnrollment", "minimumEnrollment","isMaxEnrollmentEstimate",
                 "finalExamStartTime", "finalExamEndTime", 
                 "finalExamSpaceCode",
                 "meta", "attributes", "_futureElements"})
@@ -75,7 +75,9 @@ public class ActivityOfferingInfo
        
     @XmlElement
     private List<OfferingInstructorInfo> instructors;
-    
+
+
+
     @XmlElement
     private String weeklyInclassContactHours;
     
@@ -89,6 +91,9 @@ public class ActivityOfferingInfo
     private Integer maximumEnrollment;
 
     @XmlElement
+    private Boolean isMaxEnrollmentEstimate;
+
+    @XmlElement
     private Integer minimumEnrollment;
         
     @XmlElement
@@ -100,10 +105,8 @@ public class ActivityOfferingInfo
     @XmlElement
     private String finalExamSpaceCode;
 
-
-
     @XmlElement
-    private Boolean evaluationFlag;
+    private Boolean isEvaluated;
 
 
     @XmlAnyElement
@@ -150,7 +153,10 @@ public class ActivityOfferingInfo
         this.weeklyOutofclassContactHours = offering.getWeeklyOutofclassContactHours();
         this.weeklyTotalContactHours = offering.getWeeklyTotalContactHours();
         this.maximumEnrollment = offering.getMaximumEnrollment();
+
         this.minimumEnrollment = offering.getMinimumEnrollment();        
+
+        this.isMaxEnrollmentEstimate = offering.getIsMaxEnrollmentEstimate();
 
         if (offering.getFinalExamStartTime() != null) {
             this.finalExamStartTime = new Date(offering.getFinalExamStartTime().getTime());
@@ -161,7 +167,7 @@ public class ActivityOfferingInfo
         }
 
         this.finalExamSpaceCode = offering.getFinalExamSpaceCode();
-        this.evaluationFlag = offering.getEvaluationFlag();
+        this.isEvaluated = offering.getIsEvaluated();
     }
 
     @Override
@@ -287,8 +293,8 @@ public class ActivityOfferingInfo
     }
 
     @Override
-    public Boolean getEvaluationFlag() {
-        return this.evaluationFlag;
+    public Boolean getIsEvaluated() {
+        return this.isEvaluated;
     }
 
     public void setMinimumEnrollment(Integer minimumEnrollment) {
@@ -326,7 +332,19 @@ public class ActivityOfferingInfo
         isHonorsOffering = honorsOffering;
     }
 
-    public void setEvaluationFlag(Boolean evaluationFlag) {
-        this.evaluationFlag = evaluationFlag;
+    public void setIsEvaluated(Boolean isEvaluated) {
+        this.isEvaluated = isEvaluated;
     }
+
+
+    @Override
+    public Boolean getIsMaxEnrollmentEstimate(){
+       return this.isMaxEnrollmentEstimate ;
+    }
+
+
+    public void setIsMaxEnrollmentEstimate(Boolean isMaxEnrollmentEstimate){
+         this.isMaxEnrollmentEstimate  = isMaxEnrollmentEstimate;
+    }
+
 }
