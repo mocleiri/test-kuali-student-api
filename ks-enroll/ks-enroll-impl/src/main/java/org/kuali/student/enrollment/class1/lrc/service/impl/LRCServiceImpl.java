@@ -83,8 +83,10 @@ public class LRCServiceImpl implements LRCService {
 
     @Override
     public ResultValuesGroupInfo createResultValuesGroup(
-            @WebParam(name = "resultGroupInfo") ResultValuesGroupInfo gradeValuesGroupInfo,
-            @WebParam(name = "context") ContextInfo context) throws AlreadyExistsException,
+            String resultScaleKey,
+            String resultValuesGroupTypeKey,
+            ResultValuesGroupInfo gradeValuesGroupInfo,
+            ContextInfo context) throws AlreadyExistsException,
             DataValidationErrorException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         ResultValuesGroupEntity entity = resultValuesGroupDao.find(gradeValuesGroupInfo.getKey());
@@ -168,8 +170,8 @@ public class LRCServiceImpl implements LRCService {
     }
 
     @Override
-    public ResultValueInfo createResultValue(@WebParam(name = "resultValueInfo") ResultValueInfo resultValueInfo,
-            @WebParam(name = "context") ContextInfo context) throws AlreadyExistsException,
+    public ResultValueInfo createResultValue(String resultScaleKey, String resultValueTypeKey, ResultValueInfo resultValueInfo,
+            ContextInfo context) throws AlreadyExistsException,
             DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         throw new UnsupportedOperationException("Method not implemented."); // TODO implement method
@@ -323,7 +325,7 @@ public class LRCServiceImpl implements LRCService {
     }
 
     @Override
-    public ResultScaleInfo createResultScale(ResultScaleInfo resultScaleInfo,
+    public ResultScaleInfo createResultScale(String resultTypeKey, ResultScaleInfo resultScaleInfo,
             ContextInfo context)
             throws AlreadyExistsException,
             DataValidationErrorException,
