@@ -15,10 +15,10 @@
 
 package org.kuali.student.r2.core.process.infc;
 
+import java.util.List;
+
 import org.kuali.student.r2.common.infc.Relationship;
 import org.kuali.student.r2.common.infc.RichText;
-
-import java.util.List;
 
 
 /**
@@ -57,15 +57,14 @@ public interface Instruction
      * @required
      * @readOnly
      */
-    public String getCheckId();
+    public String getCheckKey();
 
     /**
-     * The Population Id to which the Check applies.
-     * Check notes on https://wiki.kuali.org/display/STUDENT/SVCS+20120605
+     * The Population Ids to which the Check applies.
      *
-     * @name Applied Population Id
+     * @name Applied Population Ids
      */
-    public String getAppliedPopulationId();
+    public List<String> getAppliedPopulationKeys();
 
     /**
      * The ATP Type keys to which the Check applies.
@@ -114,5 +113,5 @@ public interface Instruction
      *
      * @name Is Exemptable
      */
-    public Boolean getIsExemptible();
+    public Boolean getIsExemptable();
 }

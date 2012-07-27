@@ -18,14 +18,30 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "KSEN_SCHED_RQST_ATTR")
 public class ScheduleRequestAttributeEntity extends BaseAttributeEntity<ScheduleRequestEntity> {
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private ScheduleRequestEntity owner;
 
-	public ScheduleRequestAttributeEntity() {
-		super();
-	}
+    public ScheduleRequestAttributeEntity() {
+    }
 
-	public ScheduleRequestAttributeEntity(Attribute att,
-			ScheduleRequestEntity owner) {
-		super(att, owner);
-	}
-   
+    public ScheduleRequestAttributeEntity(String key, String value) {
+        super(key, value);
+    }
+
+    public ScheduleRequestAttributeEntity(Attribute att, ScheduleRequestEntity owner) {
+        super(att);
+        setOwner(owner);
+    }
+
+    @Override
+    public void setOwner(ScheduleRequestEntity owner) {
+        this.owner = owner;
+
+    }
+
+    @Override
+    public ScheduleRequestEntity getOwner() {
+        return owner;
+    }
 }

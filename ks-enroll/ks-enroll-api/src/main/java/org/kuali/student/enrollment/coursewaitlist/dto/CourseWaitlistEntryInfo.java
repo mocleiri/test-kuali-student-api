@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CourseWaitlistEntryInfo", propOrder = {"id", "typeKey", "stateKey", "effectiveDate", "expirationDate",
-        "studentId", "registrationGroupId", "position", "lastCheckedIn", "courseOfferingId", "meta", "attributes",
+        "studentId", "regGroupId", "position", "lastCheckedIn", "courseOfferingId", "meta", "attributes",
         "_futureElements"})
 public class CourseWaitlistEntryInfo extends RelationshipInfo implements CourseWaitlistEntry, Serializable {
 
@@ -26,7 +26,7 @@ public class CourseWaitlistEntryInfo extends RelationshipInfo implements CourseW
     private String studentId;
 
     @XmlElement
-    private String registrationGroupId;
+    private String regGroupId;
 
     @XmlElement
     private Integer position;
@@ -42,16 +42,21 @@ public class CourseWaitlistEntryInfo extends RelationshipInfo implements CourseW
 
     public CourseWaitlistEntryInfo() {
         super();
+        this.studentId = null;
+        this.position = null;
+        this.lastCheckedIn = null;
+        this._futureElements = null;
     }
 
     public CourseWaitlistEntryInfo(CourseWaitlistEntry courseWaitlistEntry) {
         super(courseWaitlistEntry);
         if (null != courseWaitlistEntry) {
             this.studentId = courseWaitlistEntry.getStudentId();
-            this.registrationGroupId = courseWaitlistEntry.getRegistrationGroupId();
+            this.regGroupId = courseWaitlistEntry.getRegGroupId();
             this.position = courseWaitlistEntry.getPosition();
             this.lastCheckedIn = courseWaitlistEntry.getLastCheckedIn();
             this.courseOfferingId = courseWaitlistEntry.getCourseOfferingId();
+            this._futureElements = null;
         }
     }
 
@@ -63,13 +68,17 @@ public class CourseWaitlistEntryInfo extends RelationshipInfo implements CourseW
         this.studentId = studentId;
     }
 
-    @Override
-    public String getRegistrationGroupId() {
-        return registrationGroupId;
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 
-    public void setRegistrationGroupId(String registrationGroupId) {
-        this.registrationGroupId = registrationGroupId;
+    @Override
+    public String getRegGroupId() {
+        return regGroupId;
+    }
+
+    public void setRegGroupId(String regGroupId) {
+        this.regGroupId = regGroupId;
     }
 
     @Override
@@ -80,10 +89,6 @@ public class CourseWaitlistEntryInfo extends RelationshipInfo implements CourseW
     @Override
     public Integer getPosition() {
         return position;
-    }
-
-    public void setPosition(Integer position) {
-        this.position = position;
     }
 
     @Override
@@ -99,4 +104,5 @@ public class CourseWaitlistEntryInfo extends RelationshipInfo implements CourseW
     public void setCourseOfferingId(String courseOfferingId) {
         this.courseOfferingId = courseOfferingId;
     }
+
 }

@@ -32,13 +32,28 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "KSEN_ENROLLMENT_FEE_ATTR")
 public class EnrollmentFeeAttributeEntity extends BaseAttributeEntity<EnrollmentFeeEntity> {
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private EnrollmentFeeEntity owner;
 
-	public EnrollmentFeeAttributeEntity() {
-		super();
-	}
+    public EnrollmentFeeAttributeEntity() {
+    }
 
-	public EnrollmentFeeAttributeEntity(Attribute att, EnrollmentFeeEntity owner) {
-		super(att, owner);
-	}
-   
+    public EnrollmentFeeAttributeEntity(String key, String value) {
+        super(key, value);
+    }
+
+    public EnrollmentFeeAttributeEntity(Attribute att, EnrollmentFeeEntity owner) {
+        super(att);
+        setOwner(owner);
+    }
+
+    public void setOwner(EnrollmentFeeEntity owner) {
+        this.owner = owner;
+
+    }
+
+    public EnrollmentFeeEntity getOwner() {
+        return owner;
+    }
 }

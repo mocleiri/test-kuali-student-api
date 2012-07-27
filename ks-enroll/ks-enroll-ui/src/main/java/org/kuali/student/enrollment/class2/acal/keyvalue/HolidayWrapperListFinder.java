@@ -85,30 +85,19 @@ public class HolidayWrapperListFinder extends UifKeyValuesFinderBase implements 
         for(HolidayCalendarWrapper hcw : acalForm.getHolidayCalendarList()) {
             addedHolidayCalendarIds.add(hcw.getId());
         }
-
-        if (holidayCalendarInfoList != null && holidayCalendarInfoList.isEmpty()){
-            ConcreteKeyValue keyValue = new ConcreteKeyValue();
-            keyValue.setKey("");
-            keyValue.setValue("No Holiday Calendar available");
-            keyValues.add(keyValue);
-        }else{
-            ConcreteKeyValue keyValue = new ConcreteKeyValue();
-            keyValue.setKey("");
-            keyValue.setValue("");
-            keyValues.add(keyValue);
-
-            for(HolidayCalendarInfo holidayCalendarInfo:holidayCalendarInfoList) {
-                if (addedHolidayCalendarIds.contains(holidayCalendarInfo.getId())) {
-                    continue;
-                }
-                keyValue = new ConcreteKeyValue();
-                keyValue.setKey(holidayCalendarInfo.getId());
-                keyValue.setValue(holidayCalendarInfo.getName());
-                keyValues.add(keyValue);
+        
+        for(HolidayCalendarInfo holidayCalendarInfo:holidayCalendarInfoList) {
+            if (addedHolidayCalendarIds.contains(holidayCalendarInfo.getId())) {
+                continue;
             }
 
+            ConcreteKeyValue keyValue = new ConcreteKeyValue();
+            keyValue.setKey(holidayCalendarInfo.getId());
+            keyValue.setValue(holidayCalendarInfo.getName());
+            keyValues.add(keyValue);
         }
         return keyValues;
+
 
     }
 

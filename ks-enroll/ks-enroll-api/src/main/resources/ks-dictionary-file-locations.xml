@@ -6,8 +6,7 @@
 
     <!--LPR Service-->
     <bean id="luiPersonRelationInfoDictionaryLocation" class="java.lang.String">
-        <!--<constructor-arg value="classpath:ks-LuiPersonRelationInfo-dictionary.xml" />-->
-        <constructor-arg value="classpath:ks-LprInfo-dictionary.xml" />
+        <constructor-arg value="classpath:ks-LuiPersonRelationInfo-dictionary.xml" />
     </bean>
     <bean name="luiPersonRelationServiceDictionaryLocations" class="java.util.ArrayList">
         <constructor-arg>
@@ -64,17 +63,17 @@
         </constructor-arg>
     </bean>
    <!--Hold Service-->
-    <bean id="appliedHoldInfoDictionaryLocation" class="java.lang.String">
-        <constructor-arg value="classpath:ks-AppliedHoldInfo-dictionary.xml" />
+    <bean id="holdInfoDictionaryLocation" class="java.lang.String">
+        <constructor-arg value="classpath:ks-HoldInfo-dictionary.xml" />
     </bean>
-    <bean id="holdIssueInfoDictionaryLocation" class="java.lang.String">
-        <constructor-arg value="classpath:ks-HoldIssueInfo-dictionary.xml" />
+    <bean id="issueInfoDictionaryLocation" class="java.lang.String">
+        <constructor-arg value="classpath:ks-IssueInfo-dictionary.xml" />
     </bean>
     <bean name="holdServiceDictionaryLocations" class="java.util.ArrayList">
         <constructor-arg>
             <list>
-                <bean parent="appliedHoldInfoDictionaryLocation" />
-                <bean parent="holdIssueInfoDictionaryLocation" />                
+                <bean parent="holdInfoDictionaryLocation" />
+                <bean parent="issueInfoDictionaryLocation" />                
             </list>
         </constructor-arg>
      </bean>
@@ -110,9 +109,6 @@
            <constructor-arg value="classpath:ks-RegistrationGroupInfo-dictionary.xml" />
        </bean>
 
-	<bean id="seatPoolDefinitionInfoDictionaryLocation" class="java.lang.String">
-           <constructor-arg value="classpath:ks-SeatPoolDefinitionInfo-dictionary.xml" />
-       </bean>
 
     <bean name="courseOfferingServiceDictionaryLocations" class="java.util.ArrayList">
         <constructor-arg>
@@ -120,8 +116,7 @@
                 <bean parent="courseOfferingInfoDictionaryLocation" />
                 <bean parent="formatOfferingInfoDictionaryLocation"/>
                 <bean parent="registrationGroupInfoDictionaryLocation"/>
-                <bean parent="seatPoolDefinitionInfoDictionaryLocation"/>
-                
+                <bean parent="activityOfferingInfoDictionaryLocation"/>
             </list>
         </constructor-arg>
      </bean>
@@ -140,16 +135,13 @@
                 <bean parent="termInfoDictionaryLocation" />
                 <bean parent="holidayInfoDictionaryLocation" />
                 <bean parent="keyDateInfoDictionaryLocation" />   
-                <bean parent="appliedHoldInfoDictionaryLocation" />
-                <bean parent="holdIssueInfoDictionaryLocation" />                
+                <bean parent="holdInfoDictionaryLocation" />
+                <bean parent="issueInfoDictionaryLocation" />                
                 <bean parent="luiInfoDictionaryLocation" />
                 <bean parent="luiLuiRelationInfoDictionaryLocation" />  
                 <bean parent="courseOfferingInfoDictionaryLocation" />
                 <bean parent="activityOfferingInfoDictionaryLocation" />
                 <bean parent="formatOfferingInfoDictionaryLocation" />
-                <bean parent="registrationGroupInfoDictionaryLocation" />
-                <bean parent="seatPoolDefinitionInfoDictionaryLocation" />
-                
             </list>
         </constructor-arg>
     </bean>

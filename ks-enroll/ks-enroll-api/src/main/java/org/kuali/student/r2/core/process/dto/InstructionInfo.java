@@ -1,52 +1,48 @@
 /*
- * Copyright 2011 The Kuali Foundation 
- *
- * Licensed under the Educational Community License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
+ * Copyright 2011 The Kuali Foundation Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
  *
  * http://www.osedu.org/licenses/ECL-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied. See the License for the specific language governing
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
 package org.kuali.student.r2.core.process.dto;
 
-import org.kuali.student.r2.common.dto.RelationshipInfo;
-import org.kuali.student.r2.common.dto.RichTextInfo;
-import org.kuali.student.r2.core.process.infc.Instruction;
-import org.w3c.dom.Element;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.kuali.student.r2.common.dto.RelationshipInfo;
+import org.kuali.student.r2.common.dto.RichTextInfo;
+import org.kuali.student.r2.core.process.infc.Instruction;
+
+import org.w3c.dom.Element;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InstructionInfo", propOrder = { "id", "typeKey", "stateKey", 
                 "effectiveDate", "expirationDate",
-                "processKey", "checkId",
-                "appliedPopulationId", "appliedAtpTypeKeys",
+                "processKey", "checkKey", 
+                "appliedPopulationKeys", "appliedAtpTypeKeys",
                 "message", "position", "isWarning", 
-                "continueOnFail", "isExemptible",
+                "continueOnFail", "isExemptable", 
                 "meta", "attributes",
 		"_futureElements" })
 
-public class InstructionInfo 
-    extends RelationshipInfo 
+public class InstructionInfo extends RelationshipInfo 
     implements Instruction, Serializable {
-
-    ////////////////////
-    // DATA FIELDS
-    ////////////////////
 
     private static final long serialVersionUID = 1L;
     
@@ -54,10 +50,10 @@ public class InstructionInfo
     private String processKey;
 
     @XmlElement 
-    private String checkId;
+    private String checkKey;
 
     @XmlElement 
-    private String appliedPopulationId;
+    private List<String> appliedPopulationKeys;
 
     @XmlElement 
     private List<String> appliedAtpTypeKeys;
@@ -75,14 +71,11 @@ public class InstructionInfo
     private Boolean continueOnFail;
 
     @XmlElement 
-    private Boolean isExemptible;
+    private Boolean isExemptable;
 
     @XmlAnyElement
     private List<Element> _futureElements;
-
-    //////////////////////////
-    // CONSTRUCTORS ETC.
-    //////////////////////////
+    
 
     /**
      * Constructs a new InstructionInfo.
@@ -97,24 +90,26 @@ public class InstructionInfo
      */
     public InstructionInfo(Instruction instruction) {
         super(instruction);
+
         if (instruction != null) {
             this.processKey= instruction.getProcessKey();
-            this.checkId = instruction.getCheckId();
-            this.appliedPopulationId = instruction.getAppliedPopulationId();
+            this.checkKey = instruction.getCheckKey();
+
+            if (instruction.getAppliedPopulationKeys() != null) {
+                this.appliedPopulationKeys = new ArrayList<String>(instruction.getAppliedPopulationKeys());
+            }
+
             if (instruction.getAppliedAtpTypeKeys() != null) {
                 this.appliedAtpTypeKeys = new ArrayList<String>(instruction.getAppliedAtpTypeKeys());
             }
+
             this.message = new RichTextInfo(instruction.getMessage());
             this.position = instruction.getPosition();
             this.isWarning = instruction.getIsWarning();
             this.continueOnFail = instruction.getContinueOnFail();
-            this.isExemptible = instruction.getIsExemptible();
+            this.isExemptable = instruction.getIsExemptable();
         }
     }
-
-    ///////////////////////////
-    // GETTERS AND SETTERS
-    ///////////////////////////
 
     @Override
     public String getProcessKey() {
@@ -126,21 +121,25 @@ public class InstructionInfo
     }
 
     @Override
-    public String getCheckId() {
-        return this.checkId;
+    public String getCheckKey() {
+        return this.checkKey;
     }
 
-    public void setCheckId(String checkId) {
-        this.checkId = checkId;
+    public void setCheckKey(String checkKey) {
+        this.checkKey = checkKey;
     }
 
     @Override
-    public String getAppliedPopulationId() {
-        return this.appliedPopulationId;
+    public List<String> getAppliedPopulationKeys() {
+        if (this.appliedPopulationKeys == null) {
+            this.appliedPopulationKeys = new ArrayList<String>();
+        }
+
+        return this.appliedPopulationKeys;
     }
 
-    public void setAppliedPopulationId(String appliedPopulationId) {
-        this.appliedPopulationId = appliedPopulationId;
+    public void setAppliedPopulationKeys(List<String> appliedPopulationKeys) {
+        this.appliedPopulationKeys = appliedPopulationKeys;
     }
 
     @Override
@@ -193,11 +192,11 @@ public class InstructionInfo
     }
 
     @Override
-    public Boolean getIsExemptible() {
-        return this.isExemptible;
+    public Boolean getIsExemptable() {
+        return this.isExemptable;
     }
 
-    public void setIsExemptible(Boolean isExemptible) {
-        this.isExemptible = isExemptible;
+    public void setIsExemptable(Boolean isExemptable) {
+        this.isExemptable = isExemptable;
     }
 }

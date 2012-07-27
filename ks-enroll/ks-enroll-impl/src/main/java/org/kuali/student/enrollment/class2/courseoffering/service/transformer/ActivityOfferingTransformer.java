@@ -6,17 +6,13 @@ import org.kuali.rice.kim.api.services.KimApiServiceLocator;
 import org.kuali.rice.kim.impl.KIMPropertyConstants;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.OfferingInstructorInfo;
-import org.kuali.student.enrollment.lpr.dto.LprInfo;
-import org.kuali.student.enrollment.lpr.service.LprService;
+import org.kuali.student.enrollment.lpr.dto.LuiPersonRelationInfo;
+import org.kuali.student.enrollment.lpr.service.LuiPersonRelationService;
 import org.kuali.student.enrollment.lui.dto.LuiIdentifierInfo;
 import org.kuali.student.enrollment.lui.dto.LuiInfo;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.common.exceptions.DoesNotExistException;
-import org.kuali.student.r2.common.exceptions.InvalidParameterException;
-import org.kuali.student.r2.common.exceptions.MissingParameterException;
-import org.kuali.student.r2.common.exceptions.OperationFailedException;
-import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.common.infc.Attribute;
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
@@ -30,7 +26,7 @@ import java.util.Map;
 
 public class ActivityOfferingTransformer {
 
-    public static void lui2Activity(ActivityOfferingInfo ao, LuiInfo lui, LprService lprService, ContextInfo context) throws InvalidParameterException, MissingParameterException, DoesNotExistException, PermissionDeniedException, OperationFailedException {
+    public static void lui2Activity(ActivityOfferingInfo ao, LuiInfo lui, LuiPersonRelationService lprService, ContextInfo context) throws InvalidParameterException, MissingParameterException, DoesNotExistException, PermissionDeniedException, OperationFailedException {
         ao.setId(lui.getId());
         ao.setMeta(lui.getMeta());
         ao.setStateKey(lui.getStateKey());
@@ -70,7 +66,7 @@ public class ActivityOfferingTransformer {
         }
 
         // build list of OfferingInstructors
-        List<LprInfo> lprs = lprService.getLprsByLui(ao.getId(), context);
+        List<LuiPersonRelationInfo> lprs = lprService.getLprsByLui(ao.getId(), context);
 
         ao.setInstructors(OfferingInstructorTransformer.lprs2Instructors(lprs));
 
@@ -126,17 +122,6 @@ public class ActivityOfferingTransformer {
         //Honors code
         LuCodeInfo luCode = findAddLuCode(lui, LuiServiceConstants.HONORS_LU_CODE);
         luCode.setValue(String.valueOf(ao.getIsHonorsOffering()));
-    }
-
-
-    public static List<Person> getInstructorByPersonId(String personId){
-        Map<String, String> searchCriteria = new HashMap<String, String>();
-        searchCriteria.put(KIMPropertyConstants.Person.ENTITY_ID, personId);
-        return getPersonService().findPeople(searchCriteria);
-    }
-
-    public static PersonService getPersonService() {
-        return KimApiServiceLocator.getPersonService();
     }
 
     public static LuCodeInfo findLuCode(LuiInfo lui, String typeKey) {

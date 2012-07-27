@@ -8,10 +8,11 @@
   <!-- JPA test "unit" -->
     <persistence-unit name="persistentUnit" transaction-type="JTA">
 
+        <class>org.kuali.student.enrollment.class1.hold.model.HoldRichTextEntity</class>
         <class>org.kuali.student.enrollment.class1.hold.model.HoldIssueEntity</class>
         <class>org.kuali.student.enrollment.class1.hold.model.HoldIssueAttributeEntity</class>
-        <class>org.kuali.student.enrollment.class1.hold.model.AppliedHoldEntity</class>
-        <class>org.kuali.student.enrollment.class1.hold.model.AppliedHoldAttributeEntity</class>
+        <class>org.kuali.student.enrollment.class1.hold.model.HoldEntity</class>
+        <class>org.kuali.student.enrollment.class1.hold.model.HoldAttributeEntity</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

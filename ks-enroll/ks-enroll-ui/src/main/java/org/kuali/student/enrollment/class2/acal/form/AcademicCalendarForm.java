@@ -16,7 +16,6 @@ package org.kuali.student.enrollment.class2.acal.form;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
-import org.kuali.student.enrollment.acal.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.enrollment.acal.dto.AcademicCalendarInfo;
 import org.kuali.student.enrollment.class2.acal.dto.AcademicTermWrapper;
 import org.kuali.student.enrollment.class2.acal.dto.AcalEventWrapper;
@@ -51,9 +50,6 @@ public class AcademicCalendarForm extends UifFormBase {
     //used by copying
     private boolean newCalendar;
     private boolean officialCalendar;
-
-    //Just to display buttons (delete) based on this flag
-    private boolean officialUI;
 
     //This is useful when user edit term from calendar search. User should see the term tab. By default, info tab
     private String defaultTabToShow;
@@ -183,13 +179,6 @@ public class AcademicCalendarForm extends UifFormBase {
             return 1;
         }
         return 0;
-    }
-
-    public boolean isOfficialUI(){
-        if (academicCalendarInfo != null){
-            return StringUtils.equals(AcademicCalendarServiceConstants.ACADEMIC_CALENDAR_OFFICIAL_STATE_KEY,academicCalendarInfo.getStateKey());
-        }
-        return false;
     }
 
     public void reset(){

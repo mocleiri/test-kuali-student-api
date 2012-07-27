@@ -12,14 +12,29 @@ import javax.persistence.Table;
 @Table(name = "KSEN_SOC_ROR_ITEM_ATTR")
 public class SocRolloverResultItemAttributeEntity extends BaseAttributeEntity<SocRolloverResultItemEntity> {
 
-	public SocRolloverResultItemAttributeEntity() {
-		super();
-	}
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private SocRolloverResultItemEntity owner;
 
-	public SocRolloverResultItemAttributeEntity(Attribute att,
-			SocRolloverResultItemEntity owner) {
-		super(att, owner);
-	}
+    public SocRolloverResultItemAttributeEntity() {}
 
-   
+    public SocRolloverResultItemAttributeEntity(String key, String value) {
+        super(key, value);
+    }
+
+    public SocRolloverResultItemAttributeEntity(Attribute att, SocRolloverResultItemEntity owner) {
+        super(att);
+        setOwner(owner);
+    }
+
+    @Override
+    public void setOwner(SocRolloverResultItemEntity owner) {
+        this.owner = owner;
+
+    }
+
+    @Override
+    public SocRolloverResultItemEntity getOwner() {
+        return owner;
+    }
 }

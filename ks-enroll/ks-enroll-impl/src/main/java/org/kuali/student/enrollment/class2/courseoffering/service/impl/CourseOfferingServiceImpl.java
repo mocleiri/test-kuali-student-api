@@ -1,17 +1,5 @@
 package org.kuali.student.enrollment.class2.courseoffering.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.jws.WebParam;
-import javax.xml.namespace.QName;
-
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.criteria.GenericQueryResults;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
@@ -39,8 +27,8 @@ import org.kuali.student.enrollment.courseoffering.dto.RegistrationGroupTemplate
 import org.kuali.student.enrollment.courseoffering.dto.SeatPoolDefinitionInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingServiceBusinessLogic;
-import org.kuali.student.enrollment.lpr.dto.LprInfo;
-import org.kuali.student.enrollment.lpr.service.LprService;
+import org.kuali.student.enrollment.lpr.dto.LuiPersonRelationInfo;
+import org.kuali.student.enrollment.lpr.service.LuiPersonRelationService;
 import org.kuali.student.enrollment.lui.dto.LuiInfo;
 import org.kuali.student.enrollment.lui.dto.LuiLuiRelationInfo;
 import org.kuali.student.enrollment.lui.service.LuiService;
@@ -66,7 +54,7 @@ import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.common.util.constants.AtpServiceConstants;
-import org.kuali.student.r2.common.util.constants.LprServiceConstants;
+import org.kuali.student.r2.common.util.constants.LuiPersonRelationServiceConstants;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
 import org.kuali.student.r2.common.util.constants.TypeServiceConstants;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
@@ -76,6 +64,17 @@ import org.kuali.student.r2.core.type.dto.TypeInfo;
 import org.kuali.student.r2.core.type.dto.TypeTypeRelationInfo;
 import org.kuali.student.r2.core.type.service.TypeService;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.jws.WebParam;
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class CourseOfferingServiceImpl implements CourseOfferingService {
@@ -87,11 +86,14 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     private AtpService atpService;
     private RegistrationGroupAssembler registrationGroupAssembler;
     private StateService stateService;
-    private LprService lprService;
+    private LuiPersonRelationService lprService;
     private CourseOfferingServiceBusinessLogic businessLogic;
     private TermAssembler termAssembler = null;
     private CourseOfferingCodeGenerator offeringCodeGenerator;
     private CourseOfferingTransformer courseOfferingTransformer;
+
+    // TODO - remove when KSENROLL-247 is resolved
+    private static final Integer TEMP_MAX_ENROLLMENT_DEFAULT = 50;
 
     public CourseOfferingServiceBusinessLogic getBusinessLogic() {
         return businessLogic;
@@ -101,15 +103,6 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         this.businessLogic = businessLogic;
     }
 
-    private void deleteLprsByLui(String luiId, ContextInfo context)throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<LprInfo> lprs = lprService.getLprsByLui(luiId, context);
-        for(LprInfo lpr : lprs) {
-            StatusInfo status = lprService.deleteLpr(lpr.getId(), context);
-            if(!status.getIsSuccess()) {
-                throw new OperationFailedException("Error Deleting related LPR with id ( " + lpr.getId() + " ), given message was: " + status.getMessage());
-            }
-        }
-    }
 
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
@@ -121,11 +114,8 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         for (FormatOfferingInfo fo:fos){
             deleteFormatOfferingCascaded(fo.getId(), context);
         }
-
-        // delete offering instructor lprs for the Course Offering
-        deleteLprsByLui(courseOfferingId, context);
-
-        //TODO: Delete all attached other things (EnrollmentFees, org relations, etc.)
+        //Delete all attached things (LPRs, EnrollmentFees, org relations, etc.)
+        //TODO
 
         //Delete the CO
         deleteCourseOffering(courseOfferingId, context);
@@ -139,11 +129,8 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         // Delete dependent activity offerings
         List<ActivityOfferingInfo> aos = getActivityOfferingsByFormatOffering(formatOfferingId, context);
         for (ActivityOfferingInfo ao: aos) {
-            deleteActivityOfferingCascaded(ao.getId(), context);
+            deleteActivityOffering(ao.getId(), context);
         }
-
-        //TODO: Delete dependent RegistrationGroups
-
         // Delete the format offering
         try {
             deleteFormatOffering(formatOfferingId, context);
@@ -220,17 +207,15 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         this.stateService = stateService;
     }
 
-    public LprService getLprService() {
+    public LuiPersonRelationService getLprService() {
         return lprService;
     }
 
-    public void setLprService(LprService lprService) {
+    public void setLprService(LuiPersonRelationService lprService) {
         this.lprService = lprService;
     }
 
-
     @Override
-
     @Transactional(readOnly = true)
     public CourseOfferingInfo getCourseOffering(String courseOfferingId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException,
@@ -355,9 +340,9 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     @Transactional(readOnly = true)
     public List<CourseOfferingInfo> getCourseOfferingsByTermAndInstructor(String termId, String instructorId, ContextInfo context) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<LprInfo> lprInfos = lprService.getLprsByPersonAndTypeForAtp(instructorId, termId, LprServiceConstants.INSTRUCTOR_MAIN_TYPE_KEY, context);
+        List<LuiPersonRelationInfo> lprInfos = lprService.getLprsByPersonAndTypeForAtp(instructorId, termId, LuiPersonRelationServiceConstants.INSTRUCTOR_MAIN_TYPE_KEY, context);
         List<CourseOfferingInfo> cos = new ArrayList<CourseOfferingInfo>();
-        for (LprInfo lprInfo : lprInfos) {
+        for (LuiPersonRelationInfo lprInfo : lprInfos) {
             cos.add(getCourseOffering(lprInfo.getLuiId(), context));
         }
         return cos;
@@ -499,7 +484,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         // map existing lprs to their person id
         Map<String, OfferingInstructorInfo> existingPersonMap = new HashMap<String, OfferingInstructorInfo>(existingLprs.size());
         for(OfferingInstructorInfo info : existingLprs) {
-            if (info.getStateKey() != null && info.getStateKey().equals(LprServiceConstants.DROPPED_STATE_KEY))  {
+            if (info.getStateKey() != null && info.getStateKey().equals(LuiPersonRelationServiceConstants.DROPPED_STATE_KEY))  {
                 continue;
             }
             existingPersonMap.put(info.getPersonId(), info);
@@ -526,14 +511,20 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         Collection<OfferingInstructorInfo> deletedInstructors = existingPersonMap.values();
 
         // create the new lprs
-        List<LprInfo> createdLprs = OfferingInstructorTransformer.instructors2Lprs(lui, createdInstructors);
-        for (LprInfo lprInfo : createdLprs) {
-            lprService.createLpr(lprInfo.getPersonId(), lprInfo.getLuiId(), lprInfo.getTypeKey(), lprInfo, context);
+        List<LuiPersonRelationInfo> createdLprs = OfferingInstructorTransformer.instructors2Lprs(lui, createdInstructors);
+        for (LuiPersonRelationInfo lprInfo : createdLprs) {
+            try {
+                lprService.createLpr(lprInfo.getPersonId(), lprInfo.getLuiId(), lprInfo.getTypeKey(), lprInfo, context);
+            } catch (AlreadyExistsException e) {
+                throw new OperationFailedException("Tried to create an already existing LPR", e);
+            } catch (DisabledIdentifierException e) {
+                throw new OperationFailedException("Unexpected", e);
+            }
         }
 
         // update existing lprs
-        List<LprInfo> updatedLprs = OfferingInstructorTransformer.instructors2Lprs(lui, updatedInstructors);
-        for(LprInfo lprInfo : updatedLprs) {
+        List<LuiPersonRelationInfo> updatedLprs = OfferingInstructorTransformer.instructors2Lprs(lui, updatedInstructors);
+        for(LuiPersonRelationInfo lprInfo : updatedLprs) {
             lprService.updateLpr(lprInfo.getId(), lprInfo, context);
         }
 
@@ -563,8 +554,8 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     private void processInstructors(String courseOfferingId, List<OfferingInstructorInfo> instructors, String atpId, ContextInfo context) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException, DataValidationErrorException, VersionMismatchException {
 
-        List<String> currrentInstructors = lprService.getPersonIdsByLuiAndTypeAndState(courseOfferingId, LprServiceConstants.INSTRUCTOR_MAIN_TYPE_KEY,
-                LprServiceConstants.ASSIGNED_STATE_KEY, context);
+        List<String> currrentInstructors = lprService.getPersonIdsByLuiAndTypeAndState(courseOfferingId, LuiPersonRelationServiceConstants.INSTRUCTOR_MAIN_TYPE_KEY,
+                LuiPersonRelationServiceConstants.ASSIGNED_STATE_KEY, context);
 
 
 
@@ -572,19 +563,19 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
             for (OfferingInstructorInfo instructor : instructors) {
                 try {
                     if (currrentInstructors.contains(instructor.getPersonId())) {
-                        LprInfo existingLpr = getLpr(instructor.getPersonId(), courseOfferingId, context);
+                        LuiPersonRelationInfo existingLpr = getLpr(instructor.getPersonId(), courseOfferingId, context);
                         if (existingLpr != null) {
-                            if (instructor.getPercentageEffort() != null) {
-                                existingLpr.setCommitmentPercent("" + instructor.getPercentageEffort());
-                            } else {
-                                existingLpr.setCommitmentPercent(null);
-                            }
+                            existingLpr.setCommitmentPercent(instructor.getPercentageEffort());
                             lprService.updateLpr(existingLpr.getId(), existingLpr, context);
                             currrentInstructors.remove(instructor.getPersonId());
                         }
                     } else {
                         lprService.createLpr(instructor.getPersonId(), courseOfferingId, instructor.getTypeKey(), getNewLpr(instructor, courseOfferingId), context);
                     }
+                } catch (AlreadyExistsException e) {
+                    throw new OperationFailedException();
+                } catch (DisabledIdentifierException e) {
+                    throw new OperationFailedException();
                 } catch (ReadOnlyException e) {
                     throw new OperationFailedException();
                 }
@@ -594,7 +585,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         if (currrentInstructors != null && currrentInstructors.size() > 0) {
             if (atpId != null) {
                 for (String instructorId : currrentInstructors) {
-                    LprInfo lpr = getLpr(instructorId, courseOfferingId, context);
+                    LuiPersonRelationInfo lpr = getLpr(instructorId, courseOfferingId, context);
                     if (lpr != null) {
                         lprService.deleteLpr(lpr.getId(), context);
                     }
@@ -603,14 +594,10 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         }
     }
 
-    private LprInfo getNewLpr(OfferingInstructorInfo instructor, String courseOfferingId) {
-        LprInfo lpr = new LprInfo();
+    private LuiPersonRelationInfo getNewLpr(OfferingInstructorInfo instructor, String courseOfferingId) {
+        LuiPersonRelationInfo lpr = new LuiPersonRelationInfo();
         lpr.setPersonId(instructor.getPersonId());
-        if (instructor.getPercentageEffort() != null) {
-            lpr.setCommitmentPercent("" + instructor.getPercentageEffort());
-        } else {
-            lpr.setCommitmentPercent(null);
-        }
+        lpr.setCommitmentPercent(instructor.getPercentageEffort());
         lpr.setId(UUIDHelper.genStringUUID());
         lpr.setLuiId(courseOfferingId);
         lpr.setTypeKey(instructor.getTypeKey());
@@ -618,18 +605,23 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         return lpr;
     }
 
-    private LprInfo getLpr(String instructor, String courseOfferingId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
+    private LuiPersonRelationInfo getLpr(String instructor, String courseOfferingId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        LprInfo lpr = null;
-            List<LprInfo> lprs = lprService.getLprsByPersonAndLui(instructor, courseOfferingId, context);
+        LuiPersonRelationInfo lpr = null;
+        try {
+            List<LuiPersonRelationInfo> lprs = lprService.getLprsByPersonAndLui(instructor, courseOfferingId, context);
 
             if (lprs != null && !lprs.isEmpty()) {
-                for (LprInfo lpri : lprs) {
-                    if (lpri.getTypeKey().equals(LprServiceConstants.INSTRUCTOR_MAIN_TYPE_KEY)) {
+                for (LuiPersonRelationInfo lpri : lprs) {
+                    if (lpri.getTypeKey().equals(LuiPersonRelationServiceConstants.INSTRUCTOR_MAIN_TYPE_KEY)) {
                         lpr = lpri;
                     }
                 }
             }
+        } catch (DisabledIdentifierException e) {
+            throw new OperationFailedException();
+        }
+
         return lpr;
     }
 
@@ -732,6 +724,10 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     public StatusInfo deleteFormatOffering(String formatOfferingId, ContextInfo context) throws DoesNotExistException,
             InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DependentObjectsExistException {
 
+        List<LuiLuiRelationInfo> formatOfferingRelations = luiService.getLuiLuiRelationsByLui(formatOfferingId, context);
+        for (LuiLuiRelationInfo luiLuiRelation : formatOfferingRelations) {
+            luiService.deleteLuiLuiRelation(luiLuiRelation.getId(), context);
+        }
         return luiService.deleteLui(formatOfferingId, context);
 
     }
@@ -950,7 +946,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     }
 
     @Override
-    public List<ActivityOfferingInfo> getActivityOfferingsByFormatOfferingWithoutRegGroup(String formatOfferingId, ContextInfo context)
+    public List<ActivityOfferingInfo> getActivityOfferingsByCourseOfferingWithoutRegGroup(String courseOfferingId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         throw new UnsupportedOperationException();
     }
@@ -1018,10 +1014,16 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         }
 
         // build LPR(s) for Offering Instructor
-        List<LprInfo> lprs = OfferingInstructorTransformer.instructors2Lprs(lui, aoInfo.getInstructors());
+        List<LuiPersonRelationInfo> lprs = OfferingInstructorTransformer.instructors2Lprs(lui, aoInfo.getInstructors());
 
-        for (LprInfo lprInfo : lprs) {
+        for (LuiPersonRelationInfo lprInfo : lprs) {
+            try {
                 lprService.createLpr(lprInfo.getPersonId(), lprInfo.getLuiId(), lprInfo.getTypeKey(), lprInfo, context);
+            } catch (AlreadyExistsException e) {
+                throw new OperationFailedException("Tried to create an already existing LPR", e);
+            } catch (DisabledIdentifierException e) {
+                throw new OperationFailedException("Unexpected", e);
+            }
         }
 
         // now build the lui lui relation
@@ -1050,7 +1052,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         ActivityOfferingTransformer.lui2Activity(ao, lui, lprService, context);
         ao.setFormatOfferingId(luiRel.getLuiId());
         ao.setCourseOfferingId(co.getId());
-        ao.setFormatOfferingName(fo.getShortName());
+        ao.setFormatOfferingName(fo.getName());
         ao.setCourseOfferingCode(co.getCourseOfferingCode());
         ao.setCourseOfferingTitle(co.getCourseOfferingTitle());
         AtpService localAtpService = getAtpService();
@@ -1153,14 +1155,20 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
 
 
         // create the new lprs
-        List<LprInfo> createdLprs = OfferingInstructorTransformer.instructors2Lprs(lui, createdInstructors);
-        for (LprInfo lprInfo : createdLprs) {
+        List<LuiPersonRelationInfo> createdLprs = OfferingInstructorTransformer.instructors2Lprs(lui, createdInstructors);
+        for (LuiPersonRelationInfo lprInfo : createdLprs) {
+            try {
                 lprService.createLpr(lprInfo.getPersonId(), lprInfo.getLuiId(), lprInfo.getTypeKey(), lprInfo, context);
+            } catch (AlreadyExistsException e) {
+                throw new OperationFailedException("Tried to create an already existing LPR", e);
+            } catch (DisabledIdentifierException e) {
+                throw new OperationFailedException("Unexpected", e);
+            }
         }
 
         // update existing lprs
-        List<LprInfo> updatedLprs = OfferingInstructorTransformer.instructors2Lprs(lui, updatedInstructors);
-        for(LprInfo lprInfo : updatedLprs) {
+        List<LuiPersonRelationInfo> updatedLprs = OfferingInstructorTransformer.instructors2Lprs(lui, updatedInstructors);
+        for(LuiPersonRelationInfo lprInfo : updatedLprs) {
             lprService.updateLpr(lprInfo.getId(), lprInfo, context);
         }
 
@@ -1198,7 +1206,13 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
 
         try {
             // delete offering instructor lprs for the Activity Offering
-            deleteLprsByLui(activityOfferingId, context);
+            List<LuiPersonRelationInfo> lprs = lprService.getLprsByLui(activityOfferingId, context);
+            for(LuiPersonRelationInfo lpr : lprs) {
+                StatusInfo status = lprService.deleteLpr(lpr.getId(), context);
+                if(!status.getIsSuccess()) {
+                    throw new OperationFailedException("Error Deleting related LPR with id ( " + lpr.getId() + " ), given message was: " + status.getMessage());
+                }
+            }
 
             return luiService.deleteLui(activityOfferingId, context);
         } catch (DependentObjectsExistException e) {
@@ -1207,24 +1221,6 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     }
 
     @Override
-    @Transactional
-	public StatusInfo deleteActivityOfferingCascaded(String activityOfferingId,
-			ContextInfo context) throws DoesNotExistException,
-			InvalidParameterException, MissingParameterException,
-			OperationFailedException, PermissionDeniedException
-			 {
-        // TODO: getSeatPoolDefinitionsForActivityOffering and Delete dependent seatpool
-
-        // Delete the Activity offering
-        deleteActivityOffering(activityOfferingId, context);
-
-        StatusInfo statusInfo = new StatusInfo();
-        statusInfo.setSuccess(true);
-        return statusInfo;
-
-	}
-
-	@Override
     public List<ValidationResultInfo> validateActivityOffering(String validationType,
                                                                ActivityOfferingInfo activityOfferingInfo, ContextInfo context)
             throws DoesNotExistException,
@@ -1324,13 +1320,6 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
-    public List<RegistrationGroupInfo> generateRegistrationGroupsForTemplate(String registrationGroupTemplateId, ContextInfo context)
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
-    }
-
     private String getTermkeyByCourseOffering(String courseOfferingId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         String termId = null;
@@ -1392,22 +1381,6 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         }
     }
 
-
-    @Override
-    public StatusInfo deleteRegistrationGroupsByFormatOffering(String formatOfferingId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public StatusInfo deleteGeneratedRegistrationGroupsByFormatOffering(String formatOfferingId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public StatusInfo deleteGeneratedRegistrationGroupsForTemplate(String registrationGroupTemplateId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public List<ValidationResultInfo> validateRegistrationGroup(String validationType,
                                                                 RegistrationGroupInfo registrationGroupInfo, ContextInfo context) throws DoesNotExistException,
@@ -1420,17 +1393,6 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     public RegistrationGroupTemplateInfo getRegistrationGroupTemplate(String registrationGroupTemplateId,
                                                                       ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
-    }
-
-
-    @Override
-    public List<ValidationResultInfo> validateRegistrationGroupTemplate(String validationTypeKey, RegistrationGroupTemplateInfo registrationGroupTemplateInfo, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RegistrationGroupTemplateInfo createRegistrationGroupTemplate(RegistrationGroupTemplateInfo registrationGroupTemplateDefinitionInfo, ContextInfo context) throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
         throw new UnsupportedOperationException();
     }
 
@@ -1462,7 +1424,14 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SeatPoolDefinitionInfo> getSeatPoolDefinitionsForActivityOffering(String activityOfferingId, ContextInfo context)
+    public List<SeatPoolDefinitionInfo> getSeatPoolDefinitionsForCourseOffering(String courseOfferingId, ContextInfo context)
+            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SeatPoolDefinitionInfo> getSeatPoolDefinitionsForRegGroup(String registrationGroupId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         throw new UnsupportedOperationException();
     }
@@ -1645,6 +1614,58 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         this.offeringCodeGenerator = offeringCodeGenerator;
     }
 
+    @Override
+    public TermInfo getTerm(String termId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        AtpInfo atp = atpService.getAtp(termId, context);
+        TermInfo term = null;
+        TermAssembler termAssembler = getTermAssembler();
+        if (termAssembler == null) {
+            setTermAssembler(new TermAssembler());
+        }
+
+        if (atp != null && checkTypeForTermType(atp.getTypeKey(), context)) {
+            try {
+                term = getTermAssembler().assemble(atp, context);
+            } catch (AssemblyException e) {
+                throw new OperationFailedException("AssemblyException : " + e.getMessage());
+            }
+        } else {
+            throw new DoesNotExistException("This is either not valid Atp or not valid Term. " + termId);
+        }
+
+        return term;
+    }
+
+    private boolean checkTypeForTermType(String typeKey, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        List<TypeInfo> types = getTermTypes(context);
+        return checkTypeInTypes(typeKey, types);
+    }
+
+    @Override
+    public List<TypeInfo> getTermTypes(ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+
+        List<TypeTypeRelationInfo> relations = null;
+        try {
+            relations = typeService.getTypeTypeRelationsByOwnerAndType(AtpServiceConstants.ATP_TERM_GROUPING_TYPE_KEY, TypeServiceConstants.TYPE_TYPE_RELATION_GROUP_TYPE_KEY, context);
+        } catch (DoesNotExistException e) {
+            throw new OperationFailedException(e.getMessage(), e);
+        }
+
+        if (relations != null) {
+            List<TypeInfo> results = new ArrayList<TypeInfo>(relations.size());
+            for (TypeTypeRelationInfo rel : relations) {
+                try {
+                    results.add(typeService.getType(rel.getRelatedTypeKey(), context));
+                } catch (DoesNotExistException e) {
+                    throw new OperationFailedException(e.getMessage(), e);
+                }
+            }
+
+            return results;
+        }
+
+        return null;
+    }
 
     public TermAssembler getTermAssembler() {
         if (termAssembler == null) {
@@ -1658,63 +1679,4 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     }
 
 
-	@Override
-	 @Transactional(readOnly = true)
-	public TypeInfo getCourseOfferingType(String courseOfferingTypeKey,
-			ContextInfo context) throws DoesNotExistException,
-			InvalidParameterException, MissingParameterException,
-			OperationFailedException, PermissionDeniedException {
-		 throw new UnsupportedOperationException();
-	}
-
-	@Override
-	 @Transactional(readOnly = true)
-	public List<TypeInfo> getCourseOfferingTypes(ContextInfo context)
-			throws InvalidParameterException, MissingParameterException,
-			OperationFailedException, PermissionDeniedException {
-		 throw new UnsupportedOperationException();
-	}
-
-	@Override
-	 @Transactional(readOnly = true)
-	public List<TypeInfo> getInstructorTypesForCourseOfferingType(
-			String courseOfferingTypeKey, ContextInfo context)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException,
-			PermissionDeniedException {
-		 throw new UnsupportedOperationException();
-	}
-
-	@Override
-	 @Transactional(readOnly = true)
-	public List<TypeInfo> getInstructorTypesForActivityOfferingType(
-			String activityOfferingTypeKey, ContextInfo context)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException,
-			PermissionDeniedException {
-		 throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public StatusInfo addSeatPoolDefinitionToActivityOffering(
-			String seatPoolDefinitionId, String activityOfferingId,
-			ContextInfo contextInfo) throws AlreadyExistsException,
-			DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException,
-			PermissionDeniedException {
-		// should be supported by M4
-		 throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public StatusInfo removeSeatPoolDefinitionFromActivityOffering(
-			String seatPoolDefinitionId, String activityOfferingId,
-			ContextInfo contextInfo) throws DoesNotExistException,
-			InvalidParameterException, MissingParameterException,
-			OperationFailedException, PermissionDeniedException {
-		// should be supported in M4
-		 throw new UnsupportedOperationException();
-	}
-
-    
 }

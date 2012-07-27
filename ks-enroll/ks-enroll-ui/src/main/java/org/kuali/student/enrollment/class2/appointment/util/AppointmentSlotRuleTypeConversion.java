@@ -58,7 +58,7 @@ public class AppointmentSlotRuleTypeConversion {
     }
 
     //Converting appt. rule type object to code
-    public static String convToAppointmentSlotRuleCode(AppointmentSlotRuleInfo slotRuleInfo){
+    public static String convTotAppointmentSlotRuleCode(AppointmentSlotRuleInfo slotRuleInfo){
         String slotRule = "";
         StringBuilder tempSlotRule = new StringBuilder();
 

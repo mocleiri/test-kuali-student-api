@@ -11,14 +11,28 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "KSEN_LUI_IDENT_ATTR")
 public class LuiIdentifierAttributeEntity extends BaseAttributeEntity<LuiIdentifierEntity> {
-
-	public LuiIdentifierAttributeEntity() {
-		super();
-	}
-
-	public LuiIdentifierAttributeEntity(Attribute att, LuiIdentifierEntity owner) {
-		super(att, owner);
-	}
     
-   
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private LuiIdentifierEntity owner;
+
+    public LuiIdentifierAttributeEntity(){}
+    
+    public LuiIdentifierAttributeEntity(Attribute att) {
+        super(att);
+    }
+    
+    public LuiIdentifierAttributeEntity(String key, String value) {
+        super(key, value);
+    }
+
+    @Override
+    public void setOwner(LuiIdentifierEntity owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public LuiIdentifierEntity getOwner() {
+        return owner;
+    }
 }

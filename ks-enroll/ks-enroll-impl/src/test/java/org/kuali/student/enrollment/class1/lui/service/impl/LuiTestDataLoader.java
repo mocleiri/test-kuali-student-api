@@ -4,7 +4,6 @@ import org.kuali.student.enrollment.class1.lui.dao.LuiDao;
 import org.kuali.student.enrollment.class1.lui.dao.LuiLuiRelationDao;
 import org.kuali.student.enrollment.class1.lui.model.*;
 import org.kuali.student.enrollment.lui.dto.LuiIdentifierInfo;
-import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
@@ -72,27 +71,18 @@ public class LuiTestDataLoader {
         luiEntity.setReferenceURL(refUrl);
         luiEntity.setPlain(descrPlain);
         luiEntity.setCreateId(principalId);
-        Date time;
-		luiEntity.setCreateTime(time = new Date());
-        
-        luiEntity.setUpdateId(principalId);
-        luiEntity.setUpdateTime(time);
-        
-        luiEntity.setEffectiveDate(time);
+        luiEntity.setCreateTime(new Date());
+        luiEntity.setEffectiveDate(new Date());
 
         LuiIdentifierEntity luiIdent = new LuiIdentifierEntity();
         luiIdent.setLui(luiEntity);
         luiIdent.setId(additionIden);
-        luiIdent.setCreateId("TESTDATALOADER");
-        luiIdent.setCreateTime(new Date ());
 
         LuiIdentifierEntity luiOfficialIdent = new LuiIdentifierEntity();
         luiOfficialIdent.setLui(luiEntity);
         luiOfficialIdent.setId(officialIdentifier);
         luiOfficialIdent.setShortName(officialIdentName);
-        luiOfficialIdent.setType(LuiServiceConstants.LUI_IDENTIFIER_OFFICIAL_TYPE_KEY);        
-        luiOfficialIdent.setCreateId("TESTDATALOADER");
-        luiOfficialIdent.setCreateTime(new Date ());
+        luiOfficialIdent.setType(LuiServiceConstants.LUI_IDENTIFIER_OFFICIAL_TYPE_KEY);
         List<LuiIdentifierEntity> luiIdents = new ArrayList<LuiIdentifierEntity>();
 
         luiIdents.add(luiIdent);
@@ -102,8 +92,6 @@ public class LuiTestDataLoader {
         //Lu Code
         LuCodeEntity luCode = new LuCodeEntity();
         luCode.setId("Lu-Code-" + id);
-        luCode.setCreateId(principalId);
-        luCode.setCreateTime(new Date());
         ArrayList<LuCodeEntity> luCodes = new ArrayList<LuCodeEntity>();
         luCodes.add(luCode);
         luiEntity.setLuiCodes(luCodes);
@@ -116,7 +104,7 @@ public class LuiTestDataLoader {
         //Attributes
         if (luiAttributes != null && luiAttributes.length > 0){
             for (String attr:luiAttributes){
-                LuiAttributeEntity luiAttr = new LuiAttributeEntity(new AttributeInfo(attr, attr), luiEntity);
+                LuiAttributeEntity luiAttr = new LuiAttributeEntity(attr, attr);
                 luiEntity.getAttributes().add(luiAttr);
             }
         }
@@ -216,11 +204,8 @@ public class LuiTestDataLoader {
         entity.setDescrPlain(descrFormatted);
 
         entity.setCreateId(principalId);
-        Date time;
-		entity.setCreateTime(time = new Date());
+        entity.setCreateTime(new Date());
 
-		entity.setUpdateId(principalId);
-		entity.setUpdateTime(time);
 
         luiLuiRelationDao.persist(entity);
 

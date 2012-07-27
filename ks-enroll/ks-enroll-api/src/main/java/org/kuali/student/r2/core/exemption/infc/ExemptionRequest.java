@@ -34,10 +34,11 @@ import org.kuali.student.r2.common.infc.IdEntity;
 public interface ExemptionRequest extends IdEntity {
 
     /**
-     * The id of a Process that indicates to what Process in the
+     * The key of a Process that indicates to what Process in the
      * the exemption is requested, if any.
      *
-     * @name Process id
+     * @name Process Key
+     * @required
      */
     public String getProcessKey();
 
@@ -47,31 +48,28 @@ public interface ExemptionRequest extends IdEntity {
      *
      * @name Check Id
      */
-    public String getCheckId();
+    public String getCheckKey();
 
     /**
      * The Id of the Person for whom the request is requested
      *
      * @name Person Id
      * @required
-     * @readOnly on update
      */
     public String getPersonId();
 
     /**
      * The Id of the Person making the request.
      * 
-     * If not specified it should default to the person identified in the supplied
-     * contextInfo.
+     * This may or may not be the person for who
      *
      * @name Requester Id
+     * @required
      */
     public String getRequesterId();
 
     /**
      * The date of this exemption request.
-     * 
-     * If not specified it should default to today's date.
      *
      * @name Request Date
      * @required
@@ -93,7 +91,7 @@ public interface ExemptionRequest extends IdEntity {
     public Date getApprovedDate();
 
     /**
-     * The detailed data for a date override.
+     * The data for a date override.
      *
      * @name Date Override
      */
@@ -102,20 +100,14 @@ public interface ExemptionRequest extends IdEntity {
     /**
      * The data for a milestone override.
      *
-     * TODO: understand the exact usage of this.
-     * 
      * @name Milestone Override
      */
     public MilestoneOverride getMilestoneOverride();
 
     /**
      * The data for a learning result override.
-     * 
-     * This is deprecated because it is just a PLACEHOLDER for eventual overrides 
-     * that are used in degree audit.
-     * 
+     *
      * @name Learning Result Override
      */
-    @Deprecated
     public LearningResultOverride getLearningResultOverride();
 }

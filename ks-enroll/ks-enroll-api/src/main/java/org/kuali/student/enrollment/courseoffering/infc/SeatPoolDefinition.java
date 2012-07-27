@@ -35,34 +35,29 @@ public interface SeatPoolDefinition
     extends IdEntity {
 
     /**
-     * When this seat pool definition expires. A seat pool whose state
-     * is active is active once the registration period for the
-     * related ActivityOffering begins. The restriction may expire
-     * before the end of the registration period on a Milestone. The
-     * Milestone is determined by the Expiration Milestone Type Key on
-     * the ATP for the registration period.
+     * Course offering Id to which the seat pool is linked to. Course
+     * Offering Id should be set only if the seat pool applies across
+     * all the registration group in the course offering.
      *
-     * @name Expiration Milestone Type Key
+     * @name Course Offering Id
+     * @required
      */
-    public String getExpirationMilestoneTypeKey();
-
+    public String getCourseOfferingId();
+    
     /**
-     * Tests if the seat limit is an absolute number or a percentage
-     * of MaximumEnrollment in the ActivityOffering. 
+     * List of registration groups that seat pool applies to.
      *
-     * @name Is Percentage
+     * @name Registration Group Ids
      */
-    public Boolean getIsPercentage();
-
+    public List<String> getRegistrationGroupIds();
+    
     /** 
-     * The limit on the number of seats in this pool. The number may
-     * be expressed as an absolute number or as an integer
-     * representing a percentage (0-100) based on the IsPercentage
-     * flag.
+     * Count Maximum seats available through this seat pool.
      *
-     * @name Seat Limit
+     * @name Maximum Seat
+     * @required
      */
-    public Integer getSeatLimit();
+    public Integer getMaximumSeatCount();
 
     /**
      * Indicates the order in which this seat pool will be processed
@@ -75,9 +70,13 @@ public interface SeatPoolDefinition
     public Integer getProcessingPriority();
 
     /**
-     * The Population to which this seat pool applies. 
+     * Statement that defines the capacity restriction that apply to
+     * this seat pool. 
      *
-     * @name Population Id
+     * NOTE: linking to Statement Id instead of TreeView. The Process
+     * service Check entity has an Agenda Id.
+     *
+     * @name Capacity Restriction Statement Id
      */
-    public String getPopulationId();
+    public String getCapacityRestrictionStatementId();
 }

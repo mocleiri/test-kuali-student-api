@@ -23,13 +23,27 @@ import javax.persistence.Table;
 @Table(name = "KSEN_LRR_ATTR")
 public class LrrAttributeEntity extends BaseAttributeEntity<LearningResultRecordEntity> {
 
-	public LrrAttributeEntity() {
-		super();
-	}
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private LearningResultRecordEntity owner;
 
-	public LrrAttributeEntity(Attribute att, LearningResultRecordEntity owner) {
-		super(att, owner);
-	}
+    public LrrAttributeEntity() {}
 
-    
+    public LrrAttributeEntity(String key, String value) {
+        super(key, value);
+    }
+
+    public LrrAttributeEntity(Attribute att) {
+        super(att);
+    }
+
+    @Override
+    public void setOwner(LearningResultRecordEntity owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public LearningResultRecordEntity getOwner() {
+        return owner;
+    }
 }

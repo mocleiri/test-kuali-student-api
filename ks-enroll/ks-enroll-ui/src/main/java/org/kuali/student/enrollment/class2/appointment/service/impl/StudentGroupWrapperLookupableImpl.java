@@ -43,7 +43,6 @@ import static org.kuali.rice.core.api.criteria.PredicateFactory.like;
  */
 public class StudentGroupWrapperLookupableImpl extends LookupableImpl {
     private transient PopulationService populationService;
-
     @Override
     protected List<?> getSearchResults(LookupForm lookupForm, Map<String, String> fieldValues, boolean unbounded) {
         List<StudentGroupWrapper> results = new ArrayList<StudentGroupWrapper>();
@@ -71,15 +70,17 @@ public class StudentGroupWrapperLookupableImpl extends LookupableImpl {
         try {
             // method returns list of populationinfos.
             java.util.List<PopulationInfo> populationInfos = getPopulationService().searchForPopulations(qBuilder.build(), context);
-            for(PopulationInfo populationInfo:populationInfos){
-                StudentGroupWrapper studentGroupWrapper = new StudentGroupWrapper();
-                studentGroupWrapper.setId(populationInfo.getId());
-                studentGroupWrapper.setName(populationInfo.getName());
-                studentGroupWrapper.setDescription(populationInfo.getDescr().getPlain());
-                results.add(studentGroupWrapper);
+            if(!populationInfos.isEmpty()){
+                for(PopulationInfo populationInfo:populationInfos){
+                    StudentGroupWrapper studentGroupWrapper = new StudentGroupWrapper();
+                    studentGroupWrapper.setId(populationInfo.getId());
+                    studentGroupWrapper.setName(populationInfo.getName());
+                    studentGroupWrapper.setDescription(populationInfo.getDescr().getPlain());
+                    results.add(studentGroupWrapper);
+                }
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error Performing Search", e); //To change body of catch statement use File | Settings | File Templates.
+            throw new RuntimeException("Error Performing Search",e); //To change body of catch statement use File | Settings | File Templates.
         }
         return results;
     }
@@ -94,4 +95,9 @@ public class StudentGroupWrapperLookupableImpl extends LookupableImpl {
         return populationService;
     }
 
+    public static void main(String[] args){
+        StudentGroupWrapperLookupableImpl studentWrapper = new StudentGroupWrapperLookupableImpl();
+        studentWrapper.getPopulationService();
+
+    }
 }

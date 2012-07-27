@@ -51,12 +51,16 @@
     <bean id="typeTypeRelationDao" class="org.kuali.student.r2.core.class1.type.dao.TypeTypeRelationDao">
     	<property name="em" ref="enrollEntityManager"/>
     </bean>
-     
-    <bean id="appliedHoldDao" class="org.kuali.student.enrollment.class1.hold.dao.AppliedHoldDao">
+    
+    <bean id="holdRichTextDao" class="org.kuali.student.enrollment.class1.hold.dao.HoldRichTextDao">
+    	<property name="em" ref="enrollEntityManager"/>
+    </bean>   
+    
+    <bean id="holdDao" class="org.kuali.student.enrollment.class1.hold.dao.HoldDao">
     	<property name="em" ref="enrollEntityManager"/>
     </bean>
     
-    <bean id="holdIssueDao" class="org.kuali.student.enrollment.class1.hold.dao.HoldIssueDao">
+    <bean id="issueDao" class="org.kuali.student.enrollment.class1.hold.dao.HoldIssueDao">
     	<property name="em" ref="enrollEntityManager"/>
     </bean>
     
@@ -105,15 +109,15 @@
         <property name="em" ref="enrollEntityManager"/>
     </bean>
 
-    <bean id="processDao" class="org.kuali.student.r2.core.process.dao.ProcessDao">
+    <bean id="processDao" class="org.kuali.student.r2.core.class1.process.dao.ProcessDao">
         <property name="em" ref="enrollEntityManager"/>
     </bean>
 
-    <bean id="instructionDao" class="org.kuali.student.r2.core.process.dao.InstructionDao">
+    <bean id="instructionDao" class="org.kuali.student.r2.core.class1.process.dao.InstructionDao">
         <property name="em" ref="enrollEntityManager"/>
     </bean>
 
-    <bean id="checkDao" class="org.kuali.student.r2.core.process.dao.CheckDao">
+    <bean id="checkDao" class="org.kuali.student.r2.core.class1.process.dao.CheckDao">
         <property name="em" ref="enrollEntityManager"/>
     </bean>
 

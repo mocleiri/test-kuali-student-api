@@ -84,7 +84,7 @@ public class EnrolledCoursesByTermTermResolver implements TermResolver<List<Cour
         
         List<CourseRegistrationInfo> result = null;
         try {
-            result = courseRegistrationService.getCourseRegistrationsByStudentAndTerm(personId, termId, context);
+            result = courseRegistrationService.getCourseRegistrationsForStudentByTerm(personId, termId, context);
         } catch (Exception e) {
             KSKRMSExecutionUtil.convertExceptionsToTermResolutionException(parameters, e, this);
         }

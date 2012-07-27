@@ -27,13 +27,12 @@
           p:id="manageCourseOfferingsPage"
           p:headerText="">
         <property name="header">
-            <bean parent="Uif-HeaderThree"/>
+            <bean parent="Uif-HeaderTwo"/>
         </property>
         <property name="items">
             <list>
                 <ref bean="KS-CourseOfferingManagement-CriteriaSection"/>
                 <ref bean="KS-CourseOfferingManagement-CourseOfferingResultSection"/>
-                <ref bean="KS-CourseOfferingManagement-CourseOfferingActionSection"/>
             </list>
         </property>
     </bean>
@@ -43,11 +42,8 @@
         <property name="disclosure.render" value="false"/>
         <property name="items">
             <list>
-                <bean parent="Uif-ActionLink" p:clientSideJs="confirmDeletion('This will mark all Activity Offerings in this Subject Code as \&quot;Ready for Scheduling\&quot;')"
-                      p:methodToCall="markSubjectCodeReadyForScheduling"
-                      p:actionLabel="Mark Subject Code Ready for Scheduling" />
-                <bean parent="Uif-Label" p:labelText="Current Course Offerings" p:render="@{!courseOfferingEditWrapperList.empty}"/>
-                <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Create Course Offering" p:methodToCall="createCourseOffering" p:render="@{!courseOfferingEditWrapperList.empty}"/>
+                <bean parent="Uif-Label" p:labelText="Current Course Offerings" p:render="@{!courseOfferingList.empty}"/>
+                <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Create Course Offering" p:methodToCall="createCourseOffering" p:render="@{!courseOfferingList.empty}"/>
                 <ref bean="KS-CourseOfferingManagement-CourseOfferingListSection"/>
                 <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Create Course Offering" p:methodToCall="createCourseOffering"/>
             </list>
@@ -56,8 +52,8 @@
 
     <bean id="KS-CourseOfferingManagement-CourseOfferingListSection" parent="Uif-TableCollectionSection"
           p:layoutManager.numberOfColumns="3"  p:renderAddLine="false">
-        <property name="collectionObjectClass" value="org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper" />
-        <property name="propertyName" value="courseOfferingEditWrapperList" />
+        <property name="collectionObjectClass" value="org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo" />
+        <property name="propertyName" value="courseOfferingList" />
         <property name="collectionLookup.quickfinderAction.render" value="false" />
         <property name="layoutManager.renderSequenceField" value="false" />
         <property name="layoutManager.applyDefaultCellWidths" value="true" />
@@ -65,28 +61,23 @@
         <property name="layoutManager.richTable.templateOptions">
             <map merge="true">
                 <entry key="sDom" value="rtip"/>
-                <entry key="aaSorting" value="[[ 1, 'asc' ]]"/>
+                <entry key="aaSorting" value="[[ 0, 'asc' ]]"/>
                 <entry key="bPaginate" value="false"/>
             </map>
         </property>
         <property name="items">
             <list>
-                <bean parent="Uif-InputField" p:propertyName="isChecked" p:required="false">
-                    <property name="control">
-                        <bean parent="Uif-CheckboxControl" p:disabled="false"/>
-                    </property>
-                </bean>
-                <bean parent="Uif-DataField" p:propertyName="coInfo.courseOfferingCode">
+                <bean parent="Uif-DataField" p:propertyName="courseOfferingCode">
                     <property name="inquiry">
-                        <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper" p:inquiryParameters="coInfo.id" />
+                        <bean parent="Uif-Inquiry" p:dataObjectClassName="org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper" p:inquiryParameters="id" />
                     </property>
                 </bean>
                 <bean parent="Uif-DataField"
                       p:label="TITLE"
-                      p:propertyName="coInfo.courseOfferingTitle"/>
+                      p:propertyName="courseOfferingTitle"/>
                 <bean parent="Uif-DataField"
                       p:label="CREDITS"
-                      p:propertyName="coInfo.creditCnt"/>
+                      p:propertyName="creditCnt"/>
                 <bean parent="Uif-DataField"
                       p:label="GRADING"
                       p:propertyName="gradingOption"/>
@@ -102,30 +93,8 @@
             <list>
                 <bean parent="KS-SubmitActionLink" p:methodToCall="loadAOs" p:actionLabel="Manage" />
                 <bean parent="KS-SubmitActionLink" p:methodToCall="edit" p:actionLabel="Edit  " />
-                <bean parent="KS-SubmitActionLink" p:methodToCall="deleteCoConfirmation" p:actionLabel="Delete" p:render = "@{#line.isLegalToDelete()}" />
+                <bean parent="KS-SubmitActionLink" p:clientSideJs="confirmDeletion('Are you sure you want to delete the holiday calendar?')" p:methodToCall="delete" p:actionLabel="Delete" />
             </list>
-        </property>
-    </bean>
-
-    <bean id="KS-CourseOfferingManagement-CourseOfferingActionSection" parent="Uif-VerticalBoxSection">
-        <property name="items">
-        <list>
-            <bean parent="Uif-HorizontalBoxSection">
-                <property name="items">
-                    <list>
-                        <bean parent="Uif-InputField" p:propertyName="selectedOfferingAction" p:label="Selected Course Offering Actions" p:labelPlacement="TOP">
-                            <property name="control">
-                                <bean parent="Uif-DropdownControl"/>
-                            </property>
-                            <property name="optionsFinder">
-                                <bean class="org.kuali.student.enrollment.class2.courseoffering.keyvalue.CourseOfferingActionsKeyValues"/>
-                            </property>
-                        </bean>
-                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Go" p:methodToCall="selectedCOActions"/>
-                    </list>
-                </property>
-            </bean>
-        </list>
         </property>
     </bean>
 

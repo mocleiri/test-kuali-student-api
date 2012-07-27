@@ -26,19 +26,13 @@ import org.kuali.student.enrollment.courseoffering.dto.OfferingInstructorInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.lum.course.service.CourseService;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.common.util.constants.LprServiceConstants;
 import org.kuali.student.r2.core.state.dto.StateInfo;
 import org.kuali.student.r2.core.state.service.StateService;
 import org.kuali.student.r2.core.type.dto.TypeInfo;
 import org.kuali.student.r2.core.type.service.TypeService;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class ActivityOfferingMaintainableImpl extends MaintainableImpl implements ActivityOfferingMaintainable {
 
@@ -47,7 +41,7 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
     private transient TypeService typeService;
     private transient StateService stateService;
     private transient CourseService courseService;
-    private transient AcademicCalendarService academicCalendarService;
+    private AcademicCalendarService academicCalendarService;
 
     @Override
     public void saveDataObject() {
@@ -98,17 +92,7 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
             }
             wrapper.setTermDisplayString(getTermDisplayString(info.getTermId(), term));
 
-            wrapper.setCourseOfferingCode(info.getCourseOfferingCode());
-            wrapper.setCourseOfferingTitle(info.getCourseOfferingTitle());
-
-            String sCredits = courseOfferingInfo.getCreditCnt();
-            if (sCredits == null) {
-                sCredits = "0";
-            }
-            wrapper.setCredits(sCredits);
-            //wrapper.setAbbreviatedActivityCode(info.getActivityCode().toUpperCase().substring(0,3));
-            wrapper.setActivityCode(info.getActivityCode());
-            wrapper.setAbbreviatedCourseType(getTypeService().getType(info.getTypeKey(), getContextInfo()).getName().toUpperCase().substring(0,3));
+            wrapper.setCodeTypeString(getCodeTypeString(info));
 
             //process instructor effort
             assembleInstructorWrapper(info.getInstructors(), wrapper);
@@ -131,13 +115,13 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
         }
     }
 
-//    private String getCodeTypeString(ActivityOfferingInfo info) throws Exception {
-//        String codeTypeString = "GHI(LEC)";
-//        TypeInfo typeInfo = getTypeService().getType(info.getTypeKey(), getContextInfo());
-//        String typeName = typeInfo.getName().toUpperCase().substring(0,3);
-//        codeTypeString = info.getActivityCode() + "(" + typeName + ")";
-//        return codeTypeString;
-//    }
+    private String getCodeTypeString(ActivityOfferingInfo info) throws Exception {
+        String codeTypeString = "GHI(LEC)";
+        TypeInfo typeInfo = getTypeService().getType(info.getTypeKey(), getContextInfo());
+        String typeName = typeInfo.getName().toUpperCase().substring(0,3);
+        codeTypeString = info.getActivityCode() + "(" + typeName + ")";
+        return codeTypeString;
+    }
 
     private String getTermDisplayString(String termId, TermInfo term) {
         // Return Term as String display like 'FALL 2020 (9/26/2020-12/26/2020)'
@@ -181,17 +165,6 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
         if(!StringUtils.isBlank(instructor.getsEffort())){
             instructorInfo.setPercentageEffort(new Float(instructor.getsEffort()));
         }
-
-
-        if(StringUtils.isBlank(instructorInfo.getStateKey())) {
-            try {
-                StateInfo state = getStateService().getState(LprServiceConstants.TENTATIVE_STATE_KEY, getContextInfo());
-                instructorInfo.setStateKey(state.getKey());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         return instructorInfo;
     }
 
@@ -237,19 +210,8 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
                 scheduleComponentWrapper.setRoomFeatures(resources.toString());
             }
         }
-        else if(addLine instanceof OfferingInstructorWrapper) {
-            // set the person name if it's null, in the case of user-input personell id
-            OfferingInstructorWrapper instructor = (OfferingInstructorWrapper) addLine;
-            if (instructor.getOfferingInstructorInfo().getPersonName() == null && instructor.getOfferingInstructorInfo().getPersonId() != null) {
-                List<Person> personList = ViewHelperUtil.getInstructorByPersonId(instructor.getOfferingInstructorInfo().getPersonId());
-                if (personList.size() == 1) {
-                    instructor.getOfferingInstructorInfo().setPersonName(personList.get(0).getName());
-                }
-            }
-        }
     }
 
-    @Override
     protected boolean performAddLineValidation(View view, CollectionGroup collectionGroup, Object model, Object addLine) {
         if (addLine instanceof OfferingInstructorWrapper){
             OfferingInstructorWrapper instructor = (OfferingInstructorWrapper) addLine;
@@ -278,7 +240,6 @@ public class ActivityOfferingMaintainableImpl extends MaintainableImpl implement
         return super.performAddLineValidation(view, collectionGroup, model, addLine);
     }
 
-    @Override
     protected void processBeforeAddLine(View view, CollectionGroup collectionGroup, Object model, Object addLine) {
         if (addLine instanceof OfferingInstructorWrapper){
             OfferingInstructorWrapper instructor = (OfferingInstructorWrapper) addLine;

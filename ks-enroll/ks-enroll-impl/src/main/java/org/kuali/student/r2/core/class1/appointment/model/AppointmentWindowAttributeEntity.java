@@ -33,14 +33,28 @@ import javax.persistence.Table;
 @Table(name = "KSEN_APPT_WINDOW_ATTR")
 public class AppointmentWindowAttributeEntity  extends BaseAttributeEntity<AppointmentWindowEntity> {
 
-	public AppointmentWindowAttributeEntity() {
-		super();
-	}
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private AppointmentWindowEntity owner;
 
-	public AppointmentWindowAttributeEntity(Attribute att,
-			AppointmentWindowEntity owner) {
-		super(att, owner);
-	}
+    public AppointmentWindowAttributeEntity() {
+    }
 
-    
+    public AppointmentWindowAttributeEntity(String key, String value) {
+        super(key, value);
+    }
+
+    public AppointmentWindowAttributeEntity(Attribute att, AppointmentWindowEntity owner) {
+        super(att);
+        setOwner(owner);
+    }
+
+    public void setOwner(AppointmentWindowEntity owner) {
+        this.owner = owner;
+
+    }
+
+    public AppointmentWindowEntity getOwner() {
+        return owner;
+    }
 }

@@ -30,14 +30,27 @@ import javax.persistence.Table;
 @Table(name = "KSEN_LRC_RVG_ATTR")
 public class ResultValuesGroupAttributeEntity extends BaseAttributeEntity<ResultValuesGroupEntity> {
 
-	public ResultValuesGroupAttributeEntity() {
-		super();
-	}
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private ResultValuesGroupEntity owner;
 
-	public ResultValuesGroupAttributeEntity(Attribute att,
-			ResultValuesGroupEntity owner) {
-		super(att, owner);
-	}
+    public ResultValuesGroupAttributeEntity() {}
 
-   
+    public ResultValuesGroupAttributeEntity(String key, String value) {
+        super(key, value);
+    }
+
+    public ResultValuesGroupAttributeEntity(Attribute att) {
+        super(att);
+    }
+
+    @Override
+    public void setOwner(ResultValuesGroupEntity owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public ResultValuesGroupEntity getOwner() {
+        return owner;
+    }
 }

@@ -25,8 +25,12 @@ import org.kuali.student.r2.common.util.RichTextHelper;
 import org.kuali.student.r2.core.population.dto.PopulationRuleInfo;
 import org.kuali.student.r2.core.population.infc.PopulationRule;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -72,26 +76,9 @@ public class PopulationRuleEntity extends MetaEntity implements AttributeOwner<P
     @Column(name = "SUPPORTS_GET_MBR_IND")
     private Boolean supportsGetMembersIndicator;
 
-    @ElementCollection
-    @CollectionTable(
-            name="KSEN_POPULATION_RULE_AGENDA",
-            joinColumns=@JoinColumn(name="POPULATION_RULE_ID")
-    )
-    @Column(name="AGENDA_ID")
-    private Set<String> agendaIds;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.EAGER)
     private final Set<PopulationRuleAttributeEntity> attributes = new HashSet<PopulationRuleAttributeEntity>();
 
-    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "KSEN_POPULATION_RULE_CHILD_POP",
-            joinColumns = {
-                    @JoinColumn(name="POPULATION_RULE_ID", referencedColumnName = "ID")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name="CHILD_POPULATION_ID", referencedColumnName = "ID")
-            })
-    private Set<PopulationEntity> childPopulations = new HashSet<PopulationEntity>();
     //////////////////////////
     // CONSTRUCTORS ETC.
     //////////////////////////
@@ -108,8 +95,6 @@ public class PopulationRuleEntity extends MetaEntity implements AttributeOwner<P
     }
 
     public void fromDTO(PopulationRule infc) {
-        // Note: Child populations must be set externally because infc only population IDS, not
-        //       PopulationInfo or PopulationEntity (which it wouldn't store anyway).
         this.setPopulationRuleState(infc.getStateKey());
         this.setName(infc.getName());
         if (infc.getDescr() != null) {
@@ -122,10 +107,6 @@ public class PopulationRuleEntity extends MetaEntity implements AttributeOwner<P
         this.setRefPopulationId(infc.getReferencePopulationId());
         this.setVariesByTimeIndicator(infc.getVariesByTime());
         this.setSupportsGetMembersIndicator(infc.getSupportsGetMembers());
-
-        this.agendaIds = new HashSet<String>(infc.getAgendaIds().size());
-        this.agendaIds.addAll(infc.getAgendaIds());
-
         this.attributes.clear();
         for (Attribute att : infc.getAttributes()) {
             this.attributes.add(new PopulationRuleAttributeEntity(att, this));
@@ -139,17 +120,12 @@ public class PopulationRuleEntity extends MetaEntity implements AttributeOwner<P
         PopulationRuleInfo populationRuleInfo = new PopulationRuleInfo();
         populationRuleInfo.setMeta(super.toDTO());
         populationRuleInfo.setId(getId());
-        populationRuleInfo.setName(getName());
         populationRuleInfo.setTypeKey(populationRuleType);
         populationRuleInfo.setStateKey(populationRuleState);
         populationRuleInfo.setDescr(new RichTextHelper().toRichTextInfo(descrPlain, descrFormatted));
         populationRuleInfo.setReferencePopulationId(refPopulationId);
         populationRuleInfo.setVariesByTime(variesByTimeIndicator);
         populationRuleInfo.setSupportsGetMembers(supportsGetMembersIndicator);
-        populationRuleInfo.getAgendaIds().clear();
-        if(agendaIds!=null){
-            populationRuleInfo.getAgendaIds().addAll(agendaIds);
-        }
         List<AttributeInfo> dtoAttributes = populationRuleInfo.getAttributes();
         dtoAttributes.clear();
         List<AttributeInfo> attributes = populationRuleInfo.getAttributes();
@@ -160,13 +136,7 @@ public class PopulationRuleEntity extends MetaEntity implements AttributeOwner<P
             }
         }
         populationRuleInfo.setAttributes(attributes);
-        List<String> childIds = new ArrayList<String>();
-        if (getChildPopulations() != null) {
-            for (PopulationEntity popEnt: getChildPopulations()) {
-                childIds.add(popEnt.getId());
-            }
-        }
-        populationRuleInfo.setChildPopulationIds(childIds);
+
         return populationRuleInfo;
     }
 
@@ -236,14 +206,6 @@ public class PopulationRuleEntity extends MetaEntity implements AttributeOwner<P
 
     public void setSupportsGetMembersIndicator(Boolean supportsGetMembersIndicator) {
         this.supportsGetMembersIndicator = supportsGetMembersIndicator;
-    }
-
-    public Set<PopulationEntity> getChildPopulations() {
-        return childPopulations;
-    }
-
-    public void setChildPopulations(Set<PopulationEntity> childPopulations) {
-        this.childPopulations = childPopulations;
     }
 
     @Override

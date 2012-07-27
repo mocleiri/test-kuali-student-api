@@ -61,7 +61,7 @@ public class TestEnrolledCourseSet {
 
     @Test
     public void testResolve() {
-        EnrolledCourseSetTermResolver termResolver = new EnrolledCourseSetTermResolver();
+        EnrolledCourseSet termResolver = new EnrolledCourseSet();
         termResolver.setCourseRegistrationService(courseRegistrationService);
         Map<String, Object> resolvedPrereqs = new HashMap<String, Object>();
         Map<String, String> parameters = new HashMap<String, String>();

@@ -33,12 +33,27 @@ import javax.persistence.Table;
 @Table(name = "KSEN_SCHED_TMSLOT_ATTR")
 public class TimeSlotAttributeEntity extends BaseAttributeEntity<TimeSlotEntity> {
 
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private TimeSlotEntity owner;
+
     public TimeSlotAttributeEntity() {
-        super();
+    }
+
+    public TimeSlotAttributeEntity(String key, String value) {
+        super(key, value);
     }
 
     public TimeSlotAttributeEntity(Attribute att, TimeSlotEntity owner) {
-        super(att, owner);
+        super(att);
+        setOwner(owner);
     }
 
+    public TimeSlotEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(TimeSlotEntity owner) {
+        this.owner = owner;
+    }
 }

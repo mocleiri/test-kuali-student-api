@@ -12,15 +12,29 @@ import javax.persistence.Table;
 @Table(name = "KSEN_MSTONE_ATTR")
 public class MilestoneAttributeEntity extends BaseAttributeEntity<MilestoneEntity> {
 
-	public MilestoneAttributeEntity() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    @ManyToOne
+    @JoinColumn(name = "OWNER_ID")
+    private MilestoneEntity owner;
 
-	public MilestoneAttributeEntity(Attribute att, MilestoneEntity owner) {
-		super(att, owner);
-		// TODO Auto-generated constructor stub
-	}
+    public MilestoneAttributeEntity() {}
 
-   
+    public MilestoneAttributeEntity(String key, String value) {
+        super(key, value);
+    }
+
+    public MilestoneAttributeEntity(Attribute att, MilestoneEntity owner) {
+        super(att);
+        setOwner(owner);
+    }
+
+    @Override
+    public void setOwner(MilestoneEntity owner) {
+        this.owner = owner;
+
+    }
+
+    @Override
+    public MilestoneEntity getOwner() {
+        return owner;
+    }
 }

@@ -1,10 +1,8 @@
 package org.kuali.student.enrollment.class2.courseoffering.form;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.krad.web.form.UifFormBase;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingWrapper;
-import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 
 import java.util.ArrayList;
@@ -17,13 +15,14 @@ public class CourseOfferingManagementForm extends UifFormBase {
     private String subjectCode;
     private String radioSelection;
     private String inputCode;
-    private String selectedOfferingAction;
+    private String activityActionType;
+    private List<CourseOfferingInfo> courseOfferingList;
     private CourseOfferingInfo theCourseOffering;
     private String coViewLinkWrapper = "View"; // temp var to hold/store the View Details Link
 
     private List<ActivityOfferingWrapper> activityWrapperList;
     private List<ActivityOfferingWrapper> selectedToDeleteList;
-    private List<CourseOfferingEditWrapper> courseOfferingEditWrapperList;
+
 
     //For Adding Activity
     private String formatIdForNewAO;
@@ -31,15 +30,11 @@ public class CourseOfferingManagementForm extends UifFormBase {
     private String activityIdForNewAO;
     private String noOfActivityOfferings;
 
-    private CourseOfferingInfo previousCourseOffering;
-    private CourseOfferingInfo nextCourseOffering;
-    private String previousCourseOfferingCodeUI;
-    private String nextCourseOfferingCodeUI;
-
     public CourseOfferingManagementForm (){
+        courseOfferingList = new ArrayList<CourseOfferingInfo>();
         activityWrapperList = new ArrayList<ActivityOfferingWrapper>();
         selectedToDeleteList = new ArrayList<ActivityOfferingWrapper>();
-        courseOfferingEditWrapperList = new ArrayList<CourseOfferingEditWrapper>();
+//        haveValidTerm = false;
     }
 
     public String getTermCode(){
@@ -90,14 +85,22 @@ public class CourseOfferingManagementForm extends UifFormBase {
         this.inputCode = inputCode;
     }
 
-    public String getSelectedOfferingAction() {
-        return selectedOfferingAction;
+    public String getActivityActionType() {
+        return activityActionType;
     }
 
-    public void setSelectedOfferingAction(String selectedOfferingAction) {
-        this.selectedOfferingAction = selectedOfferingAction;
+    public void setActivityActionType(String activityActionType) {
+        this.activityActionType = activityActionType;
     }
 
+    public List<CourseOfferingInfo> getCourseOfferingList(){
+        return courseOfferingList;
+    }
+    
+    public void setCourseOfferingList(List<CourseOfferingInfo> courseOfferingList) {
+        this.courseOfferingList = courseOfferingList;
+    }
+    
     public CourseOfferingInfo getTheCourseOffering(){
         return theCourseOffering;
     }
@@ -152,55 +155,5 @@ public class CourseOfferingManagementForm extends UifFormBase {
 
     public void setCoViewLinkWrapper(String coViewLinkWrapper) {
         this.coViewLinkWrapper = coViewLinkWrapper;
-    }
-
-    public List<CourseOfferingEditWrapper> getCourseOfferingEditWrapperList() {
-        return courseOfferingEditWrapperList;
-    }
-
-    public void setCourseOfferingEditWrapperList(List<CourseOfferingEditWrapper> courseOfferingEditWrapperList) {
-        this.courseOfferingEditWrapperList = courseOfferingEditWrapperList;
-    }
-
-    public String getPreviousCourseOfferingCodeUI() {
-        return previousCourseOfferingCodeUI;
-    }
-
-    public void setPreviousCourseOfferingCodeUI(String previousCourseOfferingCodeUI) {
-        this.previousCourseOfferingCodeUI = previousCourseOfferingCodeUI;
-    }
-
-    public String getNextCourseOfferingCodeUI() {
-        return nextCourseOfferingCodeUI;
-    }
-
-    public void setNextCourseOfferingCodeUI(String nextCourseOfferingCodeUI) {
-        this.nextCourseOfferingCodeUI = nextCourseOfferingCodeUI;
-    }
-
-    public CourseOfferingInfo getPreviousCourseOffering() {
-        return previousCourseOffering;
-    }
-
-    public void setPreviousCourseOffering(CourseOfferingInfo previousCourseOffering) {
-        this.previousCourseOffering = previousCourseOffering;
-        if (previousCourseOffering != null){
-            setPreviousCourseOfferingCodeUI(previousCourseOffering.getCourseOfferingCode());
-        }else{
-            setPreviousCourseOfferingCodeUI(StringUtils.EMPTY);
-        }
-    }
-
-    public CourseOfferingInfo getNextCourseOffering() {
-        return nextCourseOffering;
-    }
-
-    public void setNextCourseOffering(CourseOfferingInfo nextCourseOffering) {
-        this.nextCourseOffering = nextCourseOffering;
-        if (nextCourseOffering != null){
-            setNextCourseOfferingCodeUI(nextCourseOffering.getCourseOfferingCode());
-        }else{
-            setNextCourseOfferingCodeUI(StringUtils.EMPTY);
-        }
     }
 }

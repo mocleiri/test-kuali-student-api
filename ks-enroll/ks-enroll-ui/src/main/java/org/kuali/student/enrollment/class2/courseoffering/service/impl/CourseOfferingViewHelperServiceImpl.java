@@ -114,10 +114,10 @@ public class CourseOfferingViewHelperServiceImpl extends ViewHelperServiceImpl i
 //        coInfo.setCourseId("5aa58103-1644-40d8-8d9c-09f64e437b93"); // In the new DB
         coInfo.setCourseOfferingCode("CHEM241");
         coInfo.setCourseNumberSuffix("241");
-        coInfo.setIsEvaluated(Boolean.TRUE);
+        coInfo.setEvaluated(Boolean.TRUE);
         coInfo.setFinalExamType(FinalExam.STANDARD.toString());
         coInfo.setTermId(termId);
-        coInfo.setIsFeeAtActivityOffering(Boolean.FALSE);
+        coInfo.setFeeAtActivityOffering(Boolean.FALSE);
 //        coInfo.setSubjectArea("MATH");
         coInfo.setInstructors(new ArrayList<OfferingInstructorInfo>());
         try {

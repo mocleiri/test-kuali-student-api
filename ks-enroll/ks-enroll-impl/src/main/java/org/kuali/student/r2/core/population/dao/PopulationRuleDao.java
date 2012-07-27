@@ -17,10 +17,7 @@
 package org.kuali.student.r2.core.population.dao;
 
 import org.kuali.student.enrollment.dao.GenericEntityDao;
-import org.kuali.student.r2.core.population.model.PopulationEntity;
 import org.kuali.student.r2.core.population.model.PopulationRuleEntity;
-
-import java.util.List;
 
 /**
  * This class //TODO ...
@@ -28,10 +25,4 @@ import java.util.List;
  * @author Kuali Student Team
  */
 public class PopulationRuleDao extends GenericEntityDao<PopulationRuleEntity> {
-    public List<String> getPopulationRuleIdsByType(String populationRuleType) {
-        String query = "SELECT entity.id FROM PopulationRuleEntity entity WHERE entity.populationRuleType = :popRuleType";
-        return em.createQuery(query)
-                .setParameter("popRuleType", populationRuleType).getResultList();
-    }
-
 }

@@ -136,7 +136,7 @@ public class KSTermResolverTypeService implements TermResolverTypeService {
 			resolver.setCourseRegistrationService(courseRegistrationService);
 			return resolver;
 		}else if (termResolverDefinition.getName().equals(KSKRMSConstants.TERM_SPEC_ENROLLED_SET)) {
-			EnrolledCourseSetTermResolver resolver = new EnrolledCourseSetTermResolver();
+			EnrolledCourseSet resolver = new EnrolledCourseSet();
 			resolver.setCourseRegistrationService(courseRegistrationService);
 			return resolver;
 		}else if (termResolverDefinition.getName().equals(KSKRMSConstants.TERM_SPEC_ENROLLED_COURSES)) {

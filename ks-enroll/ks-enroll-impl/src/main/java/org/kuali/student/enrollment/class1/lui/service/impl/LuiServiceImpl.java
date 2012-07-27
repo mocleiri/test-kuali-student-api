@@ -246,9 +246,10 @@ public class LuiServiceImpl
         entity.setAtpId(atpId);
         entity.setCluId(cluId);
         entity.setLuiType(luiTypeKey);
-        
-        entity.setEntityCreated(context);
-        
+        entity.setCreateId(context.getPrincipalId());
+        entity.setCreateTime(context.getCurrentDate());
+        entity.setUpdateId(context.getPrincipalId());
+        entity.setUpdateTime(context.getCurrentDate());
         if(entity.getIdentifiers() != null){
             for(LuiIdentifierEntity ident:entity.getIdentifiers()){
                 ident.setCreateId(context.getPrincipalId());
@@ -298,9 +299,8 @@ public class LuiServiceImpl
         }
 
         //Update any Meta information
-       
-        entity.setEntityUpdated(context);
-        
+        entity.setUpdateId(context.getPrincipalId());
+        entity.setUpdateTime(context.getCurrentDate());
 
         if(entity.getIdentifiers() != null){
             for(LuiIdentifierEntity ident:entity.getIdentifiers()){
@@ -590,9 +590,10 @@ public class LuiServiceImpl
         }
 
         entity.setLuiLuiRelationType(luiLuiRelationTypeKey);
-        
-        entity.setEntityCreated(context);
-        
+        entity.setCreateId(context.getPrincipalId());
+        entity.setCreateTime(context.getCurrentDate());
+        entity.setUpdateId(context.getPrincipalId());
+        entity.setUpdateTime(context.getCurrentDate());
         luiLuiRelationDao.persist(entity);
 
         return entity.toDto();
@@ -621,9 +622,8 @@ public class LuiServiceImpl
 
         //Transform the DTO to the entity
         List<Object> orphans = entity.fromDto(luiLuiRelationInfo);
-        
-        entity.setEntityUpdated(context);
-        
+        entity.setUpdateId(context.getPrincipalId());
+        entity.setUpdateTime(context.getCurrentDate());
 
         luiLuiRelationDao.merge(entity);
 

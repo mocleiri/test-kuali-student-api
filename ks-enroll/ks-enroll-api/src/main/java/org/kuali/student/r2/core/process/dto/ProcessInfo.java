@@ -1,16 +1,15 @@
 /*
- * Copyright 2011 The Kuali Foundation 
- *
- * Licensed under the Educational Community License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
+ * Copyright 2011 The Kuali Foundation Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
  *
  * http://www.osedu.org/licenses/ECL-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied. See the License for the specific language governing
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -35,13 +34,8 @@ import org.w3c.dom.Element;
                 "name", "descr", "ownerOrgId", "meta", "attributes",
                 "_futureElements" })
 
-public class ProcessInfo 
-    extends KeyEntityInfo 
+public class ProcessInfo extends KeyEntityInfo 
     implements Process, Serializable {
-
-    ////////////////////
-    // DATA FIELDS
-    ////////////////////
 
     private static final long serialVersionUID = 1L;
     
@@ -50,10 +44,7 @@ public class ProcessInfo
 
     @XmlAnyElement
     private List<Element> _futureElements;
-
-    //////////////////////////
-    // CONSTRUCTORS ETC.
-    //////////////////////////
+    
 
     /**
      * Constructs a new ProcessInfo.
@@ -68,14 +59,11 @@ public class ProcessInfo
      */
     public ProcessInfo(Process process) {
         super(process);
+
         if (process != null) {
             this.ownerOrgId = process.getOwnerOrgId();
         }
     }
-
-    ///////////////////////////
-    // GETTERS AND SETTERS
-    ///////////////////////////
 
     @Override
     public String getOwnerOrgId() {
@@ -84,18 +72,5 @@ public class ProcessInfo
 
     public void setOwnerOrgId(String ownerOrgId) {
         this.ownerOrgId = ownerOrgId;
-    }
-
-    ///////////////////////
-    // FUNCTIONALS
-    ///////////////////////
-
-
-    @Override
-    public String toString() {
-        return "ProcessInfo{" +
-                "ownerOrgId='" + ownerOrgId + '\'' +
-                ", _futureElements=" + _futureElements +
-                '}';
     }
 }
