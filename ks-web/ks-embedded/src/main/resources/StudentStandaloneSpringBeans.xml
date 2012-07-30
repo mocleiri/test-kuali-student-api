@@ -49,7 +49,8 @@
                 <value>classpath:ks-SocRolloverResultInfo-dictionary.xml</value>
                 <value>classpath:ks-SocRolloverResultItemInfo-dictionary.xml</value>
                 <value>classpath:ks-TermInfo-dictionary.xml</value>
-
+                <value>classpath:ks-PopulationInfo-dictionary.xml</value>
+                <value>classpath:ks-PopulationRuleInfo-dictionary.xml</value>
 
                 <!--
 				<value>classpath:AcademicCalendarInfoUI.xml</value>
@@ -83,9 +84,6 @@
                 <value>classpath:org/kuali/student/enrollment/acal/AcademicCalendarEditPage.xml</value>
                 <value>classpath:org/kuali/student/enrollment/acal/AcademicTermPage.xml</value>
                 <value>classpath:org/kuali/student/enrollment/acal/AcademicTermLookupView.xml</value>
-                <value>classpath:org/kuali/student/enrollment/courseoffering/ActivityOfferingMaintenanceDocument.xml</value>
-                <value>classpath:org/kuali/student/enrollment/courseoffering/EnrollmentFeeMaintenanceDocument.xml</value>
-
 
                 <!-- Appointments -->
                 <value>classpath:org/kuali/student/enrollment/appointment/RegistrationWindowsEditPage.xml</value>
@@ -96,23 +94,45 @@
 
                 <!-- Course Offering -->
                 <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingRolloverManagementView.xml</value>
-                <value>classpath:org/kuali/student/enrollment/courseoffering/ActivityOfferingLookupAndInquiryView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/ActivityOfferingInfoLookupAndInquiryView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingInfoLookupAndInquiryView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/KSPersonMaintenance.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/SocRolloverResultInfoLookpAndInquiryView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/SocRolloverResultItemInfoLookupAndInquiryView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/FormatOfferingInfoLookupAndInquiryView.xml</value>
-                <value>classpath:org/kuali/student/enrollment/courseoffering/EnrollmentFeeLookupView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/EnrollmentFeeInfoLookupAndInquiryView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/EnrollmentFeeInfoMaintenanceDocument.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/RolloverResultsPageView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/FormatOfferingInfoMaintenanceView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingManagementView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingManagement-SearchInputPage.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingManagement-ManageCourseOfferingsPage.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingManagement-ManageActivityOfferingsPage.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/SelectedAoDeleteConfirmationPage.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/CoDeleteConfirmationPage.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/PersonnelLookupView.xml</value>
-
+                <value>classpath:org/kuali/student/enrollment/courseoffering/CourseInfoLookupView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingEditMaintenanceView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/ActivityOfferingMaintenanceDocument.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingCreateMaintenanceView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/OrganizationInfoLookupView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/DeleteTargetTermView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingRolloverManagement-SelectTermPage.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/CourseOfferingRolloverManagement-ReleaseToDeptsPage.xml</value>
+                <value>classpath:org/kuali/student/enrollment/courseoffering/ActivityOfferingWrapperLookupAndInquiryView.xml</value>
 
+                <!-- Population -->
+                <value>classpath:org/kuali/student/enrollment/population/PopulationWrapperMaintenanceDocument.xml</value>
+                <value>classpath:org/kuali/student/enrollment/population/PopulationWrapperLookupAndInquiryView.xml</value>
+
+                <!-- Holds -->
+                <value>classpath:org/kuali/student/enrollment/hold/HoldIssueInfoSearchView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/hold/HoldIssueInfoCreateView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/hold/HoldIssueInfoModifyView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/hold/HoldIssueInfoView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/hold/ProcessInfoSearchView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/hold/ProcessInfoCreateView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/hold/ProcessInfoView.xml</value>
             </list>
 		</property>
 		<property name="packagePrefixes">

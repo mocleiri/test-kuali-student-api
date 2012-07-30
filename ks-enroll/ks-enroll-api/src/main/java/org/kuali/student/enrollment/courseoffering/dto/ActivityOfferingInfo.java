@@ -73,16 +73,16 @@ public class ActivityOfferingInfo
 
     @XmlElement
     private String activityCode;   
-    
+
     @XmlElement
     private String scheduleId;
 
     @XmlElement
     private Boolean isHonorsOffering;
-    
+
     @XmlElement
     private List<String> gradingOptionKeys;
-       
+
     @XmlElement
     private List<OfferingInstructorInfo> instructors;
 

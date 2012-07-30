@@ -54,7 +54,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @WebService(name = "AppointmentWindowService", serviceName = "AppointmentWindowService", portName = "AppointmentWindowService", targetNamespace = "http://student.kuali.org/wsdl/appointmentwindow")
 public class AppointmentServiceImpl implements AppointmentService {
-    // Note: add getters/setters to instance variables otherwise, can't dependency inject!!!!
     @Resource
     private AppointmentWindowDao appointmentWindowDao;
     @Resource
@@ -185,7 +184,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         List<AppointmentSlotInfo> slotInfoList = getAppointmentSlotsByWindow(appointmentWindowId, contextInfo);
         statusInfo = new StatusInfo();
         // Get the population
-        List<String> studentIds = populationService.getMembersAsOfDate(populationId, contextInfo.getCurrentDate(), contextInfo);
+        List<String> studentIds = populationService.getMembersAsOfDate(populationId, new Date(), contextInfo);
         // Set the status to true here--gives the _generateAppointments method a chance to set it to
         // false, which should only happen in the max allocation
         statusInfo.setSuccess(true);
@@ -258,7 +257,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (null != apptWin) {
             helper.deleteAppointmentsByWindow(apptWin, false); // don't delete the slots
         } else {
-            throw new DoesNotExistException(apptWin.getId());
+            throw new DoesNotExistException(appointmentWindowId);
         }
         return status;
     }
@@ -450,10 +449,11 @@ public class AppointmentServiceImpl implements AppointmentService {
             helper.deleteAppointmentSlotsByWindowCascading(apptWin);
         }
         // if statement between the three supported cases
-        if (apptWin.getApptWindowType().equals(AppointmentServiceConstants.APPOINTMENT_WINDOW_TYPE_ONE_SLOT_KEY)) {
+        String apptWinType = apptWin.getApptWindowType();
+        if (AppointmentServiceConstants.APPOINTMENT_WINDOW_TYPE_ONE_SLOT_KEY.equals(apptWinType)) {
             slotList = helper.createOneSlotPerWindow(apptWin, contextInfo);
-        } else if (apptWin.getApptWindowType().equals(AppointmentServiceConstants.APPOINTMENT_WINDOW_TYPE_SLOTTED_MAX_KEY) ||
-                   apptWin.getApptWindowType().equals(AppointmentServiceConstants.APPOINTMENT_WINDOW_TYPE_SLOTTED_UNIFORM_KEY)) {
+        } else if (AppointmentServiceConstants.APPOINTMENT_WINDOW_TYPE_SLOTTED_MAX_KEY.equals(apptWinType) ||
+                   AppointmentServiceConstants.APPOINTMENT_WINDOW_TYPE_SLOTTED_UNIFORM_KEY.equals(apptWinType)) {
             AppointmentSlotRuleInfo slotRule = apptWinInfo.getSlotRule();
             if (slotRule == null) {
                 throw new MissingParameterException("Missing slot rule");
@@ -467,6 +467,17 @@ public class AppointmentServiceImpl implements AppointmentService {
                 throw new InvalidParameterException("Start time should be 1 AM or after");
             } else if (slotRule.getEndTimeOfDay().getMilliSeconds() < 1L * MINUTES_IN_HOUR * MILLIS_IN_MINUTE) {
                 throw new InvalidParameterException("End time should be 1 AM or after");
+            }
+
+            if (AppointmentServiceConstants.APPOINTMENT_WINDOW_TYPE_SLOTTED_MAX_KEY.equals(apptWinType)){
+                if(apptWin.getMaxAppointmentsPerSlot() == null){
+                    // Handle null case
+                    throw new InvalidParameterException("Null max. Max appointment slot allocation require positive max value");
+                }else if(apptWin.getMaxAppointmentsPerSlot() <= 0){
+                    // Handle 0 or negative error case
+                    int maxAppts = apptWin.getMaxAppointmentsPerSlot();
+                    throw new InvalidParameterException("Invalid max: " + maxAppts + ". Max appointment slot allocation require positive max value");
+                }
             }
 
             Object [] result = helper.createMultiSlots(apptWinInfo, contextInfo);

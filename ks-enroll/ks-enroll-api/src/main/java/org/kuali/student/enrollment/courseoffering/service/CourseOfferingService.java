@@ -17,6 +17,7 @@
 package org.kuali.student.enrollment.courseoffering.service;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.courseoffering.dto.*;
 
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -1589,4 +1590,5 @@ public interface CourseOfferingService extends CourseOfferingServiceBusinessLogi
      * @throws PermissionDeniedException
      */
     public List<String> searchForSeatpoolDefinitionIds(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "context") ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+
 }

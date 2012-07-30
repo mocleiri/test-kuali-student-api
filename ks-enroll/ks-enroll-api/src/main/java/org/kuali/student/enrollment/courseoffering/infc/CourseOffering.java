@@ -26,7 +26,7 @@ import java.util.List;
  * @author Kamal
  */
 
-public interface CourseOffering extends IdNamelessEntity{
+public interface CourseOffering extends IdNamelessEntity {
 
     /**
      * A unique identifier assigned to all approved courses that exist
@@ -71,7 +71,30 @@ public interface CourseOffering extends IdNamelessEntity{
      * it is not not directly updatable but rather is calculated from it's two
      * constituent parts, the subject area and the course number suffix. For
      * example: Subject Area = "ENG" and Suffix = "101" then code = "ENG101"
-     * 
+     *
+     * This field is differentiated from the Couurse Offering Code in
+     * that the Course Offering Code can updated while the Course Code
+     * always indicates the official canonical code.
+     *
+     * @name Course Code
+     * @readOnly
+     * @impl this is a read only copy of the official canonical course code
+     */
+    public String getCourseCode();
+
+    /**
+     * Identifies the number of a course as reflected in the course catalog.
+     * This typically must be unique across all courses offered during that
+     * term. If the user wants to create two separate offerings for the same
+     * course they must modify this code to make it unique. For example: An
+     * on-line offering of the course might have an "O" appended to it to
+     * distinguish it from the face to face offering, i.e. ENG101 and ENG101O
+     * Initially copied from the course catalog but then, depending on the
+     * configuration it may be updatable. Often this field is configured so that
+     * it is not not directly updatable but rather is calculated from it's two
+     * constituent parts, the subject area and the course number suffix. For
+     * example: Subject Area = "ENG" and Suffix = "101" then code = "ENG101"
+     *
      * @name Course Offering Code
      * @impl initialially this is copied from the course catalog code but then
      *       is subsequently stored in the lui as lui.officialIdentifier.code
@@ -187,7 +210,7 @@ public interface CourseOffering extends IdNamelessEntity{
      * @name: registration Grading Option Ids
      * @impl Lui.resultOptionIds of type ???
      */
-    public List<String> getRegistrationGradingOptionIds();
+    public List<String> getStudentRegistrationGradingOptions();
 
     /**
      * A display string for the credit option.
@@ -204,7 +227,7 @@ public interface CourseOffering extends IdNamelessEntity{
      * because the canonical has more than one! Often it is just a fixed single
      * value but a ResultValuesGroup could contain a range (with increments) or
      * even a discrete list of possible credit values.
-     * 
+     *
      * @name Credit Option Id
      * @impl Lui.resultOptionIds returns a list of resultOptions. Filter option
      *       with credit type and that should give the resultValueGroup.
@@ -364,4 +387,22 @@ public interface CourseOffering extends IdNamelessEntity{
      * @name Course Offering URL
      */
     public String getCourseOfferingURL();
+
+    /**
+     * Gets the Credit Count
+     *
+     * @name Credit Count
+     * @readOnly
+     * @impl this is the number of credits
+     */
+    public String getCreditCnt();
+
+    /**
+     * Gets the Grading Name
+     *
+     * @name Grading
+     * @readOnly
+     * @impl this is the grading name - last word in gradingOptionId
+     */
+    public String getGradingOption();
 }

@@ -55,7 +55,7 @@
     </bean>
 
     <!-- Appointment Window Edit Section -->
-    <bean id="KS-RegistrationWindows-EditSection" parent="Uif-Page" p:disclosure.render="false" p:style="min-width:70em;"
+    <bean id="KS-RegistrationWindows-EditSection" parent="Uif-VerticalBoxSection" p:disclosure.render="false" p:style="min-width:70em;"
             p:headerText="Registration Windows">
         <property name="items">
             <list>
@@ -101,7 +101,7 @@
 
     <!-- This is a collection of AppointmentWindows -->
     <bean id="KS-RegistrationWindows-AddWindowsSection" parent="Uif-Disclosure-TableCollectionSection"
-          p:layoutManager.numberOfColumns="12" p:progressiveRender="showAddWindows"
+          p:layoutManager.numberOfColumns="12" p:render="@{showAddWindows}"
             p:headerText="Add Windows" p:collectionObjectClass="org.kuali.student.enrollment.class2.appointment.dto.AppointmentWindowWrapper"
             p:propertyName="appointmentWindows" p:layoutManager.renderSequenceField="false"
             p:layoutManager.generateAutoSequence="false"
@@ -164,11 +164,11 @@
                         <bean parent="Uif-TextControl" p:size="16" />
                     </property>
                     <!--<property name="quickfinder.render" value="true"/>-->
-                    <property name="quickfinder.dataObjectClassName" value="org.kuali.student.enrollment.class2.appointment.dto.StudentGroupWrapper" />
+                    <property name="quickfinder.dataObjectClassName" value="org.kuali.student.enrollment.class2.population.dto.PopulationWrapper" />
                     <property name="quickfinder.fieldConversions">
                         <map>
-                            <entry key="name" value="assignedPopulationName" />
-                            <entry key="id" value="appointmentWindowInfo.assignedPopulationId" />
+                            <entry key="populationInfo.name" value="assignedPopulationName" />
+                            <entry key="populationInfo.id" value="appointmentWindowInfo.assignedPopulationId" />
                         </map>
                     </property>
                     <!--<property name="suggest.render" value="true" />-->
@@ -306,7 +306,7 @@
     </bean>
 
 
-    <!--<bean id="KS-RegistrationAppointments-EditSection" parent="Uif-Page" p:disclosure.render="false" p:style="min-width:70em;" >-->
+    <!--<bean id="KS-RegistrationAppointments-EditSection" parent="Uif-VerticalBoxSection" p:disclosure.render="false" p:style="min-width:70em;" >-->
         <!--<property name="headerText" value="Registration Appointments" />-->
         <!--<property name="items">-->
             <!--<list>-->

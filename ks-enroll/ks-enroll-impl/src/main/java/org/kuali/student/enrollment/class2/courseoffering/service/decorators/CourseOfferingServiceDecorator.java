@@ -3,6 +3,7 @@ package org.kuali.student.enrollment.class2.courseoffering.service.decorators;
 import java.util.List;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.courseoffering.dto.*;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -477,6 +478,7 @@ public class CourseOfferingServiceDecorator implements CourseOfferingService {
         return getNextDecorator().getValidCanonicalCourseToCourseOfferingOptionKeys(context);
     }
 
+
 	@Override
 	public StatusInfo addSeatPoolDefinitionToActivityOffering(
 			String seatPoolDefinitionId, String activityOfferingId,
@@ -485,7 +487,7 @@ public class CourseOfferingServiceDecorator implements CourseOfferingService {
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
 		return getNextDecorator().addSeatPoolDefinitionToActivityOffering(seatPoolDefinitionId, activityOfferingId, contextInfo);
-				
+
 	}
 
 	@Override
@@ -504,7 +506,7 @@ public class CourseOfferingServiceDecorator implements CourseOfferingService {
 			OperationFailedException, PermissionDeniedException
 			 {
 		return getNextDecorator().deleteActivityOfferingCascaded(activityOfferingId, context);
-	} 
-    
-    
+	}
+
+
 }
