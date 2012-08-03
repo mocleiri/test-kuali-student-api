@@ -96,10 +96,10 @@
         <property name="items">
             <list>
                 <bean parent="Uif-ActionLink" p:methodToCall="createFromCatalog" p:style="font-weight:bold;" p:actionLabel="Create from Catalog" p:render="@{#showCatalogLink}"/>
-                <bean parent="Uif-MessageField" p:messageText="Create from Catalog" p:style="font-weight:bold;" p:render="@{!#showCatalogLink}"/>
-                <bean parent="Uif-MessageField" p:messageText="  |  " p:style="font-weight:bold;"/>
+                <bean parent="Uif-Message" p:messageText="Create from Catalog" p:style="font-weight:bold;" p:render="@{!#showCatalogLink}"/>
+                <bean parent="Uif-Message" p:messageText="  |  " p:style="font-weight:bold;"/>
                 <bean parent="Uif-ActionLink" p:methodToCall="createFromTermOffering" p:style="font-weight:bold;" p:actionLabel="Create from Term Offering (@{#noOfTermOfferings})" p:render="@{#showTermOfferingLink}"/>
-                <bean parent="Uif-MessageField" p:messageText="Create from Existing Offering (@{#noOfTermOfferings})" p:style="font-weight:bold;" p:render="@{!#showTermOfferingLink}"/>
+                <bean parent="Uif-Message" p:messageText="Create from Existing Offering (@{#noOfTermOfferings})" p:style="font-weight:bold;" p:render="@{!#showTermOfferingLink}"/>
             </list>
         </property>
     </bean>
@@ -126,11 +126,10 @@
                         </map>
                     </property>
                     <property name="quickfinder.quickfinderAction">
-                        <bean parent="Uif-ActionLink" p:actionLabel="Search" p:style="display:block" p:methodToCall="performLookup">
-                        <property name="lightBoxLookup">
-                          <bean parent="Uif-LightBoxPost" p:lookupReturnByScript="false"/>
-                        </property>
-                        </bean>
+                        <bean parent="Uif-ActionLink" p:actionLabel="Search" p:style="display:block" p:methodToCall="performLookup"/>
+                    </property>
+                    <property name="quickfinder.lightBoxLookup">
+                        <bean parent="Uif-LightBoxPost" p:lookupReturnByScript="false"/>
                     </property>
                 </bean>
 
@@ -151,7 +150,9 @@
 
                 <bean parent="Uif-VerticalFieldGroup" p:style="margin-left:100px;">
                   <property name="group.instructionalText" value="Course Catalog Details"/>
-                  <property name="group.instructionalMessage.style" value="font-weight:bold;font-size:15px;"/>
+                  <property name="group.instructionalMessage">
+                      <bean parent="Uif-InstructionalMessage" p:style="font-weight:bold;font-size:15px;"/>
+                  </property>
                   <property name="group.instructionalMessage.cssClasses">
                       <list merge="true">
                         <value>ks-borderBottom</value>
