@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.r2.core.class1.scheduling.impl;
+package org.kuali.student.r2.core.scheduling.impl;
 
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
