@@ -24,8 +24,8 @@ import org.kuali.student.enrollment.class2.courseoffering.service.transformer.Co
 import org.kuali.student.enrollment.courseoffering.dto.*;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingServiceBusinessLogic;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.service.CourseService;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
@@ -422,10 +422,9 @@ public class CourseOfferingServiceBusinessLogicImpl implements CourseOfferingSer
 		
 		List<RegistrationGroupInfo> existingRegistrationGroups = coService.getRegistrationGroupsByFormatOffering(formatOfferingId, context);
 		
-		if (existingRegistrationGroups.size() > 0) {
-//			throw new AlreadyExistsException("Registration groups already exist for formatOfferingId=" + formatOfferingId);
-            coService.deleteRegistrationGroupsByFormatOffering(formatOfferingId, context);
-        }
+		if (existingRegistrationGroups.size() > 0)
+			throw new AlreadyExistsException("Registration groups already exist for formatOfferingId=" + formatOfferingId);
+		
 		
 		FormatOfferingInfo formatOffering = coService.getFormatOffering(formatOfferingId,
 				context);
@@ -477,7 +476,7 @@ public class CourseOfferingServiceBusinessLogicImpl implements CourseOfferingSer
 
 			rg.setActivityOfferingIds(activityOfferingPermuation);
 
-			rg.setCourseOfferingId(formatOffering.getCourseOfferingId());
+			rg.setCourseOfferingId(formatOfferingId);
 			rg.setDescr(new RichTextInfo(name, name));
 
 			rg.setFormatOfferingId(formatOfferingId);

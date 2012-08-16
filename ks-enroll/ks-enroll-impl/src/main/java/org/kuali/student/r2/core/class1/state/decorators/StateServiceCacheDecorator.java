@@ -7,8 +7,9 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.exceptions.*;
-import org.kuali.student.r2.core.state.dto.LifecycleInfo;
-import org.kuali.student.r2.core.state.dto.StateInfo;
+import org.kuali.student.r2.common.state.service.StateServiceDecorator;
+import org.kuali.student.r2.common.state.dto.LifecycleInfo;
+import org.kuali.student.r2.common.state.dto.StateInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ import java.util.logging.Logger;
  * WARNING: The cache decorator implementation does not currently take into account ContextInfo
  *
  */
-public class StateServiceCacheDecorator extends StateServiceDecorator{
+public class StateServiceCacheDecorator extends StateServiceDecorator {
     private CacheManager cacheManager;
 
 

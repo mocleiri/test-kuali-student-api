@@ -6,7 +6,7 @@ import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
-import org.kuali.student.r2.common.util.constants.VersionManagementServiceConstants;
+import org.kuali.student.r2.core.constants.VersionManagementServiceConstants;
 import org.kuali.student.r2.core.versionmanagement.dto.VersionDisplayInfo;
 
 import javax.jws.WebParam;

@@ -36,7 +36,7 @@ import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
-import org.kuali.student.r2.common.util.constants.ExemptionServiceConstants;
+import org.kuali.student.r2.core.constants.ExemptionServiceConstants;
 
 /**
  * Version: DRAFT - NOT READY FOR RELEASE.

@@ -39,7 +39,7 @@ import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 
 import org.kuali.student.r2.core.state.dto.StateInfo;
 import org.kuali.student.r2.core.state.dto.LifecycleInfo;
-import org.kuali.student.r2.common.util.constants.StateServiceConstants;
+import org.kuali.student.r2.common.constants.StateServiceConstants;
 
 /**
  * Provides a state management and state flow information.
