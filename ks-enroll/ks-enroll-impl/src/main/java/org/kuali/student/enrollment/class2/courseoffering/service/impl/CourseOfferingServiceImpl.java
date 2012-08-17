@@ -35,9 +35,12 @@ import org.kuali.student.enrollment.lpr.service.LprService;
 import org.kuali.student.enrollment.lui.dto.LuiInfo;
 import org.kuali.student.enrollment.lui.dto.LuiLuiRelationInfo;
 import org.kuali.student.enrollment.lui.service.LuiService;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.dto.FormatInfo;
-import org.kuali.student.lum.course.service.CourseService;
+import org.kuali.student.r2.core.class1.state.service.StateService;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
+import org.kuali.student.r2.core.constants.AtpServiceConstants;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.dto.FormatInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.common.criteria.CriteriaLookupService;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.RichTextInfo;
@@ -57,9 +60,7 @@ import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.common.util.constants.*;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.service.AtpService;
-import org.kuali.student.r2.core.state.service.StateService;
-import org.kuali.student.r2.core.type.dto.TypeInfo;
-import org.kuali.student.r2.core.type.service.TypeService;
+import org.kuali.student.r2.core.class1.type.service.TypeService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jws.WebParam;
@@ -962,7 +963,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         List<ActivityOfferingInfo> activityOfferings = new ArrayList<ActivityOfferingInfo>();
 
         //Find all related luis to the course Offering
-        List<LuiInfo> luis = luiService.getRelatedLuisByLuiAndRelationType(formatOfferingId, LuiServiceConstants.LUI_LUI_RELATION_ASSOCIATED_TYPE_KEY, contextInfo);
+        List<LuiInfo> luis = luiService.getRelatedLuisByLuiAndRelationType(formatOfferingId, LuiServiceConstants.LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_AO_TYPE_KEY, contextInfo);
         for (LuiInfo lui:luis) {
 
             //Filter out only course offerings (the relation type seems to vague to only hold format offerings)
@@ -1365,17 +1366,32 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     @Override
     @Transactional(readOnly = true)
     public List<RegistrationGroupInfo> getRegistrationGroupsByFormatOffering(String formatOfferingId, ContextInfo context)
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
+            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException,
+                   PermissionDeniedException {
+        List<RegistrationGroupInfo> regGroups = new ArrayList<RegistrationGroupInfo>();
+        // Find all related luis to the format offering
+        List<LuiInfo> luis = luiService.getRelatedLuisByLuiAndRelationType(formatOfferingId, LuiServiceConstants.LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_RG_TYPE_KEY, context);
+        for (LuiInfo lui:luis) {
+            if (LuiServiceConstants.REGISTRATION_GROUP_TYPE_KEY.equals(lui.getTypeKey())) {
+                // TODO: Need to convert LUI to RG via transformer
+            } else {
+                throw new InvalidParameterException("Invalid type for reg groups");
+            }
+        }
+        return regGroups;
     }
-
 
 
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public List<RegistrationGroupInfo> generateRegistrationGroupsForFormatOffering(String formatOfferingId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
+        try {
+            return businessLogic.generateRegistrationGroupsForFormatOffering(formatOfferingId,context);
+        } catch (Exception e) {
+            throw new RuntimeException("Registration Groups generation has failed! "+ e);
+        }
     }
 
     @Override
@@ -1446,10 +1462,23 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         }
     }
 
-
     @Override
-    public StatusInfo deleteRegistrationGroupsByFormatOffering(String formatOfferingId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        throw new UnsupportedOperationException();
+    @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
+    public StatusInfo deleteRegistrationGroupsByFormatOffering(String formatOfferingId, ContextInfo context)
+            throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        // Quick verification
+        StatusInfo statusInfo = new StatusInfo();
+        statusInfo.setSuccess(Boolean.TRUE);
+        try {
+            List<RegistrationGroupInfo> regGroups = getRegistrationGroupsByFormatOffering(formatOfferingId, context);
+            for (RegistrationGroupInfo regGroup: regGroups) {
+                deleteRegistrationGroup(regGroup.getId(), context);
+            }
+        } catch (Exception e) {
+            statusInfo.setSuccess(Boolean.FALSE);
+            statusInfo.setMessage(e.getMessage());
+        }
+        return statusInfo;
     }
 
     @Override

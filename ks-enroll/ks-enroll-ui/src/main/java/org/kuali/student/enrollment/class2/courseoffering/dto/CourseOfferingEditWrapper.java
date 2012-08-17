@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CreditOptionInfo;
 import org.kuali.student.enrollment.courseoffering.dto.FormatOfferingInfo;
-import org.kuali.student.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
 
 import java.io.Serializable;
@@ -42,6 +42,7 @@ public class CourseOfferingEditWrapper implements Serializable {
     private List<OfferingInstructorWrapper> instructors;
     private CourseInfo course;
     private String termStartEnd;
+    private String stateName;
 
     private String selectedGradingOptionName;
     private String selectedStudentRegOpts;
@@ -183,6 +184,14 @@ public class CourseOfferingEditWrapper implements Serializable {
 
     public void setGradingOption(String gradingOption) {
         this.gradingOption = gradingOption;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
     }
 
     public boolean isLegalToDelete() {

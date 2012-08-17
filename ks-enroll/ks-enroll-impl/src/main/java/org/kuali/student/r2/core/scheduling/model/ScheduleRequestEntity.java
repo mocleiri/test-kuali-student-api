@@ -1,9 +1,12 @@
 package org.kuali.student.r2.core.scheduling.model;
 
-import org.kuali.student.common.entity.KSEntityConstants;
+import org.kuali.student.r1.common.entity.KSEntityConstants;
+import org.kuali.student.r2.common.assembler.TransformUtility;
 import org.kuali.student.r2.common.entity.AttributeOwner;
 import org.kuali.student.r2.common.entity.MetaEntity;
 import org.kuali.student.r2.common.infc.Attribute;
+import org.kuali.student.r2.common.util.RichTextHelper;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleRequestComponentInfo;
 import org.kuali.student.r2.core.scheduling.dto.ScheduleRequestInfo;
 import org.kuali.student.r2.core.scheduling.infc.ScheduleRequest;
 import org.kuali.student.r2.core.scheduling.infc.ScheduleRequestComponent;
@@ -26,7 +29,7 @@ public class ScheduleRequestEntity extends MetaEntity implements AttributeOwner<
     private String refObjectTypeKey;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheduleRequest", orphanRemoval=true)
-    private List<ScheduleRequestComponentEntity> scheduleRequestComponentEntities;
+    private List<ScheduleRequestComponentEntity> scheduleRequestComponents;
 
     // IdEntity fields follow
     @Column(name = "NAME")
@@ -60,7 +63,8 @@ public class ScheduleRequestEntity extends MetaEntity implements AttributeOwner<
         this.fromDto(scheduleRequest);
     }
 
-    public void fromDto(ScheduleRequest scheduleRequest) {
+    public List<Object> fromDto(ScheduleRequest scheduleRequest) {
+        List<Object> orphansToDelete = new ArrayList<Object>();
         this.setSchedReqState(scheduleRequest.getStateKey());
         this.setName(scheduleRequest.getName());
         if (scheduleRequest.getDescr() != null) {
@@ -71,43 +75,57 @@ public class ScheduleRequestEntity extends MetaEntity implements AttributeOwner<
             this.setPlain(null);
         }
 
-        this.setAttributes(new HashSet<ScheduleRequestAttributeEntity>());
-        if (null != scheduleRequest.getAttributes()) {
-            for (Attribute att : scheduleRequest.getAttributes()) {
-                this.getAttributes().add(new ScheduleRequestAttributeEntity(att, this));
-            }
-        }
+        //Map the existing cmp relations by their id
+        Map<String,ScheduleRequestComponentEntity> existingCmpEntities = new HashMap<String,ScheduleRequestComponentEntity>();
+        if(scheduleRequestComponents != null){
+            for(ScheduleRequestComponentEntity cmpEntity : scheduleRequestComponents){
+                existingCmpEntities.put(cmpEntity.getId(),cmpEntity);
+             }
+         }
 
-        this.setScheduleRequestComponentEntities(new ArrayList<ScheduleRequestComponentEntity>());
+        //Clear out the current list
+        scheduleRequestComponents = new ArrayList<ScheduleRequestComponentEntity>();
         if(scheduleRequest.getScheduleRequestComponents() != null) {
-            for(ScheduleRequestComponent sqComp : scheduleRequest.getScheduleRequestComponents()){
-                this.getScheduleRequestComponentEntities().add(new ScheduleRequestComponentEntity(sqComp));
-            }
-        }
+            for(ScheduleRequestComponent srComponent :  scheduleRequest.getScheduleRequestComponents()){
+                ScheduleRequestComponentEntity srCmpEntity;
+                if(existingCmpEntities.containsKey(srComponent.getId())){
+                    srCmpEntity = existingCmpEntities.remove(srComponent.getId());
+                    orphansToDelete.addAll(srCmpEntity.fromDto(srComponent));
+                }else{
+                    srCmpEntity = new ScheduleRequestComponentEntity(srComponent);
+                    srCmpEntity.setScheduleRequest(this);
+                }
+
+                scheduleRequestComponents.add(srCmpEntity);
+             }
+         }
+
+        // Merge attributes into entity and add leftovers to be deleted
+        orphansToDelete.addAll(TransformUtility.mergeToEntityAttributes(ScheduleRequestAttributeEntity.class, scheduleRequest, this));
+
+        return orphansToDelete;
     }
 
     public ScheduleRequestInfo toDto() {
         ScheduleRequestInfo scheduleRequestInfo = new ScheduleRequestInfo();
         scheduleRequestInfo.setRefObjectId(this.getRefObjectId());
         scheduleRequestInfo.setRefObjectTypeKey(this.getRefObjectTypeKey());
-
-        // -------------------------------------------------
-        // Stuff that is updated for nearly all entities
+        scheduleRequestInfo.setDescr(new RichTextHelper().toRichTextInfo(this.getPlain(), this.getFormatted()));
+        scheduleRequestInfo.setName(this.getName());
         scheduleRequestInfo.setId(this.getId()); // id is assumed not null
         scheduleRequestInfo.setTypeKey(this.getSchedReqType()); // type is assumed not null
         scheduleRequestInfo.setStateKey(this.getSchedReqState()); // state is assumed not null
         scheduleRequestInfo.setMeta(super.toDTO());
-        if (getAttributes() != null) {
-            for (ScheduleRequestAttributeEntity att : getAttributes()) {
-                scheduleRequestInfo.getAttributes().add(att.toDto());
-            }
-        }
+         // Attributes
+        scheduleRequestInfo.setAttributes(TransformUtility.toAttributeInfoList(this));
 
-        if (getScheduleRequestComponentEntities() != null) {
-            for (ScheduleRequestComponentEntity sqComp : getScheduleRequestComponentEntities()) {
-                scheduleRequestInfo.getScheduleRequestComponents().add(sqComp.toDto());
+        List<ScheduleRequestComponentInfo> srComps = new ArrayList<ScheduleRequestComponentInfo>();
+        if (this.getScheduleRequestComponents() != null) {
+            for (ScheduleRequestComponentEntity sqComp : getScheduleRequestComponents()) {
+                srComps.add(sqComp.toDto());
             }
         }
+        scheduleRequestInfo.setScheduleRequestComponents(srComps);
 
         return scheduleRequestInfo;
     }
@@ -128,12 +146,12 @@ public class ScheduleRequestEntity extends MetaEntity implements AttributeOwner<
         this.refObjectTypeKey = refObjectTypeKey;
     }
 
-    public List<ScheduleRequestComponentEntity> getScheduleRequestComponentEntities() {
-        return scheduleRequestComponentEntities;
+    public List<ScheduleRequestComponentEntity> getScheduleRequestComponents() {
+        return scheduleRequestComponents;
     }
 
-    public void setScheduleRequestComponentEntities(List<ScheduleRequestComponentEntity> scheduleRequestComponentEntities) {
-        this.scheduleRequestComponentEntities = scheduleRequestComponentEntities;
+    public void setScheduleRequestComponents(List<ScheduleRequestComponentEntity> scheduleRequestComponents) {
+        this.scheduleRequestComponents = scheduleRequestComponents;
     }
 
     public String getName() {

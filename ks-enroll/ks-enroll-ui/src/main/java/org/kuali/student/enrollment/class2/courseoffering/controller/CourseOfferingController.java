@@ -11,8 +11,6 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.web.controller.MaintenanceDocumentController;
 import org.kuali.rice.krad.web.form.MaintenanceForm;
-import org.kuali.student.common.search.dto.*;
-import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingCreateWrapper;
@@ -22,14 +20,22 @@ import org.kuali.student.enrollment.class2.courseoffering.util.ViewHelperUtil;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.enrollment.courseofferingset.service.CourseOfferingSetService;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.lu.service.LuService;
+import org.kuali.student.r1.common.search.dto.*;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
+import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.common.constants.CommonServiceConstants;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.util.ContextUtils;
+import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
 import org.kuali.student.r2.common.util.constants.CourseOfferingSetServiceConstants;
-import org.kuali.student.r2.core.type.service.TypeService;
+import org.kuali.student.r2.core.class1.search.CourseOfferingHistorySearchImpl;
+import org.kuali.student.r2.core.search.dto.SearchRequestInfo;
+import org.kuali.student.r2.core.search.dto.SearchResultInfo;
+import org.kuali.student.r2.core.search.dto.SearchResultRowInfo;
+import org.kuali.student.r2.core.search.service.SearchService;
+import org.kuali.student.r2.core.class1.type.service.TypeService;
 import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
 import org.kuali.student.r2.lum.lrc.service.LRCService;
 import org.springframework.stereotype.Controller;
@@ -51,7 +57,7 @@ import static org.kuali.rice.core.api.criteria.PredicateFactory.equal;
 @RequestMapping(value = "/courseOffering")
 public class CourseOfferingController extends MaintenanceDocumentController {
 
-    private LuService luService;
+    private CluService luService;
     private CourseService courseService;
     private AcademicCalendarService academicCalendarService;
     private CourseOfferingService courseOfferingService;
@@ -59,6 +65,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
     private ContextInfo contextInfo;
     private TypeService typeService;
     private transient LRCService lrcService;
+    private transient SearchService searchService;
 
     @RequestMapping(params = "methodToCall=loadCourseCatalog")
     public ModelAndView loadCourseCatalog(@ModelAttribute("KualiForm") MaintenanceForm form, BindingResult result,
@@ -77,9 +84,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
         if (matchingCourses.size() == 1 && term != null) {
             CourseInfo course = matchingCourses.get(0);
             coWrapper.setCourse(course);
-
-            coWrapper.setCourse(course);
-            coWrapper.setCreditCount(ViewHelperUtil.trimTrailing0(course.getCreditOptions().get(0).getResultValues().get(0)));
+            coWrapper.setCreditCount(ViewHelperUtil.trimTrailing0( getLrcService().getResultValue(course.getCreditOptions().get(0).getResultValueKeys().get(0), contextInfo).getValue() ));
             coWrapper.setShowAllSections(true);
             coWrapper.setShowCatalogLink(false);
             coWrapper.setShowTermOfferingLink(true);
@@ -97,7 +102,17 @@ public class CourseOfferingController extends MaintenanceDocumentController {
                 coWrapper.getExistingOfferingsInCurrentTerm().add(co);
             }
 
-            courseOfferingInfos = getCourseOfferingService().getCourseOfferingsByCourse(coWrapper.getCourse().getId(),getContextInfo());
+            //Get past 5 years CO
+            SearchRequestInfo searchRequest = new SearchRequestInfo(CourseOfferingHistorySearchImpl.PAST_CO_SEARCH.getKey());
+            searchRequest.addParam(CourseOfferingHistorySearchImpl.COURSE_ID,coWrapper.getCourse().getId());
+            SearchResultInfo searchResult = getSearchService().search(searchRequest, null);
+
+            List<String> courseOfferingIds = new ArrayList(searchResult.getTotalResults());
+            for (SearchResultRowInfo row : searchResult.getRows()) {
+                 courseOfferingIds.add(row.getCells().get(0).getValue());
+            }
+
+            courseOfferingInfos = getCourseOfferingService().getCourseOfferingsByIds(courseOfferingIds, getContextInfo());
 
             for (CourseOfferingInfo courseOfferingInfo : courseOfferingInfos) {
                 ExistingCourseOffering co = new ExistingCourseOffering(courseOfferingInfo);
@@ -289,7 +304,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
 
         SearchParam qpv1 = new SearchParam();
         qpv1.setKey("lu.criteria.code");
-        qpv1.setValue(courseName);
+        qpv1.setValue(courseName.toUpperCase());
         searchParams.add(qpv1);
 
         SearchRequest searchRequest = new SearchRequest();
@@ -297,7 +312,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
         searchRequest.setSearchKey("lu.search.cluByCode");
 
         try {
-            SearchResult searchResult = getLuService().search(searchRequest);
+            SearchResult searchResult = getCluService().search(searchRequest);
             if (searchResult.getRows().size() > 0) {
                 for(SearchResultRow row : searchResult.getRows()){
                     List<SearchResultCell> srCells = row.getCells();
@@ -305,7 +320,7 @@ public class CourseOfferingController extends MaintenanceDocumentController {
                         for(SearchResultCell cell : srCells){
                             if ("lu.resultColumn.cluId".equals(cell.getKey())) {
                                 courseId = cell.getValue();
-                                returnCourseInfo = getCourseService().getCourse(courseId);
+                                returnCourseInfo = getCourseService().getCourse(courseId, ContextUtils.getContextInfo());
                                 courseInfoList.add(returnCourseInfo);
                             }
                         }
@@ -327,9 +342,9 @@ public class CourseOfferingController extends MaintenanceDocumentController {
         return typeService;
     }
 
-    private LuService getLuService() {
+    private CluService getCluService() {
         if(luService == null) {
-            luService = CourseOfferingResourceLoader.loadLuService();
+            luService = CourseOfferingResourceLoader.loadCluService();
         }
         return luService;
     }
@@ -346,5 +361,12 @@ public class CourseOfferingController extends MaintenanceDocumentController {
             lrcService = CourseOfferingResourceLoader.loadLrcService();
         }
         return this.lrcService;
+    }
+
+    protected SearchService getSearchService() {
+        if(searchService == null) {
+            searchService = (SearchService) GlobalResourceLoader.getService(new QName(CommonServiceConstants.REF_OBJECT_URI_GLOBAL_PREFIX + "search", SearchService.class.getSimpleName()));
+        }
+        return searchService;
     }
 }
