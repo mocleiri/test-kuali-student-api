@@ -5,7 +5,6 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.FormatOfferingInfo;
-import org.kuali.student.enrollment.courseoffering.dto.SeatPoolDefinitionInfo;
 
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
 
@@ -45,6 +44,42 @@ public class ActivityOfferingWrapper implements Serializable{
     private String firstInstructorDisplayName;
 
     private String courseOfferingCode = "";
+
+    private List<ScheduleWrapper> assignedSchedules;
+    private List<ScheduleWrapper> requestedSchedules;
+
+    private List<ScheduleWrapper> scheduleRequestsToBeDeleted;
+
+    private ScheduleWrapper newScheduleRequest;
+
+    private String startTimeDisplay;
+    private String endTimeDisplay;
+    private String daysDisplayName;
+    private String buildingName;
+    private String roomName;
+
+    public ActivityOfferingWrapper(){
+        aoInfo = new ActivityOfferingInfo();
+        instructors = new ArrayList<OfferingInstructorWrapper>();
+        seatpools = new ArrayList<SeatPoolWrapper>();
+        aoInfo.setStateKey(LuiServiceConstants.LUI_AO_STATE_DRAFT_KEY);
+        aoInfo.setTypeKey(LuiServiceConstants.LECTURE_ACTIVITY_OFFERING_TYPE_KEY);
+        formatOffering = new FormatOfferingInfo();
+        term = new TermInfo();
+        scheduleComponentWrappers = new ArrayList<ScheduleComponentWrapper>();
+        this.setReadOnlyView(false);
+        this.setIsChecked(false);
+        assignedSchedules = new ArrayList<ScheduleWrapper>();
+        requestedSchedules = new ArrayList<ScheduleWrapper>();
+        newScheduleRequest = new ScheduleWrapper();
+    }
+
+    public ActivityOfferingWrapper(ActivityOfferingInfo info){
+        super();
+        aoInfo = info;
+        instructors = new ArrayList<OfferingInstructorWrapper>();
+        seatpools = new ArrayList<SeatPoolWrapper>();
+    }
 
     public String getCourseOfferingCode() {
         return courseOfferingCode;
@@ -139,30 +174,6 @@ public class ActivityOfferingWrapper implements Serializable{
     }
     public void setWaitListTypeKey(String waitListTypeKey) {
         this.waitListTypeKey = waitListTypeKey;
-    }
-
-
-
-
-    public ActivityOfferingWrapper(){
-        aoInfo = new ActivityOfferingInfo();
-        instructors = new ArrayList<OfferingInstructorWrapper>();
-        seatpools = new ArrayList<SeatPoolWrapper>();
-        aoInfo.setStateKey(LuiServiceConstants.LUI_AO_STATE_DRAFT_KEY);
-        aoInfo.setTypeKey(LuiServiceConstants.LECTURE_ACTIVITY_OFFERING_TYPE_KEY);
-        formatOffering = new FormatOfferingInfo();
-        term = new TermInfo();
-        scheduleComponentWrappers = new ArrayList<ScheduleComponentWrapper>();
-        this.setReadOnlyView(false);
-        this.setIsChecked(false);
-
-    }
-
-    public ActivityOfferingWrapper(ActivityOfferingInfo info){
-        super();
-        aoInfo = info;
-        instructors = new ArrayList<OfferingInstructorWrapper>();
-        seatpools = new ArrayList<SeatPoolWrapper>();
     }
 
     public FormatOfferingInfo getFormatOffering() {
@@ -312,5 +323,83 @@ public class ActivityOfferingWrapper implements Serializable{
             return true;
         }
         return false;
+    }
+
+    public List<ScheduleWrapper> getAssignedSchedules() {
+        return assignedSchedules;
+    }
+
+    public void setAssignedSchedules(List<ScheduleWrapper> assignedSchedules) {
+        this.assignedSchedules = assignedSchedules;
+    }
+
+    public List<ScheduleWrapper> getRequestedSchedules() {
+        if (requestedSchedules == null){
+            requestedSchedules = new ArrayList<ScheduleWrapper>();
+        }
+        return requestedSchedules;
+    }
+
+    public void setRequestedSchedules(List<ScheduleWrapper> requestedSchedules) {
+        this.requestedSchedules = requestedSchedules;
+    }
+
+    public ScheduleWrapper getNewScheduleRequest() {
+        return newScheduleRequest;
+    }
+
+    public void setNewScheduleRequest(ScheduleWrapper newScheduleRequest) {
+        this.newScheduleRequest = newScheduleRequest;
+    }
+
+    public String getStartTimeDisplay() {
+        return startTimeDisplay;
+    }
+
+    public void setStartTimeDisplay(String startTimeDisplay) {
+        this.startTimeDisplay = startTimeDisplay;
+    }
+
+    public String getEndTimeDisplay() {
+        return endTimeDisplay;
+    }
+
+    public void setEndTimeDisplay(String endTimeDisplay) {
+        this.endTimeDisplay = endTimeDisplay;
+    }
+
+    public String getDaysDisplayName() {
+        return daysDisplayName;
+    }
+
+    public void setDaysDisplayName(String daysDisplayName) {
+        this.daysDisplayName = daysDisplayName;
+    }
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
+
+    public List<ScheduleWrapper> getScheduleRequestsToBeDeleted() {
+        if (scheduleRequestsToBeDeleted == null){
+            scheduleRequestsToBeDeleted = new ArrayList();
+        }
+        return scheduleRequestsToBeDeleted;
+    }
+
+    public void setScheduleRequestsToBeDeleted(List<ScheduleWrapper> scheduleRequestsToBeDeleted) {
+        this.scheduleRequestsToBeDeleted = scheduleRequestsToBeDeleted;
     }
 }

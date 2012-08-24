@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.kuali.student.core</groupId>
     <artifactId>ks-core</artifactId>
-    <version>1.3.0-services-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
   </parent>
   <dependencies>
     <dependency>
@@ -56,7 +56,7 @@
             <id>enumerationmanagement-wsdl</id>
             <phase>${ks.java2ws.phase}</phase>
             <configuration>
-              <className>org.kuali.student.r1.core.enumerationmanagement.service.EnumerationManagementService </className>
+              <className>org.kuali.student.r2.core.enumerationmanagement.service.EnumerationManagementService </className>
               <serviceName>EnumerationManagementService</serviceName>
               <targetNameSpace>http://student.kuali.org/wsdl/EnumerationManagementService </targetNameSpace>
             </configuration>

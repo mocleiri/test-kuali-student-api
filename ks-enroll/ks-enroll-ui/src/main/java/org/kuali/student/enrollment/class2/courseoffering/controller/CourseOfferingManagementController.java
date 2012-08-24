@@ -14,14 +14,13 @@ import org.kuali.rice.krad.util.GlobalVariables;
 import org.kuali.rice.krad.util.KRADConstants;
 import org.kuali.rice.krad.web.controller.UifControllerBase;
 import org.kuali.rice.krad.web.form.UifFormBase;
-import org.kuali.student.r1.common.search.dto.*;
-import org.kuali.student.r2.common.dto.DtoConstants;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingCopyWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.ExistingCourseOffering;
+import org.kuali.student.enrollment.class2.courseoffering.dto.RegistrationGroupWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.form.CourseOfferingManagementForm;
 import org.kuali.student.enrollment.class2.courseoffering.service.CourseOfferingManagementViewHelperService;
 import org.kuali.student.enrollment.class2.courseoffering.service.impl.CourseOfferingManagementViewHelperServiceImpl;
@@ -33,19 +32,22 @@ import org.kuali.student.enrollment.common.util.ContextBuilder;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.FormatOfferingInfo;
+import org.kuali.student.enrollment.courseoffering.dto.RegistrationGroupInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
-import org.kuali.student.r2.common.util.ContextUtils;
-import org.kuali.student.r2.lum.course.dto.CourseInfo;
-import org.kuali.student.r2.lum.course.service.CourseService;
-import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r1.common.search.dto.*;
 import org.kuali.student.r2.common.constants.CommonServiceConstants;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.LocaleInfo;
+import org.kuali.student.r2.common.exceptions.*;
+import org.kuali.student.r2.common.util.ContextUtils;
 import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
 import org.kuali.student.r2.common.util.constants.CourseOfferingSetServiceConstants;
 import org.kuali.student.r2.core.organization.dto.OrgInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
+import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
 import org.kuali.student.r2.lum.lrc.service.LRCService;
 import org.springframework.stereotype.Controller;
@@ -140,7 +142,7 @@ public class CourseOfferingManagementController extends UifControllerBase  {
             theForm.getCourseOfferingEditWrapperList().clear();
             return getUIFModelAndView(theForm);
         }
-        
+
         //Second, handle subjectCode vs courseOFferingCode
         if (theForm.getRadioSelection().equals("subjectCode")){
 
@@ -157,7 +159,7 @@ public class CourseOfferingManagementController extends UifControllerBase  {
             return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_CO_PAGE);
 
         } else {
-            //load courseOffering based on courseOfferingCode and load all associated activity offerings 
+            //load courseOffering based on courseOfferingCode and load all associated activity offerings
             String courseOfferingCode = theForm.getInputCode();
             theForm.setCourseOfferingCode(courseOfferingCode);
 
@@ -165,15 +167,9 @@ public class CourseOfferingManagementController extends UifControllerBase  {
 
             if (!courseOfferingList.isEmpty() && courseOfferingList.size() == 1 )  {
 
-                CourseOfferingEditWrapper wrapper = new CourseOfferingEditWrapper(courseOfferingList.get(0));
+                CourseOfferingInfo coToShow = courseOfferingList.get(0);
 
-                theForm.getCourseOfferingEditWrapperList().clear();
-                theForm.getCourseOfferingEditWrapperList().add(wrapper);
-                theForm.setTheCourseOffering(courseOfferingList.get(0));
-                getViewHelperService(theForm).loadActivityOfferingsByCourseOffering(courseOfferingList.get(0), theForm);
-                getViewHelperService(theForm).loadPreviousAndNextCourseOffering(theForm,courseOfferingList.get(0));
-
-                return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_AO_PAGE);
+                return prepareManageAOsModelAndView(theForm, coToShow);
 
             } else if (courseOfferingList.size()>1) {
 
@@ -198,31 +194,106 @@ public class CourseOfferingManagementController extends UifControllerBase  {
         }
     }
 
-    @RequestMapping(params = "methodToCall=viewRegGroups")
-    public ModelAndView viewRegGroups(@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
+    private ModelAndView prepareManageAOsModelAndView(CourseOfferingManagementForm theForm, CourseOfferingInfo coToShow) throws Exception {
+        CourseOfferingEditWrapper wrapper = new CourseOfferingEditWrapper(coToShow);
+
+        theForm.getCourseOfferingEditWrapperList().clear();
+        theForm.getCourseOfferingEditWrapperList().add(wrapper);
+        theForm.setTheCourseOffering(coToShow);
+        theForm.setFormatIdForNewAO(null);
+        theForm.setActivityIdForNewAO(null);
+        theForm.setNoOfActivityOfferings(null);
+        getViewHelperService(theForm).loadActivityOfferingsByCourseOffering(coToShow, theForm);
+        getViewHelperService(theForm).loadPreviousAndNextCourseOffering(theForm, coToShow);
+
+        return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_AO_PAGE);
+    }
+
+    @RequestMapping(params = "methodToCall=manageRegGroups")
+    public ModelAndView manageRegGroups(@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
                                       HttpServletRequest request, HttpServletResponse response) throws Exception {
         String courseOfferingId = theForm.getTheCourseOffering().getId();
         List<FormatOfferingInfo> formatOfferingList =
                 getCourseOfferingService().getFormatOfferingsByCourseOffering(courseOfferingId, getContextInfo());
         theForm.setFormatOfferingName(formatOfferingList.get(0).getName());
+        theForm.setFormatOfferingIdForViewRG(formatOfferingList.get(0).getId());
         List<ActivityOfferingWrapper> filteredAOs = getAOsForSelectedFO(formatOfferingList.get(0).getId(), theForm);
         theForm.setFilteredAOsForSelectedFO(filteredAOs);
+
+        // Getting Reg Groups (if any) for the 1st FO
+        List<RegistrationGroupInfo> rgInfos = getCourseOfferingService().getRegistrationGroupsByFormatOffering(formatOfferingList.get(0).getId(), getContextInfo());
+        List<RegistrationGroupWrapper> filteredRGs = getRGsForSelectedFO(rgInfos, filteredAOs);
+        theForm.setFilteredRGsForSelectedFO(filteredRGs);
+        if(rgInfos != null && rgInfos.size()>0) {
+//            if(theForm.getFormatOfferingIdForViewRG()==null){
+                //Default the selected Format Offering if it was not set already
+
+//            }
+            getViewHelperService(theForm).validateRegistrationGroupsForFormatOffering(rgInfos, theForm.getFormatOfferingIdForViewRG(), theForm);
+        }
         return getUIFModelAndView(theForm, CourseOfferingConstants.REG_GROUP_PAGE);
 
     }
 
-    @RequestMapping(params = "methodToCall=filterAOsPerFO")
-    public ModelAndView filterAOsPerFO (@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
+    @RequestMapping(params = "methodToCall=filterAOsAndRGsPerFO")
+    public ModelAndView filterAOsAndRGsPerFO (@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
                                         HttpServletRequest request, HttpServletResponse response) throws Exception {
+        //first update AOs
         List<ActivityOfferingWrapper> filteredAOs = getAOsForSelectedFO(theForm.getFormatOfferingIdForViewRG(), theForm);
         theForm.setFilteredAOsForSelectedFO(filteredAOs);
         if(!filteredAOs.isEmpty()){
             theForm.setFormatOfferingName(filteredAOs.get(0).getFormatOffering().getName());
         }
+
+        //then update RGs
+        List<RegistrationGroupInfo> rgInfos = getCourseOfferingService().getRegistrationGroupsByFormatOffering(theForm.getFormatOfferingIdForViewRG(), getContextInfo());
+        List<RegistrationGroupWrapper> filteredRGs = getRGsForSelectedFO(rgInfos, filteredAOs);
+        theForm.setFilteredRGsForSelectedFO(filteredRGs);
+        if(rgInfos != null && rgInfos.size()>0) {
+            getViewHelperService(theForm).validateRegistrationGroupsForFormatOffering(rgInfos, theForm.getFormatOfferingIdForViewRG(), theForm);
+        }
+
         return getUIFModelAndView(theForm, CourseOfferingConstants.REG_GROUP_PAGE);
 
     }
-    
+
+//    @RequestMapping(params = "methodToCall=filterAOsPerFO")
+//    public ModelAndView filterAOsPerFO (@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
+//                                        HttpServletRequest request, HttpServletResponse response) throws Exception {
+//        List<ActivityOfferingWrapper> filteredAOs = getAOsForSelectedFO(theForm.getFormatOfferingIdForViewRG(), theForm);
+//        theForm.setFilteredAOsForSelectedFO(filteredAOs);
+//        if(!filteredAOs.isEmpty()){
+//            theForm.setFormatOfferingName(filteredAOs.get(0).getFormatOffering().getName());
+//        }
+//        return getUIFModelAndView(theForm, CourseOfferingConstants.REG_GROUP_PAGE);
+//
+//    }
+
+//    @RequestMapping(params = "methodToCall=filterRGsPerFO")
+//    public ModelAndView filterRGsPerFO (@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
+//                                        HttpServletRequest request, HttpServletResponse response) throws Exception {
+//        List<ActivityOfferingWrapper> filteredAOs = getAOsForSelectedFO(theForm.getFormatOfferingIdForViewRG(), theForm);
+//        List<RegistrationGroupInfo> rgInfos = getCourseOfferingService().getRegistrationGroupsByFormatOffering(theForm.getFormatOfferingIdForViewRG(), getContextInfo());
+//        List<RegistrationGroupWrapper> filteredRGs = getRGsForSelectedFO(rgInfos, filteredAOs);
+//        theForm.setFilteredRGsForSelectedFO(filteredRGs);
+//        if(rgInfos != null && rgInfos.size()>0) {
+//            getViewHelperService(theForm).validateRegistrationGroupsForFormatOffering(rgInfos, theForm.getFormatOfferingIdForViewRG(), theForm);
+//        }
+//
+//        return getUIFModelAndView(theForm, CourseOfferingConstants.REG_GROUP_PAGE);
+//    }
+
+    @RequestMapping(params = "methodToCall=generateUnconstrainedRegGroups")
+    public ModelAndView generateUnconstrainedRegGroups (@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
+                                        HttpServletRequest request, HttpServletResponse response) throws Exception {
+        List<RegistrationGroupInfo> rgInfos = getCourseOfferingService().generateRegistrationGroupsForFormatOffering(theForm.getFormatOfferingIdForViewRG(), getContextInfo());
+        List<ActivityOfferingWrapper> filteredAOs = theForm.getFilteredAOsForSelectedFO();
+        List<RegistrationGroupWrapper> filteredRGs = getRGsForSelectedFO(rgInfos, filteredAOs);
+        theForm.setFilteredRGsForSelectedFO(filteredRGs);
+
+        return getUIFModelAndView(theForm, CourseOfferingConstants.REG_GROUP_PAGE);
+    }
+
     @RequestMapping(params = "methodToCall=loadPreviousCO")
     public ModelAndView loadPreviousCO(@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
                              HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -264,14 +335,12 @@ public class CourseOfferingManagementController extends UifControllerBase  {
         if(selectedObject instanceof CourseOfferingEditWrapper){
             CourseOfferingEditWrapper coWrapper =  (CourseOfferingEditWrapper)selectedObject;
             CourseOfferingInfo theCourseOffering = coWrapper.getCoInfo();
-            theForm.setTheCourseOffering(theCourseOffering);
+
             theForm.setCourseOfferingCode(theCourseOffering.getCourseOfferingCode());
             theForm.setInputCode(theCourseOffering.getCourseOfferingCode());
             theForm.setRadioSelection(CourseOfferingConstants.COURSEOFFERING_COURSE_OFFERING_CODE);
-            getViewHelperService(theForm).loadActivityOfferingsByCourseOffering(theCourseOffering, theForm);
-            getViewHelperService(theForm).loadPreviousAndNextCourseOffering(theForm,theCourseOffering);
 
-            return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_AO_PAGE);
+            return prepareManageAOsModelAndView(theForm, theCourseOffering);
         }
         else{
             //TODO log error
@@ -415,6 +484,63 @@ public class CourseOfferingManagementController extends UifControllerBase  {
             }
         }
         return filterdAOList;
+    }
+
+    private List<RegistrationGroupWrapper> getRGsForSelectedFO(List<RegistrationGroupInfo> rgInfos, List<ActivityOfferingWrapper> filteredAOs) {
+
+        List<RegistrationGroupWrapper> filterdRGList = new ArrayList<RegistrationGroupWrapper>();
+
+        HashMap<String, ActivityOfferingWrapper> filteredAOsHM = new HashMap<String, ActivityOfferingWrapper>();
+        for (ActivityOfferingWrapper wrapper : filteredAOs) {
+            filteredAOsHM.put(wrapper.getAoInfo().getId(), wrapper);
+        }
+
+        for (RegistrationGroupInfo rgInfo : rgInfos) {
+           RegistrationGroupWrapper rgWrapper = new RegistrationGroupWrapper();
+            rgWrapper.setRgInfo(rgInfo);
+            String aoActivityCodeText = "", aoStateNameText = "", aoTypeNameText = "", aoInstructorText = "", aoMaxEnrText = "";
+            for (String aoID : rgInfo.getActivityOfferingIds()) {
+                if (filteredAOsHM.get(aoID).getAoInfo().getActivityCode() != null && !filteredAOsHM.get(aoID).getAoInfo().getActivityCode().equalsIgnoreCase("")) {
+                    aoActivityCodeText = aoActivityCodeText + filteredAOsHM.get(aoID).getAoInfo().getActivityCode() + "<br/>";
+                }
+                if (filteredAOsHM.get(aoID).getStateName() != null && !filteredAOsHM.get(aoID).getStateName().equalsIgnoreCase("")) {
+                    aoStateNameText = aoStateNameText + filteredAOsHM.get(aoID).getStateName() + "<br/>";
+                }
+                if (filteredAOsHM.get(aoID).getTypeName() != null && !filteredAOsHM.get(aoID).getTypeName().equalsIgnoreCase("")) {
+                    aoTypeNameText = aoTypeNameText + filteredAOsHM.get(aoID).getTypeName() + "<br/>";
+                }
+                if (filteredAOsHM.get(aoID).getFirstInstructorDisplayName() != null && !filteredAOsHM.get(aoID).getFirstInstructorDisplayName().equalsIgnoreCase("")) {
+                    aoInstructorText = aoInstructorText + filteredAOsHM.get(aoID).getFirstInstructorDisplayName() + "<br/>";
+                }
+                if (filteredAOsHM.get(aoID).getAoInfo().getMaximumEnrollment() != null) {
+                    aoMaxEnrText = aoMaxEnrText + Integer.toString(filteredAOsHM.get(aoID).getAoInfo().getMaximumEnrollment()) + "<br/>";
+                }
+            }
+            if (aoActivityCodeText.length() > 0) {
+                aoActivityCodeText = aoActivityCodeText.substring(0, aoActivityCodeText.lastIndexOf("<br/>"));
+            }
+            if (aoStateNameText.length() > 0) {
+                aoStateNameText = aoStateNameText.substring(0, aoStateNameText.lastIndexOf("<br/>"));
+            }
+            if (aoTypeNameText.length() > 0) {
+                aoTypeNameText = aoTypeNameText.substring(0, aoTypeNameText.lastIndexOf("<br/>"));
+            }
+            if (aoInstructorText.length() > 0) {
+                aoInstructorText = aoInstructorText.substring(0, aoInstructorText.lastIndexOf("<br/>"));
+            }
+            if (aoMaxEnrText.length() > 0) {
+                aoMaxEnrText = aoMaxEnrText.substring(0, aoMaxEnrText.lastIndexOf("<br/>"));
+            }
+
+            rgWrapper.setAoActivityCodeText(aoActivityCodeText);
+            rgWrapper.setAoStateNameText(aoStateNameText);
+            rgWrapper.setAoTypeNameText(aoTypeNameText);
+            rgWrapper.setAoInstructorText(aoInstructorText);
+            rgWrapper.setAoMaxEnrText(aoMaxEnrText);
+            filterdRGList.add(rgWrapper);
+        }
+
+        return filterdRGList;
     }
 
     protected AcademicCalendarService getAcademicCalendarService() {
@@ -571,6 +697,11 @@ public class CourseOfferingManagementController extends UifControllerBase  {
         }
 
         getViewHelperService(theForm).loadActivityOfferingsByCourseOffering(theForm.getTheCourseOffering(), theForm);
+        if(selectedAolist.size() > 0)  {
+            GlobalVariables.getMessageMap().putWarningForSectionId("manageActivityOfferingsPage",
+                    CourseOfferingConstants.COURSEOFFERING_MSG_ERROR_SELECTED_AO_TO_DELETE);
+        }
+
         return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_AO_PAGE);
 
     }
@@ -761,7 +892,7 @@ public class CourseOfferingManagementController extends UifControllerBase  {
         // reload the AOs
         CourseOfferingInfo theCourseOffering = theForm.getTheCourseOffering();
         getViewHelperService(theForm).loadActivityOfferingsByCourseOffering(theCourseOffering, theForm);
-        getViewHelperService(theForm).loadPreviousAndNextCourseOffering(theForm,theCourseOffering);
+        getViewHelperService(theForm).loadPreviousAndNextCourseOffering(theForm, theCourseOffering);
 
         return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_AO_PAGE);
     }
@@ -771,6 +902,14 @@ public class CourseOfferingManagementController extends UifControllerBase  {
                                           HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         if (StringUtils.equals(theForm.getSelectedOfferingAction(),CourseOfferingConstants.ACTIVITY_OFFERING_SCHEDULING_ACTION)) {
+            /*
+            if (!hasDialogBeenAnswered("schedulingConfirmDialog", theForm)){
+                loadSelectedCOsForScheduling(theForm);
+                return showDialog("schedulingConfirmDialog", theForm, request, response);
+            }
+
+            String res = getStringDialogResponse("schedulingConfirmDialog", theForm, request, response);
+            */
             getViewHelperService(theForm).markCourseOfferingsForScheduling(theForm.getCourseOfferingEditWrapperList());
         }
 
@@ -778,6 +917,18 @@ public class CourseOfferingManagementController extends UifControllerBase  {
 
     }
 
+    private void loadSelectedCOsForScheduling(CourseOfferingManagementForm theForm){
+        String textToDisplay = StringUtils.EMPTY;
+        int count = 1;
+        for (CourseOfferingEditWrapper co : theForm.getCourseOfferingEditWrapperList()) {
+             if (co.getIsChecked()){
+                  textToDisplay = textToDisplay + co.getCoInfo().getCourseOfferingCode() + ",";
+                 count++;
+             }
+        }
+        theForm.setToBeScheduledCourseOfferingsUI(StringUtils.stripEnd(textToDisplay,","));
+        theForm.setToBeScheduledCourseOfferingsCount(count-1);
+    }
 
     /**
      * Method used to confirm delete AOs
@@ -790,6 +941,8 @@ public class CourseOfferingManagementController extends UifControllerBase  {
         Object selectedObject;
         List<ActivityOfferingWrapper> aoList = theForm.getActivityWrapperList();
         List<ActivityOfferingWrapper> selectedIndexList = theForm.getSelectedToDeleteList();
+        boolean bEncounteredNonDraftAOInDeletion = false;
+        boolean bLegalAOInDeletion = false;
 
         // clear the list
         selectedIndexList.clear();
@@ -816,37 +969,35 @@ public class CourseOfferingManagementController extends UifControllerBase  {
         else {
             // check if there is Draft AO selected
             selectedIndexList.clear();
-            boolean bEncounteredNonDraftAOInDeletion = false;
             for(ActivityOfferingWrapper ao : aoList) {
                 if(ao.isLegalToDelete() && ao.getIsChecked()) {
                     selectedIndexList.add(ao);
-                }else if (ao.getIsChecked()){
+                    bLegalAOInDeletion = true;
+                } else if (ao.getIsChecked()){
                     if (!bEncounteredNonDraftAOInDeletion) {
                         bEncounteredNonDraftAOInDeletion = true;
-                        GlobalVariables.getMessageMap().putError("selectedOfferingAction",
-                            CourseOfferingConstants.AO_NOT_DRAFT_FOR_DELETION_ERROR);
                     }
                 }
             }
-            if (selectedIndexList.isEmpty()) {
-                LOG.error("Error: No selected Draft Activity Offering");
-                GlobalVariables.getMessageMap().putErrorForSectionId("confirmationResultSection",
+        }
+
+        if (selectedIndexList.isEmpty()) {
+            if (bEncounteredNonDraftAOInDeletion) {
+                GlobalVariables.getMessageMap().putError("manageActivityOfferingsPage",
+                        CourseOfferingConstants.AO_NOT_DRAFT_FOR_DELETION_ERROR);
+            } else {
+                GlobalVariables.getMessageMap().putError("manageActivityOfferingsPage",
                         CourseOfferingConstants.COURSEOFFERING_MSG_ERROR_FOUND_NO_DRAFT_AO_SELECTED);
-                return getUIFModelAndView(theForm);
             }
+            return getUIFModelAndView(theForm);
         }
+        /*
+                    else {
+                        GlobalVariables.getMessageMap().putWarningForSectionId("selectedAoDeleteConfirmationPage",
+                                CourseOfferingConstants.COURSEOFFERING_MSG_ERROR_SELECTED_AO_TO_DELETE);
+                    }
+        */
 
-        // GlobalVariables.getMessageMap().putErrorForSectionId("add_planned_course", PlanConstants.ERROR_KEY_UNKNOWN_COURSE);
-
-/*
-        Integer toBeDeleted = selectedIndexList.size();
-
-        if(selectedIndexList.size() >= 1) {
-            GlobalVariables.getMessageMap().putWarningForSectionId("confirmationResultSection",
-                    CourseOfferingConstants.COURSEOFFERING_MSG_ERROR_SELECTED_AO_TO_DELETE, toBeDeleted.toString());
-        }
-
-*/
         return getUIFModelAndView(theForm, CourseOfferingConstants.AO_DELETE_CONFIRM_PAGE);
     }
 

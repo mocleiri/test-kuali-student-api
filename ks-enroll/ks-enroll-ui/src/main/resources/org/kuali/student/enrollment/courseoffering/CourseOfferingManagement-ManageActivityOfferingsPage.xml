@@ -33,7 +33,7 @@
     </bean>
 
 
-    <bean id="KS-CourseOfferingManagement-ActivityOfferingResultSection" parent="Uif-VerticalBoxSection">
+    <bean id="KS-CourseOfferingManagement-ActivityOfferingResultSection" p:id="ActivityOfferingResultSection" parent="Uif-VerticalBoxSection">
         <property name="headerText" value="@{theCourseOffering.courseOfferingCode} - @{theCourseOffering.courseOfferingTitle} (@{theCourseOffering.creditCnt} Credits)" />
         <property name="disclosure.render" value="false"/>
         <property name="header.cssClasses">
@@ -103,7 +103,7 @@
                             </bean>
                             <bean parent="Uif-ActionLink" p:methodToCall="editTheCO" p:actionLabel="Edit" />
                             <bean parent="Uif-ActionLink" p:methodToCall="deleteCoConfirmation" p:actionLabel="Delete" p:render = "@{theCourseOffering.stateKey eq 'kuali.lui.state.draft' or theCourseOffering.stateKey eq 'kuali.lui.course.offering.state.draft' or theCourseOffering.stateKey eq 'kuali.lui.course.offering.state.planned'}" />
-                            <bean parent="Uif-ActionLink" p:methodToCall="viewRegGroups" p:actionLabel="View Registration Groups" />
+                            <bean parent="Uif-ActionLink" p:methodToCall="manageRegGroups" p:actionLabel="Manage Registration Groups" />
                             <!--<bean parent="Uif-ActionLink" p:methodToCall="" p:actionLabel="test" />-->
                         </list>
                     </property>
@@ -162,6 +162,21 @@
                 <bean parent="Uif-DataField"
                       p:label="FORMAT"
                       p:propertyName="aoInfo.formatOfferingName"/>
+                <bean parent="Uif-DataField"
+                      p:label="DAYS"
+                      p:propertyName="daysDisplayName"/>
+                <bean parent="Uif-DataField"
+                      p:label="START TIME"
+                      p:propertyName="startTimeDisplay"/>
+                <bean parent="Uif-DataField"
+                      p:label="END TIME"
+                      p:propertyName="endTimeDisplay"/>
+                <bean parent="Uif-DataField"
+                      p:label="BUILDING"
+                      p:propertyName="buildingName"/>
+                <bean parent="Uif-DataField"
+                      p:label="ROOM"
+                      p:propertyName="roomName"/>
                 <bean parent="Uif-DataField"
                       p:label="INSTRUCTOR"
                       p:propertyName="firstInstructorDisplayName"/>

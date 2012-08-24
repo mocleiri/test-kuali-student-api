@@ -22,7 +22,7 @@
     <bean id="KS-CourseOfferingManagement-ViewRegistrationGroupsPage" parent="Uif-Page" p:disclosure.render="false"
           p:id="viewRegistrationGroupsPage">
         <property name="header">
-            <bean parent="Uif-HeaderThree" p:headerText="View Registration Groups" />
+            <bean parent="Uif-HeaderThree" p:headerText="Manage Registration Groups" />
         </property>
         <property name="items">
             <list>
@@ -44,20 +44,25 @@
                                     <bean class="org.kuali.student.enrollment.class2.courseoffering.keyvalue.FormatsForCreateRGKeyValues" p:addBlankOption="false" />
                                 </property>
                             </bean>
-                            <bean parent="Uif-VerticalBoxSection">
-                                <property name="disclosure.render" value="false"/>
-                                <property name="headerText" value="Generate unconstrained registration groups"/>
+                            <bean parent="Uif-VerticalBoxGroup" p:refreshWhenChangedPropertyNames="formatOfferingIdForViewRG" p:methodToCallOnRefresh="filterAOsAndRGsPerFO">
                                 <property name="items">
                                     <list>
-                                        <bean parent="Uif-Message" p:messageText="Unconstrained registration groups for this course offering are listed below.  Generate unconstrained registration groups if additional activities have been added or removed since the groups were last generated." />
+                                        <ref bean="KS-ViewRegistrationGroupsPage-ActivityOfferingsPerFormatSection"/>
+                                        <bean parent="Uif-VerticalBoxSection">
+                                            <property name="disclosure.render" value="false"/>
+                                            <property name="headerText" value="Generate unconstrained registration groups"/>
+                                            <property name="items">
+                                                <list>
+                                                    <bean parent="Uif-Message" p:messageText="Unconstrained registration groups for this course offering are listed below.  Generate unconstrained registration groups if additional activities have been added or removed since the groups were last generated." />
+                                                </list>
+                                            </property>
+                                        </bean>
+                                        <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Generate Unconstrained Registration Groups" p:methodToCall="generateUnconstrainedRegGroups" p:render="@{!filteredAOsForSelectedFO.empty}" p:id="generate_rgs_button"/>
+                                        <ref bean="KS-ViewRegistrationGroupsPage-RegistrationGroupsPerFormatSection"/>
                                     </list>
                                 </property>
                             </bean>
-                            <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Generate Unconstrained Registration Groups" p:methodToCall="generateUnconstrainedRegGroups" p:render="@{!filteredAOsForSelectedFO.empty}"/>
-                            <ref bean="KS-ViewRegistrationGroupsPage-ActivityOfferingsPerFormatSection"/>
-                            <!--<ref bean="KS-ViewRegistrationGroupsPage-RegGroupsPerFormatSection"/>-->
-                            <bean parent="Uif-SecondaryActionButton-Small" p:actionLabel="Generate Unconstrained Registration Groups" p:methodToCall="generateUnconstrainedRegGroups" p:render="@{!filteredAOsForSelectedFO.empty}"/>
-                        </list>
+                         </list>
                     </property>
                 </bean>
             </list>
@@ -65,8 +70,7 @@
     </bean>
 
     <bean id="KS-ViewRegistrationGroupsPage-ActivityOfferingsPerFormatSection" parent="Uif-TableCollectionSection"
-          p:renderAddLine="false"  p:renderLineActions="false" p:refreshWhenChangedPropertyNames="formatOfferingIdForViewRG"
-          p:methodToCallOnRefresh="filterAOsPerFO">
+          p:renderAddLine="false"  p:renderLineActions="false">
         <property name="collectionObjectClass" value="org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingWrapper" />
         <property name="propertyName" value="filteredAOsForSelectedFO" />
         <property name="headerText" value="@{formatOfferingName} Activity Offerings"/>
@@ -77,7 +81,7 @@
         <property name="layoutManager.richTable.templateOptions">
             <map merge="true">
                 <entry key="sDom" value="rtip"/>
-                <entry key="aaSorting" value="[[ 1, 'desc' ]]"/>
+                <entry key="aaSorting" value="[[ 2, 'asc' ]]"/>
                 <entry key="bPaginate" value="false"/>
             </map>
         </property>
@@ -103,5 +107,47 @@
         </property>
     </bean>
 
+    <bean id="KS-ViewRegistrationGroupsPage-RegistrationGroupsPerFormatSection" parent="Uif-TableCollectionSection"
+          p:renderAddLine="false"  p:renderLineActions="false">
+        <property name="id" value="registrationGroupsPerFormatSection" />
+        <property name="collectionObjectClass" value="org.kuali.student.enrollment.class2.courseoffering.dto.RegistrationGroupWrapper" />
+        <property name="propertyName" value="filteredRGsForSelectedFO" />
+        <property name="headerText" value="@{formatOfferingName} Registration Groups"/>
+        <property name="collectionLookup.quickfinderAction.render" value="false" />
+        <property name="layoutManager.renderSequenceField" value="false" />
+        <property name="layoutManager.applyDefaultCellWidths" value="false" />
+        <property name="layoutManager.applyAlternatingRowStyles" value="false" />
+        <property name="layoutManager.richTable.templateOptions">
+            <map merge="true">
+                <entry key="sDom" value="rtip"/>
+                <entry key="aaSorting" value="[[ 0, 'asc' ]]"/>
+                <entry key="bPaginate" value="false"/>
+            </map>
+        </property>
+        <property name="items">
+            <list>
+                <bean parent="Uif-DataField"
+                      p:label="REG GROUP ID"
+                      p:propertyName="rgInfo.name" p:valign="middle">
+                </bean>
+                <bean parent="Uif-MessageField"
+                      p:label="CODE"
+                      p:messageText="@{#line.aoActivityCodeText}">
+                </bean>
+                <bean parent="Uif-MessageField"
+                      p:label="STATUS"
+                      p:messageText="@{#line.aoStateNameText}" />
+                <bean parent="Uif-MessageField"
+                      p:label="TYPE"
+                      p:messageText="@{#line.aoTypeNameText}"/>
+                <bean parent="Uif-MessageField"
+                      p:label="INSTRUCTOR"
+                      p:messageText="@{#line.aoInstructorText}"/>
+                <bean parent="Uif-MessageField"
+                      p:label="MAX ENR"
+                      p:messageText="@{#line.aoMaxEnrText}"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>

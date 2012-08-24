@@ -7,7 +7,6 @@ import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.core.api.util.RiceKeyConstants;
 import org.kuali.rice.krad.uif.service.impl.ViewHelperServiceImpl;
 import org.kuali.rice.krad.util.GlobalVariables;
-import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
 import org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingWrapper;
@@ -17,23 +16,30 @@ import org.kuali.student.enrollment.class2.courseoffering.service.CourseOffering
 import org.kuali.student.enrollment.class2.courseoffering.util.CourseOfferingConstants;
 import org.kuali.student.enrollment.class2.courseoffering.util.CourseOfferingResourceLoader;
 import org.kuali.student.enrollment.class2.courseoffering.util.ViewHelperUtil;
-import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
-import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
-import org.kuali.student.enrollment.courseoffering.dto.FormatOfferingInfo;
-import org.kuali.student.enrollment.courseoffering.dto.OfferingInstructorInfo;
+import org.kuali.student.enrollment.courseoffering.dto.*;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
-import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
-import org.kuali.student.r2.lum.course.dto.ActivityInfo;
-import org.kuali.student.r2.lum.course.dto.CourseInfo;
-import org.kuali.student.r2.lum.course.dto.FormatInfo;
-import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.LocaleInfo;
+import org.kuali.student.r2.common.dto.TimeOfDayInfo;
+import org.kuali.student.r2.common.permutation.PermutationUtils;
+import org.kuali.student.r2.common.util.constants.AcademicCalendarServiceConstants;
 import org.kuali.student.r2.common.util.constants.CourseOfferingServiceConstants;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
 import org.kuali.student.r2.core.class1.state.dto.StateInfo;
 import org.kuali.student.r2.core.class1.state.service.StateService;
+import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.core.class1.type.service.TypeService;
+import org.kuali.student.r2.core.room.dto.BuildingInfo;
+import org.kuali.student.r2.core.room.dto.RoomInfo;
+import org.kuali.student.r2.core.room.service.RoomService;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleComponentInfo;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleInfo;
+import org.kuali.student.r2.core.scheduling.dto.TimeSlotInfo;
+import org.kuali.student.r2.core.scheduling.service.SchedulingService;
+import org.kuali.student.r2.lum.course.dto.ActivityInfo;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.dto.FormatInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
 import org.kuali.student.r2.lum.lrc.service.LRCService;
 
@@ -51,6 +57,8 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
     private TypeService typeService;
     private StateService stateService;
     private transient LRCService lrcService;
+    private SchedulingService schedulingService;
+    private RoomService roomService;
 
 
     public List<TermInfo> findTermByTermCode(String termCode) throws Exception {
@@ -77,6 +85,8 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
                 coInfo.setCreditCnt(getCreditCount(coInfo, null));
                 CourseOfferingEditWrapper courseOfferingEditWrapper = new CourseOfferingEditWrapper(coInfo);
                 courseOfferingEditWrapper.setGradingOption(getGradingOption(coInfo.getGradingOptionId()));
+                StateInfo state = getStateService().getState(coInfo.getStateKey(),getContextInfo());
+                courseOfferingEditWrapper.setStateName(state.getName());
                 form.getCourseOfferingEditWrapperList().add(courseOfferingEditWrapper);
             }
         } else {
@@ -273,6 +283,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
         try {
             activityOfferingInfoList =_getCourseOfferingService().getActivityOfferingsByCourseOffering(courseOfferingId, getContextInfo());
             activityOfferingWrapperList = new ArrayList<ActivityOfferingWrapper>(activityOfferingInfoList.size());
+            Calendar calendar = new  GregorianCalendar();
 
             for (ActivityOfferingInfo info : activityOfferingInfoList) {
                 ActivityOfferingWrapper wrapper = new ActivityOfferingWrapper(info);
@@ -287,6 +298,69 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
                     wrapper.setFirstInstructorDisplayName(displayInstructor.getPersonName());
                 }
 
+/*
+                calendar.setTimeInMillis(1344443400000L);
+                String sTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " " + getAmPm(calendar.get(Calendar.AM_PM));
+                calendar.setTimeInMillis(1344447000000L);
+                String eTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " " + getAmPm(calendar.get(Calendar.AM_PM));
+
+                List<Integer>  testDays = new ArrayList<Integer>();
+                testDays.add(calendar.get(Calendar.DAY_OF_WEEK)-2);
+                testDays.add(calendar.get(Calendar.DAY_OF_WEEK));
+                wrapper.setStartTimeDisplay(sTime);
+                wrapper.setEndTimeDisplay(eTime);
+                wrapper.setDaysDisplayName(getDays(testDays));
+                wrapper.setBuildingName("COMPUTER SCIENCE INSTRUCTIONAL");
+                wrapper.setRoomName("CSI 2118");
+                SchedulingService service  = getSchedulingService();
+                RoomService roomService1 = getRoomService();
+*/
+
+                // assign the time and days
+                if (info.getScheduleId() != null) {
+                    ScheduleInfo scheduleInfo = getSchedulingService().getSchedule(info.getScheduleId(), getContextInfo());
+                    if (scheduleInfo != null) {
+                        List<ScheduleComponentInfo> componentList = scheduleInfo.getScheduleComponents();
+                        if (componentList != null && componentList.size() > 0) {
+                            List<String> ids = componentList.get(0).getTimeSlotIds();
+                            if (ids != null && ids.size() > 0) {
+                                TimeSlotInfo timeSlot = getSchedulingService().getTimeSlot(ids.get(0), getContextInfo());
+                                if (timeSlot != null) {
+                                    TimeOfDayInfo startTime = timeSlot.getStartTime();
+                                    TimeOfDayInfo endTime = timeSlot.getEndTime();
+                                    List<Integer> days = timeSlot.getWeekdays();
+
+                                    if(startTime != null) {
+                                        calendar.setTimeInMillis(startTime.getMilliSeconds());
+                                        String start1 = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " " + getAmPm(calendar.get(Calendar.AM_PM));
+                                        wrapper.setStartTimeDisplay(start1);
+                                    }
+                                    if(endTime != null) {
+                                        calendar.setTimeInMillis(endTime.getMilliSeconds());
+                                        String end1 = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " " + getAmPm(calendar.get(Calendar.AM_PM));
+                                        wrapper.setEndTimeDisplay(end1);
+                                    }
+                                    if(days != null && days.size() > 0) {
+                                        wrapper.setDaysDisplayName(getDays(days));
+                                    }
+                                }
+                            }
+                            // assign building and room info
+                            String roomId = componentList.get(0).getRoomId();
+                            if(roomId != null) {
+                                RoomInfo roomInfo = getRoomService().getRoom(roomId, getContextInfo());
+                                if(roomInfo != null) {
+                                    if(roomInfo.getBuildingId() != null  && !roomInfo.getBuildingId().isEmpty()) {
+                                        BuildingInfo buildingInfo = getRoomService().getBuilding(roomInfo.getBuildingId(), getContextInfo());
+                                        if(buildingInfo != null)
+                                        wrapper.setBuildingName(buildingInfo.getName());
+                                    }
+                                    wrapper.setRoomName(roomInfo.getName());
+                                }
+                            }
+                        }
+                    }
+                }
                 activityOfferingWrapperList.add(wrapper);
             }
         } catch (Exception e) {
@@ -312,7 +386,8 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
             if (wrapper.getIsChecked()) {
                 //  If the action is "Set as Draft" then the current state of the AO must be "Approved".
                 if (StringUtils.equals(CourseOfferingConstants.ACTIVITY_OFFERING_DRAFT_ACTION, selectedAction)) {
-                    if (StringUtils.equals(wrapper.getAoInfo().getStateKey(), LuiServiceConstants.LUI_AO_STATE_SCHEDULED_KEY)){
+                  //if (StringUtils.equals(wrapper.getAoInfo().getStateKey(), LuiServiceConstants.LUI_AO_STATE_SCHEDULED_KEY)){
+                    if (StringUtils.equals(wrapper.getAoInfo().getStateKey(), LuiServiceConstants.LUI_AO_STATE_APPROVED_KEY)){
                         wrapper.getAoInfo().setStateKey(LuiServiceConstants.LUI_AO_STATE_DRAFT_KEY);
                         wrapper.setStateName(draftState.getName());
                         ActivityOfferingInfo updatedAO = getCourseOfferingService().updateActivityOffering(wrapper.getAoInfo().getId(),wrapper.getAoInfo(),getContextInfo());
@@ -402,6 +477,45 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
         }
     }
 
+    /*
+     * For Manage Registration Group page
+     */
+    public void validateRegistrationGroupsForFormatOffering (List<RegistrationGroupInfo> rgInfos,
+                                                             String formatOfferingId,
+                                                             CourseOfferingManagementForm form) throws Exception {
+        List<ActivityOfferingInfo> aoList = coService.getActivityOfferingsByFormatOffering(
+                formatOfferingId, getContextInfo());
+
+        Map<String, List<String>> activityOfferingTypeToAvailableActivityOfferingMap =
+                constructActivityOfferingTypeToAvailableActivityOfferingMap(aoList);
+
+        List<List<String>> generatedPermutations = new ArrayList<List<String>>();
+        List<List<String>> foundList = new ArrayList<List<String>>();
+
+        PermutationUtils.generatePermutations(new ArrayList<String>(
+                activityOfferingTypeToAvailableActivityOfferingMap.keySet()),
+                new ArrayList<String>(),
+                activityOfferingTypeToAvailableActivityOfferingMap,
+                generatedPermutations);
+
+        
+        for (List<String> activityOfferingPermutation : generatedPermutations) {
+              for (RegistrationGroupInfo rgInfo : rgInfos){
+                  if (hasGeneratedRegGroup(activityOfferingPermutation,rgInfo)){
+                      rgInfos.remove(rgInfo);
+                      foundList.add(activityOfferingPermutation);
+                      break;
+                  }
+              }
+        }
+        if (generatedPermutations.size() != foundList.size() )  {
+            GlobalVariables.getMessageMap().putWarningForSectionId("registrationGroupsPerFormatSection", CourseOfferingConstants.REGISTRATIONGROUP_MISSING_REGGROUPS);
+        }
+        if (!rgInfos.isEmpty()){
+            GlobalVariables.getMessageMap().putWarningForSectionId("registrationGroupsPerFormatSection", CourseOfferingConstants.REGISTRATIONGROUP_INVALID_REGGROUPS);
+        }
+    }
+    
     private CourseOfferingService _getCourseOfferingService() {
         if (coService == null) {
             coService = (CourseOfferingService) GlobalResourceLoader.getService(new QName(CourseOfferingServiceConstants.NAMESPACE,
@@ -461,8 +575,109 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
         return this.lrcService;
     }
 
+    public SchedulingService getSchedulingService() {
+         if(schedulingService == null)  {
+             schedulingService = CourseOfferingResourceLoader.loadSchedulingService();
+         }
+         return schedulingService;
+    }
+
+    public RoomService getRoomService(){
+        if (roomService == null){
+            roomService = CourseOfferingResourceLoader.loadRoomService();
+        }
+        return roomService;
+    }
+
     //get credit count from persisted COInfo or from CourseInfo
     private String getCreditCount(CourseOfferingInfo coInfo, CourseInfo courseInfo) throws Exception{
         return ViewHelperUtil.getCreditCount(coInfo, courseInfo);
+    }
+
+    private Map<String, List<String>> constructActivityOfferingTypeToAvailableActivityOfferingMap(List<ActivityOfferingInfo> aoList) {
+        Map<String, List<String>> activityOfferingTypeToAvailableActivityOfferingMap = new HashMap<String, List<String>>();
+
+        for (ActivityOfferingInfo info : aoList) {
+            String activityType = info.getTypeKey();
+            List<String> activityList = activityOfferingTypeToAvailableActivityOfferingMap
+                    .get(activityType);
+
+            if (activityList == null) {
+                activityList = new ArrayList<String>();
+                activityOfferingTypeToAvailableActivityOfferingMap.put(
+                        activityType, activityList);
+            }
+
+            activityList.add(info.getId());
+
+        }
+        return activityOfferingTypeToAvailableActivityOfferingMap;
+    }
+    
+    private boolean hasGeneratedRegGroup(List<String>activityOfferingPermutation, RegistrationGroupInfo rgInfo){
+        boolean isMatched = true;
+        List<String> aoIds = rgInfo.getActivityOfferingIds();
+        List<String> foundList = new ArrayList<String>();
+        for (String activityOfferingPermutationItem : activityOfferingPermutation){
+            for (String aoId: aoIds){
+                if (activityOfferingPermutationItem.equals(aoId)){
+                    aoIds.remove(aoId);
+                    foundList.add(activityOfferingPermutationItem);
+                    break;
+                }
+            }
+        }
+        if (activityOfferingPermutation.size() != foundList.size() ||!aoIds.isEmpty()  )  {
+            isMatched = false;
+        }
+        return isMatched;        
+    }
+
+    private String getAmPm(int ampm) {
+        if (ampm == 1) {
+            return "pm";
+        }
+        return "am";
+    }
+
+    private String convertIntoDays(int day) {
+        String dayOfWeek = "";
+        switch (day) {
+            case 1:
+                dayOfWeek = "SU";
+                break;
+            case 2:
+                dayOfWeek = "M";
+                break;
+            case 3:
+                dayOfWeek = "T";
+                break;
+            case 4:
+                dayOfWeek = "W";
+                break;
+            case 5:
+                dayOfWeek = "TH";
+                break;
+            case 6:
+                dayOfWeek = "F";
+                break;
+            case 7:
+                dayOfWeek = "S";
+                break;
+            default:
+                dayOfWeek = "";
+        }
+        return dayOfWeek;
+    }
+
+    private String getDays(List<Integer> intList) {
+
+        StringBuilder sb = new StringBuilder();
+        if(intList == null) return sb.toString();
+
+        for(Integer d : intList) {
+            sb.append(convertIntoDays(d.intValue()));
+        }
+        return sb.toString();
     }
 }

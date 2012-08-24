@@ -49,6 +49,8 @@ public class FinalExamOptionsKeyValues extends UifKeyValuesFinderBase implements
 
     private transient EnumerationManagementService enumerationManagementService;
 
+    private ContextInfo contextInfo;
+
     @Override
     public List<KeyValue> getKeyValues(ViewModel model) {
 
@@ -81,9 +83,6 @@ public class FinalExamOptionsKeyValues extends UifKeyValuesFinderBase implements
             throw new RuntimeException(e);
         } catch (OperationFailedException e) {
             throw new RuntimeException(e);
-// TODO Re-enable when switching to r2 enumeration service
-//        } catch (PermissionDeniedException e) {
-//            throw new RuntimeException(e);
         }
 
     return keyValues;
@@ -109,5 +108,12 @@ public class FinalExamOptionsKeyValues extends UifKeyValuesFinderBase implements
             int result = enumeratedValue1.getSortKey().compareToIgnoreCase(enumeratedValue2.getSortKey());
             return result;
         }
+    }
+
+    public ContextInfo getContextInfo() {
+        if (contextInfo == null){
+            contextInfo =  org.kuali.student.enrollment.common.util.ContextBuilder.loadContextInfo();
+        }
+        return contextInfo;
     }
 }

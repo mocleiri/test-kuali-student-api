@@ -18,7 +18,7 @@
   </parent>
   <groupId>org.kuali.student</groupId>
   <artifactId>student</artifactId>
-  <version>1.3.0-services-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Kuali Student</name>
   <description>
@@ -133,7 +133,7 @@
     <jaxws.version>2.1.5</jaxws.version>
     <jetty.version>6.1.6</jetty.version>
     <junit.version>4.10</junit.version>
-    <kuali.rice.version>2.2.0-M2</kuali.rice.version>
+    <kuali.rice.version>2.2.0-myplan-build-26</kuali.rice.version>
     <log4j.version>1.2.16</log4j.version>
     <log4j.javadoc.version>1.2</log4j.javadoc.version>
     <metro.version>1.4</metro.version>
@@ -877,6 +877,16 @@
         <groupId>org.apache.velocity</groupId>
         <artifactId>velocity-tools</artifactId>
         <version>${velocity.tools.version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>commons-digester</groupId>
+                  <artifactId>commons-digester</artifactId>
+              </exclusion>
+              <exclusion>
+                  <artifactId>commons-beanutils</artifactId>
+                  <groupId>commons-beanutils</groupId>
+              </exclusion>
+          </exclusions>
       </dependency>
       <dependency>
         <groupId>commons-lang</groupId>
@@ -1094,10 +1104,16 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <!-- Should use the rice beantutils overwrite to prevent rice data dictionary validation errors.
       <dependency>
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
         <version>1.8.3</version>
+      </dependency-->
+      <dependency>
+        <groupId>org.kuali.commons</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.8.3-kuali</version>
       </dependency>
       <dependency>
         <groupId>xalan</groupId>
@@ -1131,12 +1147,13 @@
         <groupId>net.sf.jasperreports</groupId>
         <artifactId>jasperreports</artifactId>
         <version>${net.sf.jasperreports.version}</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>commons-beanutils</artifactId>
+            <groupId>commons-beanutils</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
-      <!-- dependency>
-        <groupId>net.sf.jasperreports</groupId>
-        <artifactId>jasperreports-fonts</artifactId>
-        <version>4.0.1</version>
-        </dependency -->
       <dependency>
         <groupId>com.lowagie</groupId>
         <artifactId>itext</artifactId>
@@ -1172,6 +1189,12 @@
 	    <groupId>net.sf.dozer</groupId>
 	    <artifactId>dozer</artifactId>
 	    <version>${dozer.version}</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>commons-beanutils</artifactId>
+            <groupId>commons-beanutils</groupId>
+          </exclusion>
+        </exclusions>
 	  </dependency>
     </dependencies>
   </dependencyManagement>

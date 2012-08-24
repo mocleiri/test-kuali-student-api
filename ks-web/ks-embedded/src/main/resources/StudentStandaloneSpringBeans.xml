@@ -41,6 +41,7 @@
 				<value>classpath:org/kuali/rice/student/bo/datadictionary</value>
                 <value>classpath:UifKRADOverrideDefinitions.xml</value>
 				<value>classpath:UifKSDefinitions.xml</value>
+                <value>classpath:UifUtils.xml</value>
                 <value>classpath:ks-ActivityOfferingInfo-dictionary.xml</value>
                 <value>classpath:ks-CourseOfferingInfo-dictionary.xml</value>
                 <value>classpath:ks-EnrollmentFeeInfo-dictionary.xml</value>
@@ -132,11 +133,12 @@
                 <value>classpath:org/kuali/student/enrollment/hold/HoldIssueInfoCreateView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/hold/HoldIssueInfoModifyView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/hold/HoldIssueInfoView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/hold/HoldIssueInfoLookupView.xml</value>
 
                 <!-- Process -->
                 <value>classpath:org/kuali/student/enrollment/process/ProcessInfoSearchView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/process/ProcessInfoCreateView.xml</value>
-                <value>classpath:org/kuali/student/enrollment/process/ProcessInfoView.xml</value>
+                <value>classpath:org/kuali/student/enrollment/process/ProcessInfoLookupView.xml</value>
 
                 <!-- Checks -->
                 <value>classpath:org/kuali/student/enrollment/check/CheckInfoCreateView.xml</value>
@@ -154,9 +156,12 @@
                 <value>classpath:org/kuali/student/enrollment/state/LifecycleInfoAdminLookupView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/state/LifecycleInfoAdminInquiryView.xml</value>
 
-                <!-- Kitchen Sink -->
+                <!-- Kitchen Sink-->
                 <value>classpath:org/kuali/student/enrollment/kitchensink/KitchenSinkView.xml</value>
                 <value>classpath:org/kuali/student/enrollment/kitchensink/Buttons.xml</value>
+                <value>classpath:org/kuali/student/enrollment/kitchensink/CollectionColumnSorting.xml</value>
+                <value>classpath:org/kuali/student/enrollment/kitchensink/CollectionOptions.xml</value>
+                <value>classpath:org/kuali/student/enrollment/kitchensink/CollectionActionImages.xml</value>
             </list>
 		</property>
 		<property name="packagePrefixes">

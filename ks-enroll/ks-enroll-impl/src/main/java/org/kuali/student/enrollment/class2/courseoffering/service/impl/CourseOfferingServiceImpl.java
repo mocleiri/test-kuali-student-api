@@ -15,10 +15,7 @@ import org.kuali.student.enrollment.class2.courseoffering.model.SeatPoolDefiniti
 import org.kuali.student.enrollment.class2.courseoffering.service.CourseOfferingCodeGenerator;
 import org.kuali.student.enrollment.class2.courseoffering.service.assembler.RegistrationGroupAssembler;
 import org.kuali.student.enrollment.class2.courseoffering.service.decorators.R1CourseServiceHelper;
-import org.kuali.student.enrollment.class2.courseoffering.service.transformer.ActivityOfferingTransformer;
-import org.kuali.student.enrollment.class2.courseoffering.service.transformer.CourseOfferingTransformer;
-import org.kuali.student.enrollment.class2.courseoffering.service.transformer.FormatOfferingTransformer;
-import org.kuali.student.enrollment.class2.courseoffering.service.transformer.OfferingInstructorTransformer;
+import org.kuali.student.enrollment.class2.courseoffering.service.transformer.*;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingAdminDisplayInfo;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingClusterInfo;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
@@ -35,6 +32,7 @@ import org.kuali.student.enrollment.lpr.service.LprService;
 import org.kuali.student.enrollment.lui.dto.LuiInfo;
 import org.kuali.student.enrollment.lui.dto.LuiLuiRelationInfo;
 import org.kuali.student.enrollment.lui.service.LuiService;
+import org.kuali.student.r2.common.dto.*;
 import org.kuali.student.r2.core.class1.state.service.StateService;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.core.constants.AtpServiceConstants;
@@ -42,10 +40,6 @@ import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.dto.FormatInfo;
 import org.kuali.student.r2.lum.course.service.CourseService;
 import org.kuali.student.r2.common.criteria.CriteriaLookupService;
-import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.common.dto.RichTextInfo;
-import org.kuali.student.r2.common.dto.StatusInfo;
-import org.kuali.student.r2.common.dto.ValidationResultInfo;
 import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
 import org.kuali.student.r2.common.exceptions.CircularRelationshipException;
 import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
@@ -92,6 +86,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     private CourseOfferingCodeGenerator offeringCodeGenerator;
     private CourseOfferingTransformer courseOfferingTransformer;
     private SeatPoolDefinitionDao seatPoolDefinitionDao;
+    private RegistrationGroupTransformer registrationGroupTransformer;
 
     public CourseOfferingServiceBusinessLogic getBusinessLogic() {
         return businessLogic;
@@ -136,7 +131,17 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatusInfo deleteFormatOfferingCascaded(String formatOfferingId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        // Delete related registration groups
+        deleteRegistrationGroupsByFormatOffering(formatOfferingId, context);
+
         // Delete dependent activity offerings
+        // set the ContextInfo attr to indicate deleteActivityOfferingCascaded that AO is deleted from delete FO
+        List<AttributeInfo> attributes = context.getAttributes();
+        AttributeInfo isDeleteAOCalledFromDeleteFO = new AttributeInfo();
+        isDeleteAOCalledFromDeleteFO.setKey("isDeleteAOCalledFromDeleteFO");
+        isDeleteAOCalledFromDeleteFO.setValue("true");
+        attributes.add(isDeleteAOCalledFromDeleteFO);
+
         List<ActivityOfferingInfo> aos = getActivityOfferingsByFormatOffering(formatOfferingId, context);
         for (ActivityOfferingInfo ao: aos) {
             deleteActivityOfferingCascaded(ao.getId(), context);
@@ -156,10 +161,94 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         return statusInfo;
     }
 
+
     @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
-    public RegistrationGroupInfo createRegistrationGroup( String formatOfferingId,  String registrationGroupType,  RegistrationGroupInfo registrationGroupInfo, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
-        throw new UnsupportedOperationException();
+    public RegistrationGroupInfo createRegistrationGroup( String formatOfferingId,  String registrationGroupTypeKey,  RegistrationGroupInfo registrationGroupInfo, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        FormatOfferingInfo fo = this.getFormatOffering(formatOfferingId, context);
+        if (registrationGroupInfo.getTermId() != null) {
+            if (!registrationGroupInfo.getTermId().equals(fo.getTermId())) {
+                throw new InvalidParameterException(registrationGroupInfo.getTermId() + " term in the registration group does not match the one in the format offering " + fo.getTermId());
+            }
+        }
+        registrationGroupInfo.setTermId(fo.getTermId());
+
+        if (!registrationGroupTypeKey.equals(registrationGroupInfo.getTypeKey())) {
+            throw new InvalidParameterException(registrationGroupTypeKey + " does not match the corresponding value in the object " + registrationGroupInfo.getTypeKey());
+        }
+
+        // get the course offering
+        CourseOfferingInfo coInfo = this.getCourseOffering(registrationGroupInfo.getCourseOfferingId(), context);
+        String coCode = coInfo.getCourseOfferingCode();
+        if (coCode == null) {
+            coCode = "NOCODE";
+        }
+
+        // TODO: Reg group code validation
+        if (registrationGroupInfo.getName() == null) {
+            // name stores the reg group code which is different from registration code
+            throw new DataValidationErrorException("reg group code is null");
+        }
+
+        // copy to the lui
+        LuiInfo lui = registrationGroupTransformer.rg2Lui(registrationGroupInfo, context);
+        try {
+            String cluId = lui.getCluId();
+            String atpId = lui.getAtpId();
+            String typeKey = lui.getTypeKey();
+            lui = luiService.createLui(cluId, atpId, typeKey, lui, context);
+        } catch (Exception ex) {
+            throw new OperationFailedException("unexpected", ex);
+        }
+
+        // build the lui lui relation FO-RG
+        LuiLuiRelationInfo luiLuiRelFoRg = new LuiLuiRelationInfo();
+        luiLuiRelFoRg.setLuiId(formatOfferingId);
+        luiLuiRelFoRg.setName("fo-rg-relation"); // TODO: This fixes a DB required field error--find more meaningful value.
+        luiLuiRelFoRg.setRelatedLuiId(lui.getId());
+
+        RichTextInfo descrFoRg = new RichTextInfo();
+        descrFoRg.setPlain(coCode + "-FO-RG"); // Useful for debugging
+        descrFoRg.setFormatted(coCode + "-FO-RG"); // Useful for debugging
+        luiLuiRelFoRg.setDescr(descrFoRg);
+
+        luiLuiRelFoRg.setTypeKey(LuiServiceConstants.LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_RG_TYPE_KEY);
+        luiLuiRelFoRg.setStateKey(LuiServiceConstants.LUI_LUI_RELATION_ACTIVE_STATE_KEY);
+        luiLuiRelFoRg.setEffectiveDate(new Date());
+        try {
+            luiLuiRelFoRg = luiService.createLuiLuiRelation(luiLuiRelFoRg.getLuiId(), luiLuiRelFoRg.getRelatedLuiId(), luiLuiRelFoRg.getTypeKey(), luiLuiRelFoRg, context);
+        } catch (Exception ex) {
+            throw new OperationFailedException("unexpected", ex);
+        }
+
+        // build the lui lui relation RG-AO
+        for (String aoId : registrationGroupInfo.getActivityOfferingIds()) {
+            LuiLuiRelationInfo luiLuiRelRgAo = new LuiLuiRelationInfo();
+            luiLuiRelRgAo.setLuiId(lui.getId());
+            luiLuiRelRgAo.setName("rg-ao-relation"); // TODO: This fixes a DB required field error--find more meaningful value.
+            luiLuiRelRgAo.setRelatedLuiId(aoId);
+
+            RichTextInfo descrRgAo = new RichTextInfo();
+            descrRgAo.setPlain(coCode + "-RG-AO"); // Useful for debugging
+            descrRgAo.setFormatted(coCode + "-RG-AO"); // Useful for debugging
+            luiLuiRelRgAo.setDescr(descrRgAo);
+
+            luiLuiRelRgAo.setTypeKey(LuiServiceConstants.LUI_LUI_RELATION_REGISTERED_FOR_VIA_RG_TO_AO_TYPE_KEY);
+            luiLuiRelRgAo.setStateKey(LuiServiceConstants.LUI_LUI_RELATION_ACTIVE_STATE_KEY);
+            luiLuiRelRgAo.setEffectiveDate(new Date());
+            try {
+                luiLuiRelRgAo = luiService.createLuiLuiRelation(luiLuiRelRgAo.getLuiId(), luiLuiRelRgAo.getRelatedLuiId(), luiLuiRelRgAo.getTypeKey(), luiLuiRelRgAo, context);
+            } catch (Exception ex) {
+                throw new OperationFailedException("unexpected", ex);
+            }
+        }
+
+        // Everything saved to the DB, now return RG sent back by createLui and transformed by transformer back to caller
+        RegistrationGroupInfo rgInfo = new RegistrationGroupInfo();
+        rgInfo = registrationGroupTransformer.lui2Rg(lui, context);
+        rgInfo.setCourseOfferingId(coInfo.getId());
+        rgInfo.setRegistrationCode(registrationGroupInfo.getRegistrationCode());
+        return rgInfo;
     }
 
     public CriteriaLookupService getCriteriaLookupService() {
@@ -958,11 +1047,12 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ActivityOfferingInfo> getActivityOfferingsByFormatOffering(String formatOfferingId, ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         List<ActivityOfferingInfo> activityOfferings = new ArrayList<ActivityOfferingInfo>();
 
-        //Find all related luis to the course Offering
+        // Find all related luis to the course Offering
         List<LuiInfo> luis = luiService.getRelatedLuisByLuiAndRelationType(formatOfferingId, LuiServiceConstants.LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_AO_TYPE_KEY, contextInfo);
         for (LuiInfo lui:luis) {
 
@@ -974,6 +1064,18 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
                 activityOfferings.add(activityOffering);
             }
         }
+        Collections.sort(activityOfferings, new Comparator<ActivityOfferingInfo>() {
+            @Override
+            public int compare(ActivityOfferingInfo o1, ActivityOfferingInfo o2) {
+                if (o1.getActivityCode() == null) {
+                    return 1;
+                } else if (o2.getActivityCode() == null) {
+                    return -1;
+                } else {
+                    return o1.getActivityCode().compareTo(o2.getActivityCode());
+                }
+            }
+        });
         return activityOfferings;
     }
 
@@ -1126,6 +1228,8 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
            throw new RuntimeException(e);
        }
 
+       //Generate Registration Groups based on the copied AO
+       //generateRegistrationGroupsForFormatOffering(targetAO.getFormatOfferingId(),context);
 
         return targetAO;
     }
@@ -1274,6 +1378,16 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
             deleteSeatPoolDefinition(seatPool.getId(),context);
         }
 
+        // Delete RGs attached to this AO
+        if (context.getAttributes() == null || context.getAttributes().isEmpty() || !context.getAttributeValue("isDeleteAOCalledFromDeleteFO").equals("true")) {
+            List<RegistrationGroupInfo> regGroups = getRegistrationGroupsByActivityOffering(activityOfferingId, context);
+            if (regGroups != null && !regGroups.isEmpty()) {
+                for (RegistrationGroupInfo regGroup : regGroups) {
+                    deleteRegistrationGroup(regGroup.getId(), context);
+                }
+            }
+        }
+
         // Delete the Activity offering
         return deleteActivityOffering(activityOfferingId, context);
 
@@ -1310,8 +1424,13 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     public RegistrationGroupInfo getRegistrationGroup(String registrationGroupId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         LuiInfo lui = luiService.getLui(registrationGroupId, context);
+        if (lui == null) {
+            throw new DoesNotExistException("registrationGroupId does not exist: " + registrationGroupId);
+        }
+        RegistrationGroupInfo rgInfo = registrationGroupTransformer.lui2Rg(lui, context);
+        rgInfo.setCourseOfferingId(this.getFormatOffering(rgInfo.getFormatOfferingId(), context).getCourseOfferingId());
 
-        return registrationGroupAssembler.assemble(lui, context);
+        return rgInfo;
 
     }
 
@@ -1363,6 +1482,37 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         throw new UnsupportedOperationException();
     }
 
+    private List<RegistrationGroupInfo> getRegistrationGroupsByActivityOffering (String activityOfferingId, ContextInfo context) throws InvalidParameterException, MissingParameterException, PermissionDeniedException, OperationFailedException, DoesNotExistException {
+        List<RegistrationGroupInfo> regGroups = new ArrayList<RegistrationGroupInfo>();
+
+        List<String> rgIds = luiService.getLuiIdsByRelatedLuiAndRelationType(activityOfferingId, LuiServiceConstants.LUI_LUI_RELATION_REGISTERED_FOR_VIA_RG_TO_AO_TYPE_KEY, context);
+        if (rgIds != null && !rgIds.isEmpty()) {
+            for (String rgId : rgIds) {
+                RegistrationGroupInfo rgInfo = getRegistrationGroup(rgId, context);
+                regGroups.add(rgInfo);
+            }
+
+            // Now sort based on reg group code order (alphabetical order works fine)
+            // TODO: figure out how to write a compare method that makes sense given different code generators.
+            Collections.sort(regGroups, new Comparator<RegistrationGroupInfo>() {
+                @Override
+                public int compare(RegistrationGroupInfo o1, RegistrationGroupInfo o2) {
+                    if (o1 == null) {
+                        return -1;
+                    } else if (o2 == null) {
+                        return 1;
+                    } else {
+                        // We assume <name> stores the registration group code as 4-digit string
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                }
+            });
+            return regGroups;
+        } else {
+            return null;
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<RegistrationGroupInfo> getRegistrationGroupsByFormatOffering(String formatOfferingId, ContextInfo context)
@@ -1380,6 +1530,21 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
                 throw new InvalidParameterException("Invalid type for reg groups");
             }
         }
+        // Now sort based on reg group code order (alphabetical order works fine)
+        // TODO: figure out how to write a compare method that makes sense given different code generators.
+        Collections.sort(regGroups, new Comparator<RegistrationGroupInfo>() {
+            @Override
+            public int compare(RegistrationGroupInfo o1, RegistrationGroupInfo o2) {
+                if (o1 == null) {
+                    return -1;
+                } else if (o2 == null) {
+                    return 1;
+                } else {
+                    // We assume <name> stores the registration group code as 4-digit string
+                    return o1.getName().compareTo(o2.getName());
+                }
+            }
+        });
         return regGroups;
     }
 
@@ -1388,11 +1553,10 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public List<RegistrationGroupInfo> generateRegistrationGroupsForFormatOffering(String formatOfferingId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-//        throw new UnsupportedOperationException();
         try {
             return businessLogic.generateRegistrationGroupsForFormatOffering(formatOfferingId,context);
         } catch (Exception e) {
-            throw new RuntimeException("Registration Groups generation has failed! "+ e);
+            throw new RuntimeException("Registration Groups generation has failed! ", e);
         }
     }
 
@@ -1424,33 +1588,51 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
             PermissionDeniedException,
             ReadOnlyException, VersionMismatchException {
 
+        // validate params
+        if (!registrationGroupId.equals(registrationGroupInfo.getId())) {
+            throw new InvalidParameterException(registrationGroupId + " does not match the corresponding value in the object " + registrationGroupInfo.getId());
+        }
+
+        // get it
+        LuiInfo lui = luiService.getLui(registrationGroupId, context);
+
+        //TO DO: Check that the Registration code is unique within a CO. If it is a duplicate, do not change it
+
         Set<String> existingRelatedLuiIds = new HashSet<String>();
         Set<String> newRelatedLuiIds = new HashSet<String>(registrationGroupInfo.getActivityOfferingIds());
-        newRelatedLuiIds.add(registrationGroupInfo.getCourseOfferingId());
 
-        // Delete relations for removed Activity Offerings or Course Offering
+        //Update LLR
         List<LuiLuiRelationInfo> llrs = luiService.getLuiLuiRelationsByLui(registrationGroupId, context);
         for (LuiLuiRelationInfo llr : llrs) {
-            if (registrationGroupId.equals(llr.getLuiId()) && LuiServiceConstants.LUI_LUI_RELATION_REGISTEREDFORVIA_TYPE_KEY.equals(llr.getTypeKey())) {
+            if (registrationGroupId.equals(llr.getLuiId()) && LuiServiceConstants.LUI_LUI_RELATION_REGISTERED_FOR_VIA_RG_TO_AO_TYPE_KEY.equals(llr.getTypeKey())) {
                 String relatedLuiId = llr.getRelatedLuiId();
                 existingRelatedLuiIds.add(relatedLuiId);
                 if (!newRelatedLuiIds.contains(relatedLuiId)) {
                     luiService.deleteLuiLuiRelation(llr.getId(), context);
                 }
+            } else if (registrationGroupId.equals(llr.getRelatedLuiId())
+                    && LuiServiceConstants.LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_RG_TYPE_KEY.equals(llr.getTypeKey())
+                    && !llr.getLuiId().equals(registrationGroupInfo.getFormatOfferingId())) {
+                luiService.deleteLuiLuiRelation(llr.getId(), context);
+                createLuiLuiRelationForRegGroups(registrationGroupInfo.getFormatOfferingId(), registrationGroupId, LuiServiceConstants.LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_RG_TYPE_KEY, context);
             }
         }
-
         // Create relations for added Activity Offerings or Course Offering
         for (String luiId : newRelatedLuiIds) {
             if (!existingRelatedLuiIds.contains(luiId)) {
-                createLuiLuiRelationForRegGroups(registrationGroupId, luiId, LuiServiceConstants.LUI_LUI_RELATION_REGISTEREDFORVIA_TYPE_KEY, context);
+                createLuiLuiRelationForRegGroups(registrationGroupId, luiId, LuiServiceConstants.LUI_LUI_RELATION_REGISTERED_FOR_VIA_RG_TO_AO_TYPE_KEY, context);
             }
         }
 
-        LuiInfo regGroupLui = registrationGroupAssembler.disassemble(registrationGroupInfo, context);
+        LuiInfo regGroupLui = registrationGroupTransformer.rg2Lui(registrationGroupInfo, context);
         LuiInfo updatedRegGroupLui = luiService.updateLui(regGroupLui.getId(), regGroupLui, context);
-        return registrationGroupAssembler.assemble(updatedRegGroupLui, context);
 
+        // Everything saved to the DB, now return RG sent back by createLui and transformed by transformer back to caller
+        RegistrationGroupInfo rgInfo = new RegistrationGroupInfo();
+        rgInfo = registrationGroupTransformer.lui2Rg(updatedRegGroupLui, context);
+        rgInfo.setCourseOfferingId(registrationGroupInfo.getCourseOfferingId());
+        rgInfo.setRegistrationCode(updatedRegGroupLui.getOfficialIdentifier().getCode());
+        return rgInfo;
     }
 
     @Override
@@ -1458,6 +1640,14 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     public StatusInfo deleteRegistrationGroup(String registrationGroupId, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         try {
+            LuiInfo fetch = luiService.getLui(registrationGroupId, context);
+            if (fetch == null) {
+                throw new DoesNotExistException("Registration Group, " + registrationGroupId + ", does not exist");
+            }
+            // Make sure we have correct type before deleting
+            if (!LuiServiceConstants.REGISTRATION_GROUP_TYPE_KEY.equals(fetch.getTypeKey())) {
+                throw new InvalidParameterException("ID, " + registrationGroupId + ", does not have a registration group type");
+            }
             return luiService.deleteLui(registrationGroupId, context);
         } catch (DependentObjectsExistException e) {
             throw new OperationFailedException("Could not delete LUI '" + registrationGroupId + "'", e);
@@ -1708,7 +1898,6 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
             LuiLuiRelationInfo luiRel = new LuiLuiRelationInfo();
             luiRel.setLuiId(luiId);
             luiRel.setRelatedLuiId(relatedLuiId);
-            luiRel.setTypeKey(LuiServiceConstants.LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_RG_TYPE_KEY);
             luiRel.setStateKey(LuiServiceConstants.LUI_LUI_RELATION_ACTIVE_STATE_KEY);
             luiRel.setEffectiveDate(new Date());
             try {
@@ -1829,6 +2018,14 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         this.courseOfferingTransformer = courseOfferingTransformer;
     }
 
+    public RegistrationGroupTransformer getRegistrationGroupTransformer() {
+        return registrationGroupTransformer;
+    }
+
+    public void setRegistrationGroupTransformer(RegistrationGroupTransformer registrationGroupTransformer) {
+        this.registrationGroupTransformer = registrationGroupTransformer;
+    }
+
     public void setAtpService(AtpService atpService) {
         this.atpService = atpService;
     }
@@ -1933,6 +2130,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         statusInfo.setSuccess(Boolean.TRUE);
         return statusInfo;
 	}
+
 
 
 }

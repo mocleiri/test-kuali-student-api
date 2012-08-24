@@ -47,7 +47,7 @@ import org.kuali.student.r2.common.dto.RichTextInfo;
 import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.core.class1.type.dto.TypeInfo;
 import org.kuali.student.r2.core.constants.AtpServiceConstants;
-import org.kuali.student.r2.common.util.constants.TypeServiceConstants;
+import org.kuali.student.r2.core.constants.TypeServiceConstants;
 import org.kuali.student.r2.core.class1.state.dto.StateInfo;
 import org.kuali.student.r2.core.class1.type.service.TypeService;
 
@@ -397,12 +397,20 @@ public class AcademicCalendarViewHelperServiceImpl extends ViewHelperServiceImpl
         if (model instanceof AcademicCalendarForm){
             if (addLine instanceof HolidayCalendarWrapper){
                 AcademicCalendarForm form = (AcademicCalendarForm)model;
-                for(HolidayCalendarWrapper holidayCalendarWrapper : form.getHolidayCalendarList()){
-                    if (StringUtils.equals(holidayCalendarWrapper.getId(),((HolidayCalendarWrapper) addLine).getId())){
-                        GlobalVariables.getMessageMap().putError("newCollectionLines['holidayCalendarList'].id",
-                                CalendarConstants.MSG_ERROR_DUPLICATE_HCAL,
-                                holidayCalendarWrapper.getHolidayCalendarInfo().getName());
-                        return false;
+                if ((form.getHolidayCalendarList().size() == 0))  {
+                    GlobalVariables.getMessageMap().putError("newCollectionLines['holidayCalendarList'].id",
+                            CalendarConstants.MSG_ERROR_NO_HCAL);
+                    return false;
+                } else {
+
+                    for(HolidayCalendarWrapper holidayCalendarWrapper : form.getHolidayCalendarList()){
+                        String holidayCalendarId = holidayCalendarWrapper.getId();
+                        if (StringUtils.equals(holidayCalendarWrapper.getId(),((HolidayCalendarWrapper) addLine).getId())){
+                            GlobalVariables.getMessageMap().putError("newCollectionLines['holidayCalendarList'].id",
+                                    CalendarConstants.MSG_ERROR_DUPLICATE_HCAL,
+                                    holidayCalendarWrapper.getHolidayCalendarInfo().getName());
+                            return false;
+                        }
                     }
                 }
             }
@@ -1039,19 +1047,22 @@ public class AcademicCalendarViewHelperServiceImpl extends ViewHelperServiceImpl
             HolidayCalendarWrapper inputLine = (HolidayCalendarWrapper)addLine;
             List<HolidayWrapper> holidays = new ArrayList<HolidayWrapper>();
             try {
-                HolidayCalendarInfo hcInfo = getAcalService().getHolidayCalendar(inputLine.getId(), getContextInfo());
-                inputLine.setHolidayCalendarInfo(hcInfo);
-                inputLine.setAdminOrgName(getAdminOrgNameById(hcInfo.getAdminOrgId()));
-                StateInfo hcState = getAcalService().getHolidayCalendarState(hcInfo.getStateKey(), getContextInfo());
-                inputLine.setStateName(hcState.getName());
-                List<HolidayInfo> holidayInfoList = getAcalService().getHolidaysForHolidayCalendar(hcInfo.getId(), getContextInfo());
-                for(HolidayInfo holidayInfo : holidayInfoList){
-                    HolidayWrapper holiday = new HolidayWrapper(holidayInfo);
-                    TypeInfo typeInfo = getAcalService().getHolidayType(holidayInfo.getTypeKey(), getContextInfo());
-                    holiday.setTypeName(typeInfo.getName());
-                    holidays.add(holiday);
+                String holidayCalendarId = inputLine.getId();
+                if (!StringUtils.isEmpty(holidayCalendarId)) {
+                    HolidayCalendarInfo hcInfo = getAcalService().getHolidayCalendar(inputLine.getId(), getContextInfo());
+                    inputLine.setHolidayCalendarInfo(hcInfo);
+                    inputLine.setAdminOrgName(getAdminOrgNameById(hcInfo.getAdminOrgId()));
+                    StateInfo hcState = getAcalService().getHolidayCalendarState(hcInfo.getStateKey(), getContextInfo());
+                    inputLine.setStateName(hcState.getName());
+                    List<HolidayInfo> holidayInfoList = getAcalService().getHolidaysForHolidayCalendar(hcInfo.getId(), getContextInfo());
+                    for(HolidayInfo holidayInfo : holidayInfoList){
+                        HolidayWrapper holiday = new HolidayWrapper(holidayInfo);
+                        TypeInfo typeInfo = getAcalService().getHolidayType(holidayInfo.getTypeKey(), getContextInfo());
+                        holiday.setTypeName(typeInfo.getName());
+                        holidays.add(holiday);
+                    }
+                    inputLine.setHolidays(holidays);
                 }
-                inputLine.setHolidays(holidays);
             }catch (Exception e){
                 throw new RuntimeException(e);
             }

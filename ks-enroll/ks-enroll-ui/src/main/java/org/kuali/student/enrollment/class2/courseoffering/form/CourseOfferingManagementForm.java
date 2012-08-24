@@ -6,6 +6,7 @@ import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.class2.courseoffering.dto.ActivityOfferingWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingCopyWrapper;
 import org.kuali.student.enrollment.class2.courseoffering.dto.CourseOfferingEditWrapper;
+import org.kuali.student.enrollment.class2.courseoffering.dto.RegistrationGroupWrapper;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class CourseOfferingManagementForm extends UifFormBase {
     private String formatOfferingIdForViewRG;
     private String formatOfferingName;
     private List<ActivityOfferingWrapper> filteredAOsForSelectedFO;
+    private List<RegistrationGroupWrapper> filteredRGsForSelectedFO;
 
     //For Adding Activity
     private String formatIdForNewAO;
@@ -44,10 +46,14 @@ public class CourseOfferingManagementForm extends UifFormBase {
     private String previousCourseOfferingCodeUI;
     private String nextCourseOfferingCodeUI;
 
+    private String toBeScheduledCourseOfferingsUI;
+    private int toBeScheduledCourseOfferingsCount;
+
     public CourseOfferingManagementForm (){
         activityWrapperList = new ArrayList<ActivityOfferingWrapper>();
         selectedToDeleteList = new ArrayList<ActivityOfferingWrapper>();
         filteredAOsForSelectedFO = new ArrayList<ActivityOfferingWrapper>();
+        filteredRGsForSelectedFO = new ArrayList<RegistrationGroupWrapper>();
         courseOfferingEditWrapperList = new ArrayList<CourseOfferingEditWrapper>();
         setCourseOfferingCopyWrapper(null);
     }
@@ -164,6 +170,14 @@ public class CourseOfferingManagementForm extends UifFormBase {
         this.filteredAOsForSelectedFO = filteredAOsForSelectedFO;
     }
 
+    public List<RegistrationGroupWrapper> getFilteredRGsForSelectedFO() {
+        return filteredRGsForSelectedFO;
+    }
+
+    public void setFilteredRGsForSelectedFO(List<RegistrationGroupWrapper> filteredRGsForSelectedFO) {
+        this.filteredRGsForSelectedFO = filteredRGsForSelectedFO;
+    }
+
     public String getFormatIdForNewAO() {
         return formatIdForNewAO;
     }
@@ -252,5 +266,21 @@ public class CourseOfferingManagementForm extends UifFormBase {
         }else{
             setNextCourseOfferingCodeUI(StringUtils.EMPTY);
         }
+    }
+
+    public String getToBeScheduledCourseOfferingsUI() {
+        return toBeScheduledCourseOfferingsUI;
+    }
+
+    public void setToBeScheduledCourseOfferingsUI(String toBeScheduledCourseOfferingsUI) {
+        this.toBeScheduledCourseOfferingsUI = toBeScheduledCourseOfferingsUI;
+    }
+
+    public int getToBeScheduledCourseOfferingsCount() {
+        return toBeScheduledCourseOfferingsCount;
+    }
+
+    public void setToBeScheduledCourseOfferingsCount(int toBeScheduledCourseOfferingsCount) {
+        this.toBeScheduledCourseOfferingsCount = toBeScheduledCourseOfferingsCount;
     }
 }
